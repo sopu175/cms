@@ -1,0 +1,103 @@
+{
+    "product_data": {
+        "id": 75,
+        "category_id": 18,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Dark Wash Slim Fit",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "dark-wash-slim-fit",
+        "subtitle": "Dark Wash Slim Fit",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "dark-wash-slim-fit",
+        "template": "",
+        "sort_order": 32,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 08:20:07",
+        "updated_at": "2025-05-19 12:46:07",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Men",
+        "category_slug": "men"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 946,
+                "identifier_type": "Product",
+                "identifier_id": 75,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/dark-wash-slim-fit\/",
+                "cloud_path": null,
+                "img_name": "1746018978UJQ9y.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/dark-wash-slim-fit\/1746018978UJQ9y.jpg",
+                "cdn_path": "1746018978UJQ9y.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 947,
+                "identifier_type": "Product",
+                "identifier_id": 75,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/dark-wash-slim-fit\/",
+                "cloud_path": null,
+                "img_name": "1746018978Eum1R.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/dark-wash-slim-fit\/1746018978Eum1R.jpg",
+                "cdn_path": "1746018978Eum1R.jpg"
+            },
+            {
+                "id": 948,
+                "identifier_type": "Product",
+                "identifier_id": 75,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/dark-wash-slim-fit\/",
+                "cloud_path": null,
+                "img_name": "1746018978bxiVw.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/dark-wash-slim-fit\/1746018978bxiVw.jpg",
+                "cdn_path": "1746018978bxiVw.jpg"
+            }
+        ],
+        "count": 3
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

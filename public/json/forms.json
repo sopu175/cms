@@ -1,0 +1,108 @@
+{
+    "contact_form": [
+        {
+            "id": 27,
+            "form_id": 7,
+            "field_key": "first_name",
+            "label": "Full Name",
+            "placeholder": "Full Name",
+            "hint": "",
+            "field_type": "textInput",
+            "options": "",
+            "validators": "required, string",
+            "template": "",
+            "sort_order": 1
+        },
+        {
+            "id": 42,
+            "form_id": 7,
+            "field_key": "gender",
+            "label": "Gender",
+            "placeholder": "Gender",
+            "hint": "",
+            "field_type": "radioButton",
+            "options": "male:Male,female:Female",
+            "validators": "string, safe",
+            "template": "",
+            "sort_order": 2
+        },
+        {
+            "id": 41,
+            "form_id": 7,
+            "field_key": "designation",
+            "label": "Designation",
+            "placeholder": "Designation",
+            "hint": "",
+            "field_type": "dropDownList",
+            "options": "front:Front end Developer,back:Backend Developer,full:Full Stack Developer",
+            "validators": "string, safe, required",
+            "template": "",
+            "sort_order": 4
+        },
+        {
+            "id": 29,
+            "form_id": 7,
+            "field_key": "email",
+            "label": "Email Address",
+            "placeholder": "Email",
+            "hint": "",
+            "field_type": "textInput",
+            "options": "",
+            "validators": "required, email",
+            "template": "",
+            "sort_order": 5
+        },
+        {
+            "id": 30,
+            "form_id": 7,
+            "field_key": "phone",
+            "label": "Phone",
+            "placeholder": "Contact Number",
+            "hint": "",
+            "field_type": "textInput",
+            "options": "",
+            "validators": "string,required",
+            "template": "",
+            "sort_order": 6
+        },
+        {
+            "id": 32,
+            "form_id": 7,
+            "field_key": "message",
+            "label": "Message",
+            "placeholder": "Cover Letter",
+            "hint": "",
+            "field_type": "textArea",
+            "options": "",
+            "validators": "string, required",
+            "template": "",
+            "sort_order": 7
+        },
+        {
+            "id": 33,
+            "form_id": 7,
+            "field_key": "file",
+            "label": "CV",
+            "placeholder": "",
+            "hint": "",
+            "field_type": "fileInput",
+            "options": "",
+            "validators": "string, required",
+            "template": "",
+            "sort_order": 8
+        },
+        {
+            "id": 44,
+            "form_id": 7,
+            "field_key": "Terms",
+            "label": "",
+            "placeholder": "",
+            "hint": "",
+            "field_type": "checkBox",
+            "options": "on:I accept the terms and conditions",
+            "validators": "string,safe,required",
+            "template": "",
+            "sort_order": 9
+        }
+    ]
+}

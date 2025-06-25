@@ -1,0 +1,28 @@
+{
+   "$schema": "https://turborepo.org/schema.json",
+   "tasks": {
+     "build": {
+       "dependsOn": ["^build"],
+       "outputs": [".next/**", "public/**"]
+     },
+     "dev": {
+       "dependsOn": ["^dev"],
+       "cache": false
+     },
+     "lint": {
+       "outputs": []
+     },
+     "test": {
+       "outputs": ["coverage/**"]
+     },
+     "typecheck": {
+       "dependsOn": [],
+       "outputs": []
+     },
+     "tailwind": {
+       "dependsOn": [],
+       "outputs": ["src/styles/tailwind.css"] // Or wherever your output is
+     }
+   },
+   "ui": "tui"
+ }

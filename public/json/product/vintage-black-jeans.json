@@ -1,0 +1,117 @@
+{
+    "product_data": {
+        "id": 85,
+        "category_id": 18,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Vintage Black Jeans",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "vintage-black-jeans",
+        "subtitle": "Vintage Black Jeans",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "vintage-black-jeans",
+        "template": "",
+        "sort_order": 42,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 13:27:29",
+        "updated_at": "2025-05-19 12:46:07",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Men",
+        "category_slug": "men"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 978,
+                "identifier_type": "Product",
+                "identifier_id": 85,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/vintage-black-jeans\/",
+                "cloud_path": null,
+                "img_name": "1746019672ck16x.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/vintage-black-jeans\/1746019672ck16x.jpg",
+                "cdn_path": "1746019672ck16x.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 979,
+                "identifier_type": "Product",
+                "identifier_id": 85,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/vintage-black-jeans\/",
+                "cloud_path": null,
+                "img_name": "17460196724BX7x.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/vintage-black-jeans\/17460196724BX7x.jpg",
+                "cdn_path": "17460196724BX7x.jpg"
+            },
+            {
+                "id": 980,
+                "identifier_type": "Product",
+                "identifier_id": 85,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/vintage-black-jeans\/",
+                "cloud_path": null,
+                "img_name": "1746019672NKkt5.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/vintage-black-jeans\/1746019672NKkt5.jpg",
+                "cdn_path": "1746019672NKkt5.jpg"
+            },
+            {
+                "id": 981,
+                "identifier_type": "Product",
+                "identifier_id": 85,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/vintage-black-jeans\/",
+                "cloud_path": null,
+                "img_name": "1746019672r9DRM.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/vintage-black-jeans\/1746019672r9DRM.jpg",
+                "cdn_path": "1746019672r9DRM.jpg"
+            }
+        ],
+        "count": 4
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

@@ -1,0 +1,103 @@
+{
+    "product_data": {
+        "id": 82,
+        "category_id": 18,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Super Light Straight Leg",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "super-light-straight-leg",
+        "subtitle": "Super Light Straight Leg",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "super-light-straight-leg",
+        "template": "",
+        "sort_order": 39,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 13:24:09",
+        "updated_at": "2025-05-19 12:46:07",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Men",
+        "category_slug": "men"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 969,
+                "identifier_type": "Product",
+                "identifier_id": 82,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/super-light-straight-leg\/",
+                "cloud_path": null,
+                "img_name": "1746019469kt9yV.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/super-light-straight-leg\/1746019469kt9yV.jpg",
+                "cdn_path": "1746019469kt9yV.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 970,
+                "identifier_type": "Product",
+                "identifier_id": 82,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/super-light-straight-leg\/",
+                "cloud_path": null,
+                "img_name": "1746019469Y442l.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/super-light-straight-leg\/1746019469Y442l.jpg",
+                "cdn_path": "1746019469Y442l.jpg"
+            },
+            {
+                "id": 971,
+                "identifier_type": "Product",
+                "identifier_id": 82,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/super-light-straight-leg\/",
+                "cloud_path": null,
+                "img_name": "1746019469JCMRW.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/super-light-straight-leg\/1746019469JCMRW.jpg",
+                "cdn_path": "1746019469JCMRW.jpg"
+            }
+        ],
+        "count": 3
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

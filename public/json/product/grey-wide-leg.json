@@ -1,0 +1,117 @@
+{
+    "product_data": {
+        "id": 59,
+        "category_id": 20,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Grey Wide-Leg",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "grey-wide-leg",
+        "subtitle": "Grey Wide-Leg",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "grey-wide-leg",
+        "template": "",
+        "sort_order": 16,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 06:38:10",
+        "updated_at": "2025-05-19 12:58:35",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Girls",
+        "category_slug": "girls"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 895,
+                "identifier_type": "Product",
+                "identifier_id": 59,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/grey-wide-leg\/",
+                "cloud_path": null,
+                "img_name": "1746009900jScxE.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-wide-leg\/1746009900jScxE.jpg",
+                "cdn_path": "1746009900jScxE.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 896,
+                "identifier_type": "Product",
+                "identifier_id": 59,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/grey-wide-leg\/",
+                "cloud_path": null,
+                "img_name": "1746009900ZXvyL.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-wide-leg\/1746009900ZXvyL.jpg",
+                "cdn_path": "1746009900ZXvyL.jpg"
+            },
+            {
+                "id": 897,
+                "identifier_type": "Product",
+                "identifier_id": 59,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/grey-wide-leg\/",
+                "cloud_path": null,
+                "img_name": "1746009900HJZuS.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-wide-leg\/1746009900HJZuS.jpg",
+                "cdn_path": "1746009900HJZuS.jpg"
+            },
+            {
+                "id": 898,
+                "identifier_type": "Product",
+                "identifier_id": 59,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/grey-wide-leg\/",
+                "cloud_path": null,
+                "img_name": "1746009900P8IRe.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-wide-leg\/1746009900P8IRe.jpg",
+                "cdn_path": "1746009900P8IRe.jpg"
+            }
+        ],
+        "count": 4
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

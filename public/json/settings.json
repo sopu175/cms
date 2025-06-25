@@ -1,0 +1,20 @@
+{
+    "site_title": "Company Name",
+    "slogan": "Company Slogun",
+    "info_email": "info@companyname.com",
+    "career_email": "career@companyname.com",
+    "contact_email": "info@testdomian.com",
+    "office_location": "House 91, Road 04, Block B, Banani, Dhaka 1213, Bangladesh",
+    "office_phone": "+880 1400 999 666, +880 1200 000 002",
+    "office_fax": "+1-907-555-1234",
+    "logo_light": "settings_images/logo-1750573293.svg",
+    "logo_dark": "settings_images/2022082912523017665873-1750573643.png",
+    "favicon": "settings_images/fav-1750573340.png",
+    "copyright_text": "EasyUp is Proudly Powered by",
+    "facebook": "https://www.facebook.com",
+    "youtube": "https://www.youtube.com",
+    "linkedin": "https://www.linkedin.com",
+    "instagram": "https://www.instagram.com",
+    "twitter": "https://twitter.com",
+    "google_map": ""
+}

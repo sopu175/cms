@@ -1,0 +1,117 @@
+{
+    "product_data": {
+        "id": 57,
+        "category_id": 20,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Grey Barrel",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "grey-barrel",
+        "subtitle": "Grey Barrel",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "grey-barrel",
+        "template": "",
+        "sort_order": 14,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 06:29:40",
+        "updated_at": "2025-05-19 12:56:59",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Girls",
+        "category_slug": "girls"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 887,
+                "identifier_type": "Product",
+                "identifier_id": 57,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/grey-barrel\/",
+                "cloud_path": null,
+                "img_name": "1746009816aUPcN.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-barrel\/1746009816aUPcN.jpg",
+                "cdn_path": "1746009816aUPcN.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 888,
+                "identifier_type": "Product",
+                "identifier_id": 57,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/grey-barrel\/",
+                "cloud_path": null,
+                "img_name": "1746009816h8j18.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-barrel\/1746009816h8j18.jpg",
+                "cdn_path": "1746009816h8j18.jpg"
+            },
+            {
+                "id": 889,
+                "identifier_type": "Product",
+                "identifier_id": 57,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/grey-barrel\/",
+                "cloud_path": null,
+                "img_name": "1746009816bUXk9.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-barrel\/1746009816bUXk9.jpg",
+                "cdn_path": "1746009816bUXk9.jpg"
+            },
+            {
+                "id": 890,
+                "identifier_type": "Product",
+                "identifier_id": 57,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/grey-barrel\/",
+                "cloud_path": null,
+                "img_name": "1746009816kzSGH.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-barrel\/1746009816kzSGH.jpg",
+                "cdn_path": "1746009816kzSGH.jpg"
+            }
+        ],
+        "count": 4
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

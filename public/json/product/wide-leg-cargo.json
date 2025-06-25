@@ -1,0 +1,117 @@
+{
+    "product_data": {
+        "id": 67,
+        "category_id": 20,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Wide-Leg Cargo",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "wide-leg-cargo",
+        "subtitle": "Wide-Leg Cargo",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "wide-leg-cargo",
+        "template": "",
+        "sort_order": 24,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 07:08:10",
+        "updated_at": "2025-05-19 13:02:28",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Girls",
+        "category_slug": "girls"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 923,
+                "identifier_type": "Product",
+                "identifier_id": 67,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/wide-leg-cargo\/",
+                "cloud_path": null,
+                "img_name": "1746010329kQ8wu.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/wide-leg-cargo\/1746010329kQ8wu.jpg",
+                "cdn_path": "1746010329kQ8wu.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 924,
+                "identifier_type": "Product",
+                "identifier_id": 67,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/wide-leg-cargo\/",
+                "cloud_path": null,
+                "img_name": "1746010329piqSA.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/wide-leg-cargo\/1746010329piqSA.jpg",
+                "cdn_path": "1746010329piqSA.jpg"
+            },
+            {
+                "id": 925,
+                "identifier_type": "Product",
+                "identifier_id": 67,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/wide-leg-cargo\/",
+                "cloud_path": null,
+                "img_name": "1746010329OyFMw.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/wide-leg-cargo\/1746010329OyFMw.jpg",
+                "cdn_path": "1746010329OyFMw.jpg"
+            },
+            {
+                "id": 926,
+                "identifier_type": "Product",
+                "identifier_id": 67,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/wide-leg-cargo\/",
+                "cloud_path": null,
+                "img_name": "1746010329oVgd1.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/wide-leg-cargo\/1746010329oVgd1.jpg",
+                "cdn_path": "1746010329oVgd1.jpg"
+            }
+        ],
+        "count": 4
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

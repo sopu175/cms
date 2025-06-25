@@ -1,0 +1,89 @@
+{
+    "product_data": {
+        "id": 62,
+        "category_id": 20,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Light-Wash Straight Leg",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "light-wash-straight-leg",
+        "subtitle": "Light-Wash Straight Leg",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "light-wash-straight-leg",
+        "template": "",
+        "sort_order": 19,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 06:48:12",
+        "updated_at": "2025-05-19 13:00:45",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Girls",
+        "category_slug": "girls"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 906,
+                "identifier_type": "Product",
+                "identifier_id": 62,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/light-wash-straight-leg\/",
+                "cloud_path": null,
+                "img_name": "1746010078oJR7C.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/light-wash-straight-leg\/1746010078oJR7C.jpg",
+                "cdn_path": "1746010078oJR7C.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 907,
+                "identifier_type": "Product",
+                "identifier_id": 62,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/light-wash-straight-leg\/",
+                "cloud_path": null,
+                "img_name": "17460100786DZ0q.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/light-wash-straight-leg\/17460100786DZ0q.jpg",
+                "cdn_path": "17460100786DZ0q.jpg"
+            }
+        ],
+        "count": 2
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

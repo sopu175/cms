@@ -1,0 +1,117 @@
+{
+    "product_data": {
+        "id": 50,
+        "category_id": 21,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Light Wash Jeans",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "light-wash-jeans",
+        "subtitle": "Light Wash Jeans",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "light-wash-jeans",
+        "template": "",
+        "sort_order": 7,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 06:10:53",
+        "updated_at": "2025-05-19 12:51:48",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Boys",
+        "category_slug": "boys"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 860,
+                "identifier_type": "Product",
+                "identifier_id": 50,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/light-wash-jeans\/",
+                "cloud_path": null,
+                "img_name": "1746004755jwwyU.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/light-wash-jeans\/1746004755jwwyU.jpg",
+                "cdn_path": "1746004755jwwyU.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 861,
+                "identifier_type": "Product",
+                "identifier_id": 50,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/light-wash-jeans\/",
+                "cloud_path": null,
+                "img_name": "1746004755ak2RJ.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/light-wash-jeans\/1746004755ak2RJ.jpg",
+                "cdn_path": "1746004755ak2RJ.jpg"
+            },
+            {
+                "id": 862,
+                "identifier_type": "Product",
+                "identifier_id": 50,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/light-wash-jeans\/",
+                "cloud_path": null,
+                "img_name": "17460047554a6Rv.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/light-wash-jeans\/17460047554a6Rv.jpg",
+                "cdn_path": "17460047554a6Rv.jpg"
+            },
+            {
+                "id": 863,
+                "identifier_type": "Product",
+                "identifier_id": 50,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/light-wash-jeans\/",
+                "cloud_path": null,
+                "img_name": "1746004755UyGN3.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/light-wash-jeans\/1746004755UyGN3.jpg",
+                "cdn_path": "1746004755UyGN3.jpg"
+            }
+        ],
+        "count": 4
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

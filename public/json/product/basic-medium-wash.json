@@ -1,0 +1,103 @@
+{
+    "product_data": {
+        "id": 71,
+        "category_id": 18,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Basic Medium Wash",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "basic-medium-wash",
+        "subtitle": "Basic Medium Wash",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "basic-medium-wash",
+        "template": "",
+        "sort_order": 28,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 07:23:10",
+        "updated_at": "2025-05-19 12:46:07",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Men",
+        "category_slug": "men"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 935,
+                "identifier_type": "Product",
+                "identifier_id": 71,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/basic-medium-wash\/",
+                "cloud_path": null,
+                "img_name": "1746018833owmKT.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/basic-medium-wash\/1746018833owmKT.jpg",
+                "cdn_path": "1746018833owmKT.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 936,
+                "identifier_type": "Product",
+                "identifier_id": 71,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/basic-medium-wash\/",
+                "cloud_path": null,
+                "img_name": "1746018833PSGRO.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/basic-medium-wash\/1746018833PSGRO.jpg",
+                "cdn_path": "1746018833PSGRO.jpg"
+            },
+            {
+                "id": 937,
+                "identifier_type": "Product",
+                "identifier_id": 71,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/basic-medium-wash\/",
+                "cloud_path": null,
+                "img_name": "1746018833iOpCB.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/basic-medium-wash\/1746018833iOpCB.jpg",
+                "cdn_path": "1746018833iOpCB.jpg"
+            }
+        ],
+        "count": 3
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

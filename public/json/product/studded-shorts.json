@@ -1,0 +1,117 @@
+{
+    "product_data": {
+        "id": 66,
+        "category_id": 20,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Studded Shorts",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "studded-shorts",
+        "subtitle": "Studded Shorts",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "studded-shorts",
+        "template": "",
+        "sort_order": 23,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 07:04:21",
+        "updated_at": "2025-05-19 13:02:09",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Girls",
+        "category_slug": "girls"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 919,
+                "identifier_type": "Product",
+                "identifier_id": 66,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/studded-shorts\/",
+                "cloud_path": null,
+                "img_name": "1746010298AbEyK.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/studded-shorts\/1746010298AbEyK.jpg",
+                "cdn_path": "1746010298AbEyK.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 920,
+                "identifier_type": "Product",
+                "identifier_id": 66,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/studded-shorts\/",
+                "cloud_path": null,
+                "img_name": "1746010298VyH9f.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/studded-shorts\/1746010298VyH9f.jpg",
+                "cdn_path": "1746010298VyH9f.jpg"
+            },
+            {
+                "id": 921,
+                "identifier_type": "Product",
+                "identifier_id": 66,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/studded-shorts\/",
+                "cloud_path": null,
+                "img_name": "1746010298byp16.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/studded-shorts\/1746010298byp16.jpg",
+                "cdn_path": "1746010298byp16.jpg"
+            },
+            {
+                "id": 922,
+                "identifier_type": "Product",
+                "identifier_id": 66,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/studded-shorts\/",
+                "cloud_path": null,
+                "img_name": "1746010298brE3l.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/studded-shorts\/1746010298brE3l.jpg",
+                "cdn_path": "1746010298brE3l.jpg"
+            }
+        ],
+        "count": 4
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

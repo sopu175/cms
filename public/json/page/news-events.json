@@ -1,0 +1,453 @@
+{
+    "page_data": {
+        "id": 218,
+        "parent_page_id": "0",
+        "page_section": 1,
+        "type": "",
+        "title": "News and Events",
+        "slug": "news-events",
+        "subtitle": "",
+        "short_desc": "",
+        "notitle": 0,
+        "form_id": null,
+        "description": "",
+        "image_size": "",
+        "identifier": "news-and-events",
+        "template": "",
+        "status": 1,
+        "is_archived": 0,
+        "title_tag": null,
+        "meta_title": "News and Events | Dcastalia Next Boilerplate",
+        "meta_description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+        "og_title": "News and Events | Dcastalia Next Boilerplate",
+        "og_description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+        "preview": null,
+        "instructions": null,
+        "child_of": null,
+        "update_type": null,
+        "visit_count": null,
+        "created_at": "2025-04-24 12:37:13",
+        "updated_at": "2025-05-01 03:30:29",
+        "created_by": 1,
+        "updated_by": 1
+    },
+    "sections": [
+        {
+            "section_data": {
+                "id": 219,
+                "parent_page_id": "218",
+                "page_section": 2,
+                "type": null,
+                "title": "News and Events List",
+                "slug": "news-and-events-list",
+                "subtitle": "Latest Events",
+                "short_desc": "and News Updates",
+                "notitle": 0,
+                "form_id": "",
+                "description": "Stay updated with our latest events, news, and announcements, keeping you informed about all the exciting developments.",
+                "image_size": "",
+                "identifier": "news-and-events",
+                "template": "news_list",
+                "status": 1,
+                "is_archived": 0,
+                "title_tag": null,
+                "meta_title": "",
+                "meta_description": "",
+                "og_title": "",
+                "og_description": "",
+                "preview": null,
+                "instructions": null,
+                "child_of": null,
+                "update_type": null,
+                "visit_count": null,
+                "created_at": "2025-04-24 12:37:31",
+                "updated_at": "2025-04-29 00:15:05",
+                "created_by": 1,
+                "updated_by": 1,
+                "blogs_list":[
+                    {
+                        "title": "Project Alpha",
+                        "timestamp": "2025-06-23T12:00:00Z",
+                        "slug": "project-alpha",
+                        "html_markup": "<h1>Alpha Overview</h1>",
+                        "background_image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+                        "background_color": "#f0f0f8",
+                        "sections": [
+                            {
+                                "section_title": "Alpha Details",
+                                "images": [
+                                    {
+                                        "title": "Alpha Hero",
+                                        "url": "https://images.unsplash.com/photo-1519125323398-675f0ddb6308"
+                                    }
+                                ],
+                                "markup": {
+                                    "text_list": [
+                                        "Alpha is the first project in the series.",
+                                        "It features advanced CMS capabilities."
+                                    ],
+                                    "images_list": [
+                                        "https://images.unsplash.com/photo-1465101046530-73398c7f28ca",
+                                        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+                                    ],
+                                    "table_list": [
+                                        { "feature": "User Auth", "status": "Enabled" },
+                                        { "feature": "Multi-language", "status": "Supported" }
+                                    ],
+                                    "ul_li_list": [
+                                        "Simple UI",
+                                        "Fast load times",
+                                        "Customizable themes"
+                                    ]
+                                },
+                                "links": [
+                                    {
+                                        "label": "Alpha Docs",
+                                        "url": "https://docs.example.com/alpha",
+                                        "target": "_blank",
+                                        "type": "documentation"
+                                    },
+                                    {
+                                        "label": "Alpha Live",
+                                        "url": "https://alpha.example.com",
+                                        "target": "_self",
+                                        "type": "demo"
+                                    }
+                                ],
+                                "date_time": "2025-06-23T10:00:00Z",
+                                "author": "Jane Smith",
+                                "posts": [
+                                    {
+                                        "post_title": "Alpha Launch",
+                                        "content": "Alpha was launched with new features."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Project Beta",
+                        "timestamp": "2025-06-22T14:30:00Z",
+                        "html_markup": "<h1>Beta Introduction</h1>",
+                        "slug": "project-beta",
+                        "background_image": "https://images.unsplash.com/photo-1465101046530-73398c7f28ca",
+                        "background_color": "#fff8e1",
+                        "sections": [
+                            {
+                                "section_title": "Beta Insights",
+                                "images": [
+                                    {
+                                        "title": "Beta Diagram",
+                                        "url": "https://images.unsplash.com/photo-1465101178521-c1a9136a3b99"
+                                    }
+                                ],
+                                "markup": {
+                                    "text_list": [
+                                        "Beta focuses on scalability.",
+                                        "Optimized for cloud deployment."
+                                    ],
+                                    "images_list": [
+                                        "https://images.unsplash.com/photo-1502082553048-f009c37129b9",
+                                        "https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+                                    ],
+                                    "table_list": [
+                                        { "feature": "API Rate Limit", "status": "1000/hr" },
+                                        { "feature": "Backup", "status": "Automated" }
+                                    ],
+                                    "ul_li_list": [
+                                        "Cloud-native",
+                                        "Backup ready",
+                                        "API centric"
+                                    ]
+                                },
+                                "links": [
+                                    {
+                                        "label": "Beta API",
+                                        "url": "https://api.example.com/beta",
+                                        "target": "_blank",
+                                        "type": "api"
+                                    }
+                                ],
+                                "date_time": "2025-06-22T12:00:00Z",
+                                "author": "Mike Johnson",
+                                "posts": [
+                                    {
+                                        "post_title": "Beta Insights",
+                                        "content": "Beta provides robust API capabilities."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Project Gamma",
+                        "timestamp": "2025-06-21T08:15:00Z",
+                        "html_markup": "<h1>Gamma Overview</h1>",
+                        "slug": "project-gamma",
+                        "background_image": "https://images.unsplash.com/photo-1519125323398-675f0ddb6308",
+                        "background_color": "#e1f5fe",
+                        "sections": [
+                            {
+                                "section_title": "Gamma Features",
+                                "images": [
+                                    {
+                                        "title": "Gamma Screenshot",
+                                        "url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+                                    }
+                                ],
+                                "markup": {
+                                    "text_list": [
+                                        "Gamma offers a modular plugin system.",
+                                        "Easy integration with external tools."
+                                    ],
+                                    "images_list": [
+                                        "https://images.unsplash.com/photo-1465101178521-c1a9136a3b99"
+                                    ],
+                                    "table_list": [
+                                        { "plugin": "SEO", "available": "Yes" },
+                                        { "plugin": "Analytics", "available": "No" }
+                                    ],
+                                    "ul_li_list": [
+                                        "Modular design",
+                                        "Plugin support",
+                                        "Developer-friendly"
+                                    ]
+                                },
+                                "links": [
+                                    {
+                                        "label": "Gamma Plugins",
+                                        "url": "https://plugins.example.com/gamma",
+                                        "target": "_blank",
+                                        "type": "plugins"
+                                    }
+                                ],
+                                "date_time": "2025-06-21T08:00:00Z",
+                                "author": "Anna Lee",
+                                "posts": [
+                                    {
+                                        "post_title": "Gamma Plugins Released",
+                                        "content": "Explore new plugins in Gamma."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Project Delta",
+                        "timestamp": "2025-06-20T17:45:00Z",
+                        "html_markup": "<h1>Delta Announcement</h1>",
+                        "slug": "project-delta",
+                        "background_image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+                        "background_color": "#e8f5e9",
+                        "sections": [
+                            {
+                                "section_title": "Delta Release",
+                                "images": [
+                                    {
+                                        "title": "Delta Banner",
+                                        "url": "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+                                    }
+                                ],
+                                "markup": {
+                                    "text_list": [
+                                        "Delta brings real-time collaboration.",
+                                        "Secure data storage included."
+                                    ],
+                                    "images_list": [
+                                        "https://images.unsplash.com/photo-1519125323398-675f0ddb6308"
+                                    ],
+                                    "table_list": [
+                                        { "collaboration": "Real-time", "encryption": "AES-256" }
+                                    ],
+                                    "ul_li_list": [
+                                        "Live editing",
+                                        "Encrypted files",
+                                        "Team features"
+                                    ]
+                                },
+                                "links": [
+                                    {
+                                        "label": "Delta Docs",
+                                        "url": "https://docs.example.com/delta",
+                                        "target": "_blank",
+                                        "type": "documentation"
+                                    }
+                                ],
+                                "date_time": "2025-06-20T16:00:00Z",
+                                "author": "Paul Green",
+                                "posts": [
+                                    {
+                                        "post_title": "Delta Goes Live",
+                                        "content": "Teams can now collaborate in Delta."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Project Epsilon",
+                        "timestamp": "2025-06-19T09:30:00Z",
+                        "html_markup": "<h1>Epsilon Features</h1>",
+                        "slug": "project-epsilon",
+                        "background_image": "https://images.unsplash.com/photo-1502082553048-f009c37129b9",
+                        "background_color": "#fce4ec",
+                        "sections": [
+                            {
+                                "section_title": "Epsilon Highlights",
+                                "images": [
+                                    {
+                                        "title": "Epsilon Icon",
+                                        "url": "https://images.unsplash.com/photo-1465101046530-73398c7f28ca"
+                                    }
+                                ],
+                                "markup": {
+                                    "text_list": [
+                                        "Epsilon is optimized for mobile.",
+                                        "Supports offline mode."
+                                    ],
+                                    "images_list": [
+                                        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+                                    ],
+                                    "table_list": [
+                                        { "feature": "Offline support", "available": "Yes" }
+                                    ],
+                                    "ul_li_list": [
+                                        "Mobile-first",
+                                        "Progressive Web App",
+                                        "Fast synchronization"
+                                    ]
+                                },
+                                "links": [
+                                    {
+                                        "label": "Epsilon Guide",
+                                        "url": "https://guide.example.com/epsilon",
+                                        "target": "_blank",
+                                        "type": "guide"
+                                    }
+                                ],
+                                "date_time": "2025-06-19T08:00:00Z",
+                                "author": "Sara White",
+                                "posts": [
+                                    {
+                                        "post_title": "Epsilon Mobile Update",
+                                        "content": "Mobile support has been enhanced in Epsilon."
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "images": {
+                "list": [
+                    {
+                        "id": 544,
+                        "identifier_type": "Page",
+                        "identifier_id": 219,
+                        "short_title": "",
+                        "short_desc": "",
+                        "img_alt": "",
+                        "path": "uploads\/page\/news-and-events\/",
+                        "cloud_path": null,
+                        "img_name": "1745864088Vbl30.jpg",
+                        "real_name": null,
+                        "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/page\/news-and-events\/1745864088Vbl30.jpg",
+                        "cdn_path": "1745864088Vbl30.jpg",
+                        "banner": "on"
+                    }
+                ],
+                "count": 1
+            },
+            "posts": {
+                "list": [],
+                "count": 0
+            },
+            "files": {
+                "list": [],
+                "count": 0
+            },
+            "galleries": {
+                "list": [],
+                "count": 0
+            }
+        },
+        {
+            "section_data": {
+                "id": 222,
+                "parent_page_id": "218",
+                "page_section": 2,
+                "type": null,
+                "title": "Blog List Page",
+                "slug": "blog-list-page",
+                "subtitle": "",
+                "short_desc": "",
+                "notitle": 0,
+                "form_id": null,
+                "description": "",
+                "image_size": "",
+                "identifier": "news-and-events",
+                "template": "blog_list_all",
+                "status": 1,
+                "is_archived": 0,
+                "title_tag": null,
+                "meta_title": "",
+                "meta_description": "",
+                "og_title": "",
+                "og_description": "",
+                "preview": null,
+                "instructions": null,
+                "child_of": null,
+                "update_type": null,
+                "visit_count": null,
+                "created_at": "2025-04-28 11:13:11",
+                "updated_at": "2025-05-01 03:28:38",
+                "created_by": 1,
+                "updated_by": 1
+            },
+            "images": {
+                "list": [],
+                "count": 0
+            },
+            "posts": {
+                "list": [],
+                "count": 0
+            },
+            "files": {
+                "list": [],
+                "count": 0
+            },
+            "galleries": {
+                "list": [],
+                "count": 0
+            }
+        }
+    ],
+    "child_pages": {
+        "list": [],
+        "count": 0,
+        "types": [
+            {
+                "id": 8,
+                "title": "Counter",
+                "slug": "counter",
+                "in_page": 0,
+                "in_pagepost": 1,
+                "in_product": 1,
+                "in_gallery": 0,
+                "in_productpost": 0,
+                "in_blogpost": 0,
+                "sort_order": 0,
+                "status": 1,
+                "is_archived": 0,
+                "created_at": "2025-05-27 05:22:16",
+                "updated_at": "2025-05-27 11:22:16",
+                "created_by": 1,
+                "updated_by": 1
+            }
+        ]
+    },
+    "images": {
+        "list": [],
+        "count": 0
+    }
+}

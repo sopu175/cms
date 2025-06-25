@@ -1,0 +1,103 @@
+{
+    "product_data": {
+        "id": 99,
+        "category_id": 19,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Flowy Shorts",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "flowy-shorts",
+        "subtitle": "Flowy Shorts",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "flowy-shorts",
+        "template": "",
+        "sort_order": 56,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-05-04 09:10:40",
+        "updated_at": "2025-05-19 12:46:07",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Women",
+        "category_slug": "women"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 1070,
+                "identifier_type": "Product",
+                "identifier_id": 99,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/flowy-shorts\/",
+                "cloud_path": null,
+                "img_name": "1746349859mmiXU.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/flowy-shorts\/1746349859mmiXU.jpg",
+                "cdn_path": "1746349859mmiXU.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 1071,
+                "identifier_type": "Product",
+                "identifier_id": 99,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/flowy-shorts\/",
+                "cloud_path": null,
+                "img_name": "1746349859oerGK.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/flowy-shorts\/1746349859oerGK.jpg",
+                "cdn_path": "1746349859oerGK.jpg"
+            },
+            {
+                "id": 1072,
+                "identifier_type": "Product",
+                "identifier_id": 99,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/flowy-shorts\/",
+                "cloud_path": null,
+                "img_name": "174634985994dn3.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/flowy-shorts\/174634985994dn3.jpg",
+                "cdn_path": "174634985994dn3.jpg"
+            }
+        ],
+        "count": 3
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

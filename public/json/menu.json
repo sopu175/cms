@@ -1,0 +1,467 @@
+{
+    "main_menu": {
+        "data": [
+            {
+                "id": 136,
+                "menu_id": 2,
+                "parent_id": 0,
+                "item_title": "Home",
+                "item_type": null,
+                "item_desc": "Short Description",
+                "item_url": "/",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 1,
+                "items": []
+            },
+            {
+                "id": 137,
+                "menu_id": 2,
+                "parent_id": 0,
+                "item_title": "About us",
+                "item_type": null,
+                "item_desc": "Short Description",
+                "item_url": "/about",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 2,
+                "items": []
+            },
+            {
+                "id": 138,
+                "menu_id": 2,
+                "parent_id": 0,
+                "item_title": "Projects",
+                "item_type": null,
+                "item_desc": "Short Description",
+                "item_url": "/projects",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 3,
+                "items": [
+                    {
+                        "id": 142,
+                        "menu_id": 2,
+                        "parent_id": 138,
+                        "item_title": "Residential",
+                        "item_type": null,
+                        "item_desc": "Short Description",
+                        "item_url": "/projects/residential",
+                        "item_target": "_self",
+                        "item_icon": "",
+                        "sort_order": 1,
+                        "items": [
+                            {
+                                "id": 145,
+                                "menu_id": 2,
+                                "parent_id": 142,
+                                "item_title": "Ongoing",
+                                "item_type": null,
+                                "item_desc": "Short Description",
+                                "item_url": "/projects/residential/ongoing",
+                                "item_target": "_self",
+                                "item_icon": "",
+                                "sort_order": 1,
+                                "items": [
+                                    {
+                                        "id": 148,
+                                        "menu_id": 2,
+                                        "parent_id": 145,
+                                        "item_title": "Dhaka",
+                                        "item_type": null,
+                                        "item_desc": "Short Description",
+                                        "item_url": "/projects/residential/ongoing/dhaka",
+                                        "item_target": "_self",
+                                        "item_icon": "",
+                                        "sort_order": 1,
+                                        "items": []
+                                    },
+                                    {
+                                        "id": 149,
+                                        "menu_id": 2,
+                                        "parent_id": 145,
+                                        "item_title": "Chittagong",
+                                        "item_type": null,
+                                        "item_desc": "Short Description",
+                                        "item_url": "/projects/residential/ongoing/chittagong",
+                                        "item_target": "_self",
+                                        "item_icon": "",
+                                        "sort_order": 2,
+                                        "items": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 146,
+                                "menu_id": 2,
+                                "parent_id": 142,
+                                "item_title": "Completed",
+                                "item_type": null,
+                                "item_desc": "Short Description",
+                                "item_url": "/projects/residential/completed",
+                                "item_target": "_self",
+                                "item_icon": "",
+                                "sort_order": 2,
+                                "items": [
+                                    {
+                                        "id": 150,
+                                        "menu_id": 2,
+                                        "parent_id": 146,
+                                        "item_title": "Project 1",
+                                        "item_type": null,
+                                        "item_desc": "Short Description",
+                                        "item_url": "/projects/residential/completed/project1",
+                                        "item_target": "_self",
+                                        "item_icon": "",
+                                        "sort_order": 1,
+                                        "items": []
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 147,
+                                "menu_id": 2,
+                                "parent_id": 142,
+                                "item_title": "Upcoming",
+                                "item_type": null,
+                                "item_desc": "Short Description",
+                                "item_url": "/projects/residential/upcoming",
+                                "item_target": "_self",
+                                "item_icon": "",
+                                "sort_order": 3,
+                                "items": [
+                                    {
+                                        "id": 151,
+                                        "menu_id": 2,
+                                        "parent_id": 147,
+                                        "item_title": "Project 1",
+                                        "item_type": null,
+                                        "item_desc": "Short Description",
+                                        "item_url": "/projects/residential/upcoming/project1",
+                                        "item_target": "_self",
+                                        "item_icon": "",
+                                        "sort_order": 1,
+                                        "items": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 143,
+                        "menu_id": 2,
+                        "parent_id": 138,
+                        "item_title": "Commercial",
+                        "item_type": null,
+                        "item_desc": "Short Description",
+                        "item_url": "/projects/commercial",
+                        "item_target": "_self",
+                        "item_icon": "",
+                        "sort_order": 2,
+                        "items": []
+                    },
+                    {
+                        "id": 144,
+                        "menu_id": 2,
+                        "parent_id": 138,
+                        "item_title": "Lands",
+                        "item_type": null,
+                        "item_desc": "Short Description",
+                        "item_url": "/projects/lands",
+                        "item_target": "_self",
+                        "item_icon": "",
+                        "sort_order": 3,
+                        "items": []
+                    }
+                ]
+            },
+            {
+                "id": 139,
+                "menu_id": 2,
+                "parent_id": 0,
+                "item_title": "News & Events",
+                "item_type": null,
+                "item_desc": "Short Description",
+                "item_url": "/news-events",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 2,
+                "items": []
+            },
+            {
+                "id": 140,
+                "menu_id": 2,
+                "parent_id": 0,
+                "item_title": "Career",
+                "item_type": null,
+                "item_desc": "Short Description",
+                "item_url": "/career",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 2,
+                "items": []
+            },
+            {
+                "id": 140,
+                "menu_id": 2,
+                "parent_id": 0,
+                "item_title": "Contact Us",
+                "item_type": null,
+                "item_desc": "Short Description",
+                "item_url": "/contacts",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 2,
+                "items": []
+            }
+        ],
+        "social_links": [
+            {
+                "name": "Facebook",
+                "icon": "fab fa-facebook",
+                "url": "https://facebook.com/yourpage"
+            },
+            {
+                "name": "LinkedIn",
+                "icon": "fab fa-linkedin",
+                "url": "https://linkedin.com/company/yourpage"
+            }
+        ],
+        "additional_info": {
+            "contact_info": "Contact us for more information.",
+            "address": "123 Main Street, City, Country",
+            "phone_numbers": [
+                "+123456789",
+                "+987654321"
+            ],
+            "email_address": "info@yourdomain.com"
+        },
+        "additional_links": [
+            {
+                "label": "Legal",
+                "path": "/legal",
+                "target_window": "_self"
+            },
+            {
+                "label": "Privacy Policy",
+                "path": "/privacy-policy",
+                "target_window": "_blank"
+            }
+        ]
+    },
+    "footer_menu": {
+        "data": {
+            "menu_list1": [
+                {
+                "id": 136,
+                "menu_id": 1,
+                "parent_id": 0,
+                "item_title": "Home",
+                "item_type": null,
+                "item_desc": "Go to homepage",
+                "item_url": "/",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 1,
+                "items": []
+                },
+                {
+                "id": 137,
+                "menu_id": 1,
+                "parent_id": 0,
+                "item_title": "About Us",
+                "item_type": null,
+                "item_desc": "Learn more about us",
+                "item_url": "/about",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 2,
+                "items": []
+                },
+                {
+                "id": 138,
+                "menu_id": 1,
+                "parent_id": 0,
+                "item_title": "Services",
+                "item_type": null,
+                "item_desc": "Our services",
+                "item_url": "/services",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 3,
+                "items": []
+                }
+            ],
+            "menu_list2": [
+                {
+                "id": 201,
+                "menu_id": 2,
+                "parent_id": 0,
+                "item_title": "Blog",
+                "item_type": null,
+                "item_desc": "Read our latest posts",
+                "item_url": "/blog",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 1,
+                "items": []
+                },
+                {
+                "id": 202,
+                "menu_id": 2,
+                "parent_id": 0,
+                "item_title": "Careers",
+                "item_type": null,
+                "item_desc": "Join our team",
+                "item_url": "/careers",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 2,
+                "items": []
+                },
+                {
+                "id": 203,
+                "menu_id": 2,
+                "parent_id": 0,
+                "item_title": "Resources",
+                "item_type": null,
+                "item_desc": "Helpful resources",
+                "item_url": "/resources",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 3,
+                "items": []
+                }
+            ],
+            "menu_list3": [
+                {
+                "id": 301,
+                "menu_id": 3,
+                "parent_id": 0,
+                "item_title": "Privacy Policy",
+                "item_type": null,
+                "item_desc": "Read our privacy policy",
+                "item_url": "/privacy-policy",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 1,
+                "items": []
+                },
+                {
+                "id": 302,
+                "menu_id": 3,
+                "parent_id": 0,
+                "item_title": "Terms of Service",
+                "item_type": null,
+                "item_desc": "Our terms and conditions",
+                "item_url": "/terms",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 2,
+                "items": []
+                }
+            ],
+            "menu_list4": [
+                {
+                "id": 401,
+                "menu_id": 4,
+                "parent_id": 0,
+                "item_title": "Investor Relations",
+                "item_type": null,
+                "item_desc": "Financial and legal updates",
+                "item_url": "/investors",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 1,
+                "items": []
+                },
+                {
+                "id": 402,
+                "menu_id": 4,
+                "parent_id": 0,
+                "item_title": "Newsroom",
+                "item_type": null,
+                "item_desc": "Company news and press",
+                "item_url": "/news",
+                "item_target": "_self",
+                "item_icon": "",
+                "sort_order": 2,
+                "items": []
+                }
+            ]
+            },
+
+        "social_links": [
+            {
+                "name": "Facebook",
+                "icon": "fab fa-facebook",
+                "url": "https://facebook.com/yourpage"
+            },
+            {
+                "name": "Twitter",
+                "icon": "fab fa-twitter",
+                "url": "https://twitter.com/yourhandle"
+            },
+            {
+                "name": "LinkedIn",
+                "icon": "fab fa-linkedin",
+                "url": "https://linkedin.com/company/yourcompany"
+            },
+            {
+                "name": "Instagram",
+                "icon": "fab fa-instagram",
+                "url": "https://instagram.com/yourprofile"
+            },
+            {
+                "name": "YouTube",
+                "icon": "fab fa-youtube",
+                "url": "https://youtube.com/yourchannel"
+            }
+        ],
+        "additional_info": {
+            "logo": {
+                "primary": "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=200&h=80&fit=crop",
+                "secondary": "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=150&h=60&fit=crop"
+            },
+            "contact_info": [
+                "Contact us for more information.",
+                "We are here to help you with any inquiries.",
+                "Feel free to reach out to us anytime."
+            ],
+            "address": [
+                {
+                    "name": "Headquarters",
+                    "address": "123 Main St, New York, NY 10001, USA",
+                    "google_map": ""
+                },
+                {
+                    "name": "Factory",
+                    "address": "456 High Street, London W1B 3DA, UK",
+                    "google_map": ""
+                }
+            ],
+            "phone_numbers": [
+                "+123456789",
+                "+987654321"
+            ],
+            "email_address": [
+                "info@yourdomain.com",
+                "support@yourdomain.com"
+            ],
+            "copyright": "© 2025 Your Company Name. All rights reserved.",
+            "siteCredit": "Site by Dcastalia"
+        },
+        "additional_links": [
+            {
+                "label": "Legal",
+                "path": "/legal",
+                "target_window": "_self"
+            },
+            {
+                "label": "Privacy Policy",
+                "path": "/privacy-policy",
+                "target_window": "_blank"
+            }
+        ]
+    }
+}

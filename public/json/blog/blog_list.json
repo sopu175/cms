@@ -1,0 +1,1465 @@
+[
+    {
+        "title": "Project Alpha",
+        "slug": "project-alpha",
+        "timestamp": "2025-06-23T12:00:00Z",
+        "slug": "project-alpha",
+        "html_markup": "<h1>Alpha Overview</h1>",
+        "background_image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+        "background_color": "#f0f0f8",
+    
+        "sections": [
+            {
+                "section_title": "Alpha Details",
+                "images": [
+                    {
+                        "title": "Alpha Hero",
+                        "url": "https://images.unsplash.com/photo-1519125323398-675f0ddb6308"
+                    }
+                ],
+                "markup": {
+                    "text_list": [
+                        "Alpha is the first project in the series.",
+                        "It features advanced CMS capabilities."
+                    ],
+                    "images_list": [
+                        "https://images.unsplash.com/photo-1465101046530-73398c7f28ca",
+                        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+                    ],
+                    "table_list": [
+                        { "feature": "User Auth", "status": "Enabled" },
+                        { "feature": "Multi-language", "status": "Supported" }
+                    ],
+                    "ul_li_list": [
+                        "Simple UI",
+                        "Fast load times",
+                        "Customizable themes"
+                    ]
+                },
+                "links": [
+                    {
+                        "label": "Alpha Docs",
+                        "url": "https://docs.example.com/alpha",
+                        "target": "_blank",
+                        "type": "documentation"
+                    },
+                    {
+                        "label": "Alpha Live",
+                        "url": "https://alpha.example.com",
+                        "target": "_self",
+                        "type": "demo"
+                    }
+                ],
+                "date_time": "2025-06-23T10:00:00Z",
+                "author": "Jane Smith",
+                "posts": [
+                    {
+                        "post_title": "Alpha Launch",
+                        "content": "Alpha was launched with new features."
+                    }
+                ]
+            }
+        ],
+        "gallery": {
+                    "title": "Nested Gallery",
+                    "description": "A collection of themed sub-galleries",
+                    "children": [
+                        {
+                            "id": 1,
+                            "title": "Nature",
+                            "description": "Beautiful nature photography",
+                            "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "children": [
+                                {
+                                    "id": 11,
+                                    "title": "Forests",
+                                    "description": "Deep forest views",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Pine Forest"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 111,
+                                            "title": "Misty Morning",
+                                            "description": "Foggy forest at sunrise",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Sunrise Fog"
+                                                }
+                                            ],
+                                            "children": [
+                                                {
+                                                    "id": 1111,
+                                                    "title": "Dew on Leaf",
+                                                    "description": "Macro shots of morning mist",
+                                                    "media": [
+                                                        {
+                                                            "type": "image",
+                                                            "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                            "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                            "title": "Dew on Leaf"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "id": 1112,
+                                                    "title": "Dew on Leaf 2",
+                                                    "description": "Macro shots of morning mist",
+                                                    "media": [
+                                                        {
+                                                            "type": "image",
+                                                            "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                            "title": "Dew on Leaf 2"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 12,
+                                    "title": "Mountains",
+                                    "description": "Mountain landscapes",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Snowy Peak"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 2,
+                            "title": "Architecture",
+                            "description": "Urban and historical buildings",
+                            "media": [
+                                {
+                                    "type": "video",
+                                    "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Old Cathedral"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 3,
+                            "title": "People",
+                            "description": "Portraits and candid moments",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                                    "title": "Smiling Faces"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 4,
+                            "title": "Abstract",
+                            "description": "Creative and surreal imagery",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Dream Pattern"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 8,
+                            "title": "Abstract",
+                            "description": "Creative and surreal imagery",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Dream Pattern"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 7,
+                            "title": "People",
+                            "description": "Portraits and candid moments",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                                    "title": "Smiling Faces"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 6,
+                            "title": "Architecture",
+                            "description": "Urban and historical buildings",
+                            "media": [
+                                {
+                                    "type": "video",
+                                    "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Old Cathedral"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 5,
+                            "title": "Nature",
+                            "description": "Beautiful nature photography",
+                            "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "children": [
+                                {
+                                    "id": 11,
+                                    "title": "Forests",
+                                    "description": "Deep forest views",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Pine Forest"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 111,
+                                            "title": "Misty Morning",
+                                            "description": "Foggy forest at sunrise",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Sunrise Fog"
+                                                }
+                                            ],
+                                            "children": [
+                                                {
+                                                    "id": 1111,
+                                                    "title": "Dew on Leaf",
+                                                    "description": "Macro shots of morning mist",
+                                                    "media": [
+                                                        {
+                                                            "type": "image",
+                                                            "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                            "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                            "title": "Dew on Leaf"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "id": 1112,
+                                                    "title": "Dew on Leaf 2",
+                                                    "description": "Macro shots of morning mist",
+                                                    "media": [
+                                                        {
+                                                            "type": "image",
+                                                            "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                            "title": "Dew on Leaf 2"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 12,
+                                    "title": "Mountains",
+                                    "description": "Mountain landscapes",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Snowy Peak"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+        }
+    },
+    {
+        "title": "Project Beta",
+        "timestamp": "2025-06-22T14:30:00Z",
+        "html_markup": "<h1>Beta Introduction</h1>",
+        "slug": "project-beta",
+        "background_image": "https://images.unsplash.com/photo-1465101046530-73398c7f28ca",
+        "background_color": "#fff8e1",
+        "sections": [
+            {
+                "section_title": "Beta Insights",
+                "images": [
+                    {
+                        "title": "Beta Diagram",
+                        "url": "https://images.unsplash.com/photo-1465101178521-c1a9136a3b99"
+                    }
+                ],
+                "markup": {
+                    "text_list": [
+                        "Beta focuses on scalability.",
+                        "Optimized for cloud deployment."
+                    ],
+                    "images_list": [
+                        "https://images.unsplash.com/photo-1502082553048-f009c37129b9",
+                        "https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+                    ],
+                    "table_list": [
+                        { "feature": "API Rate Limit", "status": "1000/hr" },
+                        { "feature": "Backup", "status": "Automated" }
+                    ],
+                    "ul_li_list": [
+                        "Cloud-native",
+                        "Backup ready",
+                        "API centric"
+                    ]
+                },
+                "links": [
+                    {
+                        "label": "Beta API",
+                        "url": "https://api.example.com/beta",
+                        "target": "_blank",
+                        "type": "api"
+                    }
+                ],
+                "date_time": "2025-06-22T12:00:00Z",
+                "author": "Mike Johnson",
+                "posts": [
+                    {
+                        "post_title": "Beta Insights",
+                        "content": "Beta provides robust API capabilities."
+                    }
+                ]
+            }
+        ],
+        "gallery": {
+            "title": "Nested Gallery",
+            "description": "A collection of themed sub-galleries",
+            "children": [
+                {
+                    "id": 1,
+                    "title": "Nature",
+                    "description": "Beautiful nature photography",
+                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                    "children": [
+                        {
+                            "id": 11,
+                            "title": "Forests",
+                            "description": "Deep forest views",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Pine Forest"
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "id": 111,
+                                    "title": "Misty Morning",
+                                    "description": "Foggy forest at sunrise",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Sunrise Fog"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 1111,
+                                            "title": "Dew on Leaf",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                    "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": 1112,
+                                            "title": "Dew on Leaf 2",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf 2"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 12,
+                            "title": "Mountains",
+                            "description": "Mountain landscapes",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Snowy Peak"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "title": "Architecture",
+                    "description": "Urban and historical buildings",
+                    "media": [
+                        {
+                            "type": "video",
+                            "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Old Cathedral"
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "title": "People",
+                    "description": "Portraits and candid moments",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                            "title": "Smiling Faces"
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "title": "Abstract",
+                    "description": "Creative and surreal imagery",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Dream Pattern"
+                        }
+                    ]
+                },
+                {
+                    "id": 8,
+                    "title": "Abstract",
+                    "description": "Creative and surreal imagery",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Dream Pattern"
+                        }
+                    ]
+                },
+                {
+                    "id": 7,
+                    "title": "People",
+                    "description": "Portraits and candid moments",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                            "title": "Smiling Faces"
+                        }
+                    ]
+                },
+                {
+                    "id": 6,
+                    "title": "Architecture",
+                    "description": "Urban and historical buildings",
+                    "media": [
+                        {
+                            "type": "video",
+                            "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Old Cathedral"
+                        }
+                    ]
+                },
+                {
+                    "id": 5,
+                    "title": "Nature",
+                    "description": "Beautiful nature photography",
+                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                    "children": [
+                        {
+                            "id": 11,
+                            "title": "Forests",
+                            "description": "Deep forest views",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Pine Forest"
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "id": 111,
+                                    "title": "Misty Morning",
+                                    "description": "Foggy forest at sunrise",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Sunrise Fog"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 1111,
+                                            "title": "Dew on Leaf",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                    "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": 1112,
+                                            "title": "Dew on Leaf 2",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf 2"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 12,
+                            "title": "Mountains",
+                            "description": "Mountain landscapes",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Snowy Peak"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+}
+    },
+    {
+        "title": "Project Gamma",
+        "timestamp": "2025-06-21T08:15:00Z",
+        "html_markup": "<h1>Gamma Overview</h1>",
+        "slug": "project-gamma",
+        "background_image": "https://images.unsplash.com/photo-1519125323398-675f0ddb6308",
+        "background_color": "#e1f5fe",
+        "sections": [
+            {
+                "section_title": "Gamma Features",
+                "images": [
+                    {
+                        "title": "Gamma Screenshot",
+                        "url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+                    }
+                ],
+                "markup": {
+                    "text_list": [
+                        "Gamma offers a modular plugin system.",
+                        "Easy integration with external tools."
+                    ],
+                    "images_list": [
+                        "https://images.unsplash.com/photo-1465101178521-c1a9136a3b99"
+                    ],
+                    "table_list": [
+                        { "plugin": "SEO", "available": "Yes" },
+                        { "plugin": "Analytics", "available": "No" }
+                    ],
+                    "ul_li_list": [
+                        "Modular design",
+                        "Plugin support",
+                        "Developer-friendly"
+                    ]
+                },
+                "links": [
+                    {
+                        "label": "Gamma Plugins",
+                        "url": "https://plugins.example.com/gamma",
+                        "target": "_blank",
+                        "type": "plugins"
+                    }
+                ],
+                "date_time": "2025-06-21T08:00:00Z",
+                "author": "Anna Lee",
+                "posts": [
+                    {
+                        "post_title": "Gamma Plugins Released",
+                        "content": "Explore new plugins in Gamma."
+                    }
+                ]
+            }
+        ],
+        "gallery": {
+            "title": "Nested Gallery",
+            "description": "A collection of themed sub-galleries",
+            "children": [
+                {
+                    "id": 1,
+                    "title": "Nature",
+                    "description": "Beautiful nature photography",
+                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                    "children": [
+                        {
+                            "id": 11,
+                            "title": "Forests",
+                            "description": "Deep forest views",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Pine Forest"
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "id": 111,
+                                    "title": "Misty Morning",
+                                    "description": "Foggy forest at sunrise",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Sunrise Fog"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 1111,
+                                            "title": "Dew on Leaf",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                    "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": 1112,
+                                            "title": "Dew on Leaf 2",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf 2"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 12,
+                            "title": "Mountains",
+                            "description": "Mountain landscapes",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Snowy Peak"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "title": "Architecture",
+                    "description": "Urban and historical buildings",
+                    "media": [
+                        {
+                            "type": "video",
+                            "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Old Cathedral"
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "title": "People",
+                    "description": "Portraits and candid moments",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                            "title": "Smiling Faces"
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "title": "Abstract",
+                    "description": "Creative and surreal imagery",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Dream Pattern"
+                        }
+                    ]
+                },
+                {
+                    "id": 8,
+                    "title": "Abstract",
+                    "description": "Creative and surreal imagery",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Dream Pattern"
+                        }
+                    ]
+                },
+                {
+                    "id": 7,
+                    "title": "People",
+                    "description": "Portraits and candid moments",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                            "title": "Smiling Faces"
+                        }
+                    ]
+                },
+                {
+                    "id": 6,
+                    "title": "Architecture",
+                    "description": "Urban and historical buildings",
+                    "media": [
+                        {
+                            "type": "video",
+                            "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Old Cathedral"
+                        }
+                    ]
+                },
+                {
+                    "id": 5,
+                    "title": "Nature",
+                    "description": "Beautiful nature photography",
+                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                    "children": [
+                        {
+                            "id": 11,
+                            "title": "Forests",
+                            "description": "Deep forest views",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Pine Forest"
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "id": 111,
+                                    "title": "Misty Morning",
+                                    "description": "Foggy forest at sunrise",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Sunrise Fog"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 1111,
+                                            "title": "Dew on Leaf",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                    "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": 1112,
+                                            "title": "Dew on Leaf 2",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf 2"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 12,
+                            "title": "Mountains",
+                            "description": "Mountain landscapes",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Snowy Peak"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+}
+    },
+    {
+        "title": "Project Delta",
+        "timestamp": "2025-06-20T17:45:00Z",
+        "html_markup": "<h1>Delta Announcement</h1>",
+        "slug": "project-delta",
+        "background_image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+        "background_color": "#e8f5e9",
+        "sections": [
+            {
+                "section_title": "Delta Release",
+                "images": [
+                    {
+                        "title": "Delta Banner",
+                        "url": "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+                    }
+                ],
+                "markup": {
+                    "text_list": [
+                        "Delta brings real-time collaboration.",
+                        "Secure data storage included."
+                    ],
+                    "images_list": [
+                        "https://images.unsplash.com/photo-1519125323398-675f0ddb6308"
+                    ],
+                    "table_list": [
+                        { "collaboration": "Real-time", "encryption": "AES-256" }
+                    ],
+                    "ul_li_list": [
+                        "Live editing",
+                        "Encrypted files",
+                        "Team features"
+                    ]
+                },
+                "links": [
+                    {
+                        "label": "Delta Docs",
+                        "url": "https://docs.example.com/delta",
+                        "target": "_blank",
+                        "type": "documentation"
+                    }
+                ],
+                "date_time": "2025-06-20T16:00:00Z",
+                "author": "Paul Green",
+                "posts": [
+                    {
+                        "post_title": "Delta Goes Live",
+                        "content": "Teams can now collaborate in Delta."
+                    }
+                ]
+            }
+        ],
+        "gallery": {
+            "title": "Nested Gallery",
+            "description": "A collection of themed sub-galleries",
+            "children": [
+                {
+                    "id": 1,
+                    "title": "Nature",
+                    "description": "Beautiful nature photography",
+                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                    "children": [
+                        {
+                            "id": 11,
+                            "title": "Forests",
+                            "description": "Deep forest views",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Pine Forest"
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "id": 111,
+                                    "title": "Misty Morning",
+                                    "description": "Foggy forest at sunrise",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Sunrise Fog"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 1111,
+                                            "title": "Dew on Leaf",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                    "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": 1112,
+                                            "title": "Dew on Leaf 2",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf 2"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 12,
+                            "title": "Mountains",
+                            "description": "Mountain landscapes",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Snowy Peak"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "title": "Architecture",
+                    "description": "Urban and historical buildings",
+                    "media": [
+                        {
+                            "type": "video",
+                            "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Old Cathedral"
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "title": "People",
+                    "description": "Portraits and candid moments",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                            "title": "Smiling Faces"
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "title": "Abstract",
+                    "description": "Creative and surreal imagery",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Dream Pattern"
+                        }
+                    ]
+                },
+                {
+                    "id": 8,
+                    "title": "Abstract",
+                    "description": "Creative and surreal imagery",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Dream Pattern"
+                        }
+                    ]
+                },
+                {
+                    "id": 7,
+                    "title": "People",
+                    "description": "Portraits and candid moments",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                            "title": "Smiling Faces"
+                        }
+                    ]
+                },
+                {
+                    "id": 6,
+                    "title": "Architecture",
+                    "description": "Urban and historical buildings",
+                    "media": [
+                        {
+                            "type": "video",
+                            "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Old Cathedral"
+                        }
+                    ]
+                },
+                {
+                    "id": 5,
+                    "title": "Nature",
+                    "description": "Beautiful nature photography",
+                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                    "children": [
+                        {
+                            "id": 11,
+                            "title": "Forests",
+                            "description": "Deep forest views",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Pine Forest"
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "id": 111,
+                                    "title": "Misty Morning",
+                                    "description": "Foggy forest at sunrise",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Sunrise Fog"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 1111,
+                                            "title": "Dew on Leaf",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                    "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": 1112,
+                                            "title": "Dew on Leaf 2",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf 2"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 12,
+                            "title": "Mountains",
+                            "description": "Mountain landscapes",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Snowy Peak"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+}
+    },
+    {
+        "title": "Project Epsilon",
+        "timestamp": "2025-06-19T09:30:00Z",
+        "html_markup": "<h1>Epsilon Features</h1>",
+        "slug": "project-epsilon",
+        "background_image": "https://images.unsplash.com/photo-1502082553048-f009c37129b9",
+        "background_color": "#fce4ec",
+        "sections": [
+            {
+                "section_title": "Epsilon Highlights",
+                "images": [
+                    {
+                        "title": "Epsilon Icon",
+                        "url": "https://images.unsplash.com/photo-1465101046530-73398c7f28ca"
+                    }
+                ],
+                "markup": {
+                    "text_list": [
+                        "Epsilon is optimized for mobile.",
+                        "Supports offline mode."
+                    ],
+                    "images_list": [
+                        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+                    ],
+                    "table_list": [
+                        { "feature": "Offline support", "available": "Yes" }
+                    ],
+                    "ul_li_list": [
+                        "Mobile-first",
+                        "Progressive Web App",
+                        "Fast synchronization"
+                    ]
+                },
+                "links": [
+                    {
+                        "label": "Epsilon Guide",
+                        "url": "https://guide.example.com/epsilon",
+                        "target": "_blank",
+                        "type": "guide"
+                    }
+                ],
+                "date_time": "2025-06-19T08:00:00Z",
+                "author": "Sara White",
+                "posts": [
+                    {
+                        "post_title": "Epsilon Mobile Update",
+                        "content": "Mobile support has been enhanced in Epsilon."
+                    }
+                ]
+            }
+        ],
+        "gallery": {
+            "title": "Nested Gallery",
+            "description": "A collection of themed sub-galleries",
+            "children": [
+                {
+                    "id": 1,
+                    "title": "Nature",
+                    "description": "Beautiful nature photography",
+                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                    "children": [
+                        {
+                            "id": 11,
+                            "title": "Forests",
+                            "description": "Deep forest views",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Pine Forest"
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "id": 111,
+                                    "title": "Misty Morning",
+                                    "description": "Foggy forest at sunrise",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Sunrise Fog"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 1111,
+                                            "title": "Dew on Leaf",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                    "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": 1112,
+                                            "title": "Dew on Leaf 2",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf 2"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 12,
+                            "title": "Mountains",
+                            "description": "Mountain landscapes",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Snowy Peak"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "title": "Architecture",
+                    "description": "Urban and historical buildings",
+                    "media": [
+                        {
+                            "type": "video",
+                            "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Old Cathedral"
+                        }
+                    ]
+                },
+                {
+                    "id": 3,
+                    "title": "People",
+                    "description": "Portraits and candid moments",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                            "title": "Smiling Faces"
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "title": "Abstract",
+                    "description": "Creative and surreal imagery",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Dream Pattern"
+                        }
+                    ]
+                },
+                {
+                    "id": 8,
+                    "title": "Abstract",
+                    "description": "Creative and surreal imagery",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Dream Pattern"
+                        }
+                    ]
+                },
+                {
+                    "id": 7,
+                    "title": "People",
+                    "description": "Portraits and candid moments",
+                    "media": [
+                        {
+                            "type": "image",
+                            "src": "",
+                            "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                            "title": "Smiling Faces"
+                        }
+                    ]
+                },
+                {
+                    "id": 6,
+                    "title": "Architecture",
+                    "description": "Urban and historical buildings",
+                    "media": [
+                        {
+                            "type": "video",
+                            "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "title": "Old Cathedral"
+                        }
+                    ]
+                },
+                {
+                    "id": 5,
+                    "title": "Nature",
+                    "description": "Beautiful nature photography",
+                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                    "children": [
+                        {
+                            "id": 11,
+                            "title": "Forests",
+                            "description": "Deep forest views",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Pine Forest"
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "id": 111,
+                                    "title": "Misty Morning",
+                                    "description": "Foggy forest at sunrise",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Sunrise Fog"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 1111,
+                                            "title": "Dew on Leaf",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                    "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "id": 1112,
+                                            "title": "Dew on Leaf 2",
+                                            "description": "Macro shots of morning mist",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Dew on Leaf 2"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 12,
+                            "title": "Mountains",
+                            "description": "Mountain landscapes",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Snowy Peak"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+}
+    }
+]

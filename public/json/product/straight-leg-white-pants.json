@@ -1,0 +1,103 @@
+{
+    "product_data": {
+        "id": 116,
+        "category_id": 19,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Straight Leg White Pants",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "straight-leg-white-pants",
+        "subtitle": "Straight Leg White Pants",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "straight-leg-white-pants",
+        "template": "",
+        "sort_order": 73,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-05-04 09:39:15",
+        "updated_at": "2025-05-19 12:46:07",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Women",
+        "category_slug": "women"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 1119,
+                "identifier_type": "Product",
+                "identifier_id": 116,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/straight-leg-white-pants\/",
+                "cloud_path": null,
+                "img_name": "1746351574kUm88.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/straight-leg-white-pants\/1746351574kUm88.jpg",
+                "cdn_path": "1746351574kUm88.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 1120,
+                "identifier_type": "Product",
+                "identifier_id": 116,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/straight-leg-white-pants\/",
+                "cloud_path": null,
+                "img_name": "1746351574jvnDX.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/straight-leg-white-pants\/1746351574jvnDX.jpg",
+                "cdn_path": "1746351574jvnDX.jpg"
+            },
+            {
+                "id": 1121,
+                "identifier_type": "Product",
+                "identifier_id": 116,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/straight-leg-white-pants\/",
+                "cloud_path": null,
+                "img_name": "1746351574OIHlR.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/straight-leg-white-pants\/1746351574OIHlR.jpg",
+                "cdn_path": "1746351574OIHlR.jpg"
+            }
+        ],
+        "count": 3
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

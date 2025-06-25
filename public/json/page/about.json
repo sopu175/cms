@@ -1,0 +1,1175 @@
+{
+    "page_data": {
+        "id": 218,
+        "parent_page_id": "0",
+        "page_section": 1,
+        "type": "",
+        "title": "News and Events",
+        "slug": "news-events",
+        "subtitle": "",
+        "short_desc": "",
+        "notitle": 0,
+        "form_id": null,
+        "description": "",
+        "image_size": "",
+        "identifier": "news-and-events",
+        "template": "",
+        "status": 1,
+        "is_archived": 0,
+        "title_tag": null,
+        "meta_title": "About | Dcastalia Next Boilerplate",
+        "meta_description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+        "og_title": "About | Dcastalia Next Boilerplate",
+        "og_description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+        "preview": null,
+        "instructions": null,
+        "child_of": null,
+        "update_type": null,
+        "visit_count": null,
+        "created_at": "2025-04-24 12:37:13",
+        "updated_at": "2025-05-01 03:30:29",
+        "created_by": 1,
+        "updated_by": 1
+    },
+    "sections": [
+        {
+            "section_data": {
+                "id": 210,
+                "parent_page_id": "39",
+                "page_section": 2,
+                "type": null,
+                "title": "Home Overview",
+                "slug": "home-overview",
+                "subtitle": "Since 2010",
+                "short_desc": "15",
+                "notitle": null,
+                "form_id": "",
+                "description": "<h5 class=\"fade-up\">Years of Excellence<\/h5>\n<p class=\"fade-up\">ECO Sourcing Limited is a Bangladesh-based apparel sourcing company committed to sustainability and ethical production. Specializing in high-quality denim apparel, they partner with trusted manufacturers to ensure eco-friendly materials, fair labor practices, and global quality standards.<\/p>",
+                "image_size": "",
+                "identifier": "home",
+                "template": "overview",
+                "status": 1,
+                "is_archived": 0,
+                "title_tag": null,
+                "meta_title": "",
+                "meta_description": "",
+                "og_title": "",
+                "og_description": "",
+                "preview": null,
+                "instructions": null,
+                "child_of": null,
+                "update_type": null,
+                "visit_count": null,
+                "created_at": "2025-04-24 12:31:05",
+                "updated_at": "2025-06-04 14:29:06",
+                "created_by": 1,
+                "updated_by": 3,
+                "button_text": "Click to See Our Credit Rating Details",
+                "btn_link": "https:\/\/dcfix.dcastalia.com\/2503ESL\/admin\/uploads\/page\/home\/1749025590uKG0d.pdf",
+                "speed": 900,
+                "autoplayDelay":2000 ,
+                "autoplay": "true",
+                "loop": "true",
+                "data": [
+                    {
+                        "id": 1,
+                        "postName": "Inspiring Innovation",
+                        "createdAt": "2024-07-09 17:04:20",
+                        "updatedAt": "2025-06-22 07:14:02",
+                        "title": "Inspiring Innovation",
+                        "subTitle": "Multi-line subtitle goes here, this can be an html object",
+                        "description": null,
+                        "texts": [
+                            {
+                                "title": "This can be multiline and even image can come as html object"
+                            },
+                            {
+                                "title": "This is 2nd or 3rd text data, can be multiline and even image can come as html object. If we add another text field from backend, new text field will appear here."
+                            }
+                        ],
+                        "links": [
+                            {
+                                "name": "Explore",
+                                "path": "/about",
+                                "target": ""
+                            },
+                            {
+                                "name": "Learn More",
+                                "path": "/",
+                                "target": ""
+                            }
+                        ],
+                        "tag": [],
+                        "tempalte": "",
+                        "assets": [
+                            {
+                                "id": 271,
+                                "identifier_type": "Banner",
+                                "identifier_id": 1,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "color_code": "N/A",
+                                "path": "uploads/banner/",
+                                "cloud_path": null,
+                                "img_name": "1750569412CVlcQ.jpg",
+                                "real_name": null,
+                                "ext": "jpg",
+                                "available_sizes": "[\"Actual size\"]",
+                                "size": "265.87 KB",
+                                "dimension": "1920x1282",
+                                "device": "all",
+                                "sort_order": null,
+                                "created_at": "2025-06-22 05:16:52",
+                                "updated_at": "2025-06-22 06:35:24",
+                                "created_by": 1,
+                                "updated_by": 1,
+                                "full_path": "https://project.bestinbd.com/projects/web/Dataset/admin/uploads/banner/1750569412CVlcQ.jpg",
+                                "cdn_path": "1750569412CVlcQ.jpg",
+                                "thumb": "on"
+                            },
+                            {
+                                "id": 275,
+                                "identifier_type": "Banner",
+                                "identifier_id": 1,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "color_code": "N/A",
+                                "path": "uploads/banner/",
+                                "cloud_path": null,
+                                "img_name": "1750576419tcndz.svg",
+                                "real_name": null,
+                                "ext": "svg",
+                                "available_sizes": "[\"Actual size\"]",
+                                "size": "1.34 KB",
+                                "dimension": "x",
+                                "device": "all",
+                                "sort_order": null,
+                                "created_at": "2025-06-22 07:13:39",
+                                "updated_at": "2025-06-22 07:14:01",
+                                "created_by": 1,
+                                "updated_by": 1,
+                                "full_path": "https://project.bestinbd.com/projects/web/Dataset/admin/uploads/banner/1750576419tcndz.svg",
+                                "cdn_path": "1750576419tcndz.svg",
+                                "icon": "on"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "postName": "Inspiring Innovation",
+                        "createdAt": "2024-07-11 11:41:47",
+                        "updatedAt": "2025-06-22 07:15:36",
+                        "title": "Inspiring Innovation",
+                        "subTitle": "Multi-line subtitle goes here, this can be an html object",
+                        "description": null,
+                        "texts": [
+                            {
+                                "title": "Explore the future of technology through immersive storytelling and intelligent design."
+                            },
+                            {
+                                "title": "Each section can adapt dynamically — include images, animations, or links directly within this HTML-enabled block."
+                            }
+                        ]
+                    ,
+                        "links": [
+                            {
+                                "name": "Explore",
+                                "path": "/about",
+                                "target": "_blank"
+                            },
+                            {
+                                "name": "Learn More",
+                                "path": "/",
+                                "target": "_blank"
+                            },
+                            {
+                                "name": "Read More",
+                                "path": "/",
+                                "target": "_blank"
+                            }
+                        ],
+                        "tag": [],
+                        "tempalte": "",
+                        "assets": [
+                            {
+                                "id": 273,
+                                "identifier_type": "Banner",
+                                "identifier_id": 2,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "color_code": "N/A",
+                                "path": "uploads/banner/",
+                                "cloud_path": null,
+                                "img_name": "1750569696O9yPB.jpg",
+                                "real_name": null,
+                                "ext": "jpg",
+                                "available_sizes": "[\"Actual size\"]",
+                                "size": "239.39 KB",
+                                "dimension": "1920x1280",
+                                "device": "all",
+                                "sort_order": null,
+                                "created_at": "2025-06-22 05:21:36",
+                                "updated_at": "2025-06-22 05:21:52",
+                                "created_by": 1,
+                                "updated_by": 1,
+                                "full_path": "https://project.bestinbd.com/projects/web/Dataset/admin/uploads/banner/1750569696O9yPB.jpg",
+                                "cdn_path": "1750569696O9yPB.jpg",
+                                "thumb": "on"
+                            },
+                            {
+                                "id": 276,
+                                "identifier_type": "Banner",
+                                "identifier_id": 2,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "color_code": "N/A",
+                                "path": "uploads/banner/",
+                                "cloud_path": null,
+                                "img_name": "17505765111rrj7.png",
+                                "real_name": null,
+                                "ext": "png",
+                                "available_sizes": "[\"Actual size\"]",
+                                "size": "2.30 KB",
+                                "dimension": "100x100",
+                                "device": "all",
+                                "sort_order": null,
+                                "created_at": "2025-06-22 07:15:11",
+                                "updated_at": "2025-06-22 07:15:34",
+                                "created_by": 1,
+                                "updated_by": 1,
+                                "full_path": "https://project.bestinbd.com/projects/web/Dataset/admin/uploads/banner/17505765111rrj7.png",
+                                "cdn_path": "17505765111rrj7.png",
+                                "icon": "on"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "postName": "Inspiring Innovation",
+                        "createdAt": "2024-07-09 17:04:20",
+                        "updatedAt": "2025-06-22 07:14:02",
+                        "title": "Inspiring Innovation",
+                        "subTitle": "Multi-line subtitle goes here, this can be an html object",
+                        "description": null,
+                        "texts": [
+                            {
+                                "title": "This can be multiline and even image can come as html object"
+                            },
+                            {
+                                "title": "This is 2nd or 3rd text data, can be multiline and even image can come as html object. If we add another text field from backend, new text field will appear here."
+                            }
+                        ],
+                        "links": [
+                            {
+                                "name": "Explore",
+                                "path": "/about",
+                                "target": ""
+                            },
+                            {
+                                "name": "Learn More",
+                                "path": "/",
+                                "target": ""
+                            }
+                        ],
+                        "tag": [],
+                        "tempalte": "",
+                        "assets": [
+                            {
+                                "id": 271,
+                                "identifier_type": "Banner",
+                                "identifier_id": 1,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "color_code": "N/A",
+                                "path": "uploads/banner/",
+                                "cloud_path": null,
+                                "img_name": "1750569412CVlcQ.jpg",
+                                "real_name": null,
+                                "ext": "jpg",
+                                "available_sizes": "[\"Actual size\"]",
+                                "size": "265.87 KB",
+                                "dimension": "1920x1282",
+                                "device": "all",
+                                "sort_order": null,
+                                "created_at": "2025-06-22 05:16:52",
+                                "updated_at": "2025-06-22 06:35:24",
+                                "created_by": 1,
+                                "updated_by": 1,
+                                "full_path": "https://project.bestinbd.com/projects/web/Dataset/admin/uploads/banner/1750569412CVlcQ.jpg",
+                                "cdn_path": "1750569412CVlcQ.jpg",
+                                "thumb": "on"
+                            },
+                            {
+                                "id": 275,
+                                "identifier_type": "Banner",
+                                "identifier_id": 1,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "color_code": "N/A",
+                                "path": "uploads/banner/",
+                                "cloud_path": null,
+                                "img_name": "1750576419tcndz.svg",
+                                "real_name": null,
+                                "ext": "svg",
+                                "available_sizes": "[\"Actual size\"]",
+                                "size": "1.34 KB",
+                                "dimension": "x",
+                                "device": "all",
+                                "sort_order": null,
+                                "created_at": "2025-06-22 07:13:39",
+                                "updated_at": "2025-06-22 07:14:01",
+                                "created_by": 1,
+                                "updated_by": 1,
+                                "full_path": "https://project.bestinbd.com/projects/web/Dataset/admin/uploads/banner/1750576419tcndz.svg",
+                                "cdn_path": "1750576419tcndz.svg",
+                                "icon": "on"
+                            }
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "postName": "Inspiring Innovation",
+                        "createdAt": "2024-07-09 17:04:20",
+                        "updatedAt": "2025-06-22 07:14:02",
+                        "title": "Inspiring Innovation",
+                        "subTitle": "Multi-line subtitle goes here, this can be an html object",
+                        "description": null,
+                        "texts": [
+                            {
+                                "title": "This can be multiline and even image can come as html object"
+                            },
+                            {
+                                "title": "This is 2nd or 3rd text data, can be multiline and even image can come as html object. If we add another text field from backend, new text field will appear here."
+                            }
+                        ],
+                        "links": [
+                            {
+                                "name": "Explore",
+                                "path": "/about",
+                                "target": ""
+                            },
+                            {
+                                "name": "Learn More",
+                                "path": "/",
+                                "target": ""
+                            }
+                        ],
+                        "tag": [],
+                        "tempalte": "",
+                        "assets": [
+                            {
+                                "id": 271,
+                                "identifier_type": "Banner",
+                                "identifier_id": 1,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "color_code": "N/A",
+                                "path": "uploads/banner/",
+                                "cloud_path": null,
+                                "img_name": "1750569412CVlcQ.jpg",
+                                "real_name": null,
+                                "ext": "jpg",
+                                "available_sizes": "[\"Actual size\"]",
+                                "size": "265.87 KB",
+                                "dimension": "1920x1282",
+                                "device": "all",
+                                "sort_order": null,
+                                "created_at": "2025-06-22 05:16:52",
+                                "updated_at": "2025-06-22 06:35:24",
+                                "created_by": 1,
+                                "updated_by": 1,
+                                "full_path": "https://project.bestinbd.com/projects/web/Dataset/admin/uploads/banner/1750569412CVlcQ.jpg",
+                                "cdn_path": "1750569412CVlcQ.jpg",
+                                "thumb": "on"
+                            },
+                            {
+                                "id": 275,
+                                "identifier_type": "Banner",
+                                "identifier_id": 1,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "color_code": "N/A",
+                                "path": "uploads/banner/",
+                                "cloud_path": null,
+                                "img_name": "1750576419tcndz.svg",
+                                "real_name": null,
+                                "ext": "svg",
+                                "available_sizes": "[\"Actual size\"]",
+                                "size": "1.34 KB",
+                                "dimension": "x",
+                                "device": "all",
+                                "sort_order": null,
+                                "created_at": "2025-06-22 07:13:39",
+                                "updated_at": "2025-06-22 07:14:01",
+                                "created_by": 1,
+                                "updated_by": 1,
+                                "full_path": "https://project.bestinbd.com/projects/web/Dataset/admin/uploads/banner/1750576419tcndz.svg",
+                                "cdn_path": "1750576419tcndz.svg",
+                                "icon": "on"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "images": {
+                "list": [],
+                "count": 0
+            },
+            "posts": {
+                "list": [
+                    {
+                        "data": {
+                            "id": 54,
+                            "page_id": 210,
+                            "type": "8",
+                            "title": "annual turnover around the year",
+                            "slug": "annual-turnover-around-the-year",
+                            "subtitle": "annual turnover around the year",
+                            "short_desc": "55, M+",
+                            "description": "",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-24 16:02:44",
+                            "updated_at": "2025-05-27 11:22:51"
+                        },
+                        "images": []
+                    },
+                    {
+                        "data": {
+                            "id": 56,
+                            "page_id": 210,
+                            "type": "8",
+                            "title": "apparel pieces shipped per month",
+                            "slug": "apparel-pieces-shipped-per-month",
+                            "subtitle": "apparel pieces shipped per month",
+                            "short_desc": "1, M+ ",
+                            "description": "",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-24 16:03:04",
+                            "updated_at": "2025-05-27 11:23:01"
+                        },
+                        "images": []
+                    },
+                    {
+                        "data": {
+                            "id": 57,
+                            "page_id": 210,
+                            "type": "",
+                            "title": "production lead time",
+                            "slug": "production-lead-time",
+                            "subtitle": "production lead time",
+                            "short_desc": "25-120 days",
+                            "description": "",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-24 16:03:23",
+                            "updated_at": "2025-05-27 11:23:08"
+                        },
+                        "images": []
+                    },
+                    {
+                        "data": {
+                            "id": 58,
+                            "page_id": 210,
+                            "type": "",
+                            "title": "response time for inquiries",
+                            "slug": "response-time-for-inquiries",
+                            "subtitle": "response time for inquiries",
+                            "short_desc": "24-hour ",
+                            "description": "",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": null,
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-24 16:03:52",
+                            "updated_at": "2025-04-24 16:03:52"
+                        },
+                        "images": []
+                    },
+                    {
+                        "data": {
+                            "id": 59,
+                            "page_id": 210,
+                            "type": "8",
+                            "title": "skilled professionals",
+                            "slug": "skilled-professionals",
+                            "subtitle": "skilled professionals",
+                            "short_desc": "100, +",
+                            "description": "",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-24 16:04:29",
+                            "updated_at": "2025-05-27 11:24:22"
+                        },
+                        "images": []
+                    },
+                    {
+                        "data": {
+                            "id": 60,
+                            "page_id": 210,
+                            "type": "8",
+                            "title": "partnered supplier facilities",
+                            "slug": "partnered-supplier-facilities",
+                            "subtitle": "partnered supplier facilities",
+                            "short_desc": "50, +",
+                            "description": "",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-24 16:04:48",
+                            "updated_at": "2025-05-27 11:24:16"
+                        },
+                        "images": []
+                    },
+                    {
+                        "data": {
+                            "id": 61,
+                            "page_id": 210,
+                            "type": "8",
+                            "title": "international fashion and retail brands",
+                            "slug": "international-fashion-and-retail-brands",
+                            "subtitle": "international fashion and retail brands",
+                            "short_desc": "15, +",
+                            "description": "",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-24 16:05:08",
+                            "updated_at": "2025-05-27 11:24:09"
+                        },
+                        "images": []
+                    },
+                    {
+                        "data": {
+                            "id": 62,
+                            "page_id": 210,
+                            "type": "8",
+                            "title": "countries shipped across the globe",
+                            "slug": "countries-shipped-across-the-globe",
+                            "subtitle": "countries shipped across the globe",
+                            "short_desc": "7",
+                            "description": "",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-24 16:05:34",
+                            "updated_at": "2025-05-27 11:24:01"
+                        },
+                        "images": []
+                    }
+                ],
+                "count": 8
+            },
+            "files": {
+                "list": [
+                    {
+                        "id": 1196,
+                        "identifier_type": "PageFile",
+                        "identifier_id": 210,
+                        "short_title": null,
+                        "short_desc": null,
+                        "img_alt": null,
+                        "path": "uploads\/page\/home\/",
+                        "cloud_path": null,
+                        "img_name": "1749025590uKG0d.pdf",
+                        "real_name": null,
+                        "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/page\/home\/1749025590uKG0d.pdf",
+                        "cdn_path": "1749025590uKG0d.pdf"
+                    }
+                ],
+                "count": 1
+            },
+            "galleries": {
+                "list": [],
+                "count": 0
+            }
+        },
+        {
+            "section_data": {
+                "id": 211,
+                "parent_page_id": "39",
+                "page_section": 2,
+                "type": null,
+                "title": "Home Gallery",
+                "slug": "home-gallery",
+                "subtitle": "Comprehensive Sourcing Solutions Tailored for You",
+                "short_desc": "",
+                "notitle": 0,
+                "form_id": "",
+                "description": "",
+                "image_size": "",
+                "identifier": "home",
+                "template": "gallery",
+                "status": 1,
+                "is_archived": 0,
+                "title_tag": null,
+                "meta_title": "",
+                "meta_description": "",
+                "og_title": "",
+                "og_description": "",
+                "preview": null,
+                "instructions": null,
+                "child_of": null,
+                "update_type": null,
+                "visit_count": null,
+                "created_at": "2025-04-24 12:31:33",
+                "updated_at": "2025-04-28 16:59:30",
+                "created_by": 1,
+                "updated_by": 1,
+                "gallery": {
+                    "title": "Nested Gallery",
+                    "description": "A collection of themed sub-galleries",
+                    "children": [
+                        {
+                            "id": 1,
+                            "title": "Nature",
+                            "description": "Beautiful nature photography",
+                            "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "children": [
+                                {
+                                    "id": 11,
+                                    "title": "Forests",
+                                    "description": "Deep forest views",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Pine Forest"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 111,
+                                            "title": "Misty Morning",
+                                            "description": "Foggy forest at sunrise",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Sunrise Fog"
+                                                }
+                                            ],
+                                            "children": [
+                                                {
+                                                    "id": 1111,
+                                                    "title": "Dew on Leaf",
+                                                    "description": "Macro shots of morning mist",
+                                                    "media": [
+                                                        {
+                                                            "type": "image",
+                                                            "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                            "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                            "title": "Dew on Leaf"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "id": 1112,
+                                                    "title": "Dew on Leaf 2",
+                                                    "description": "Macro shots of morning mist",
+                                                    "media": [
+                                                        {
+                                                            "type": "image",
+                                                            "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                            "title": "Dew on Leaf 2"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 12,
+                                    "title": "Mountains",
+                                    "description": "Mountain landscapes",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Snowy Peak"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 2,
+                            "title": "Architecture",
+                            "description": "Urban and historical buildings",
+                            "media": [
+                                {
+                                    "type": "video",
+                                    "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Old Cathedral"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 3,
+                            "title": "People",
+                            "description": "Portraits and candid moments",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                                    "title": "Smiling Faces"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 4,
+                            "title": "Abstract",
+                            "description": "Creative and surreal imagery",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Dream Pattern"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 8,
+                            "title": "Abstract",
+                            "description": "Creative and surreal imagery",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.unsplash.com/photo-1584395630827-860eee694d7b?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Dream Pattern"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 7,
+                            "title": "People",
+                            "description": "Portraits and candid moments",
+                            "media": [
+                                {
+                                    "type": "image",
+                                    "src": "",
+                                    "thumb": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=200&w=200",
+                                    "title": "Smiling Faces"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 6,
+                            "title": "Architecture",
+                            "description": "Urban and historical buildings",
+                            "media": [
+                                {
+                                    "type": "video",
+                                    "src": "https://videos.pexels.com/video-files/5667416/5667416-uhd_2732_1440_30fps.mp4",
+                                    "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                    "title": "Old Cathedral"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 5,
+                            "title": "Nature",
+                            "description": "Beautiful nature photography",
+                            "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                            "children": [
+                                {
+                                    "id": 11,
+                                    "title": "Forests",
+                                    "description": "Deep forest views",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "",
+                                            "thumb": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Pine Forest"
+                                        }
+                                    ],
+                                    "children": [
+                                        {
+                                            "id": 111,
+                                            "title": "Misty Morning",
+                                            "description": "Foggy forest at sunrise",
+                                            "media": [
+                                                {
+                                                    "type": "image",
+                                                    "src": "",
+                                                    "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                    "title": "Sunrise Fog"
+                                                }
+                                            ],
+                                            "children": [
+                                                {
+                                                    "id": 1111,
+                                                    "title": "Dew on Leaf",
+                                                    "description": "Macro shots of morning mist",
+                                                    "media": [
+                                                        {
+                                                            "type": "image",
+                                                            "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+                                                            "thumb": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                            "title": "Dew on Leaf"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "id": 1112,
+                                                    "title": "Dew on Leaf 2",
+                                                    "description": "Macro shots of morning mist",
+                                                    "media": [
+                                                        {
+                                                            "type": "image",
+                                                            "src": "https://images.unsplash.com/photo-1506765515384-028b60a970df",
+                                                            "thumb": "https://images.unsplash.com/photo-1506765515384-028b60a970df?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                                            "title": "Dew on Leaf 2"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 12,
+                                    "title": "Mountains",
+                                    "description": "Mountain landscapes",
+                                    "media": [
+                                        {
+                                            "type": "image",
+                                            "src": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8",
+                                            "thumb": "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?crop=entropy&cs=tinysrgb&fit=max&h=200&w=200",
+                                            "title": "Snowy Peak"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "images": {
+                "list": [],
+                "count": 0
+            },
+            "posts": {
+                "list": [
+                    {
+                        "data": {
+                            "id": 64,
+                            "page_id": 211,
+                            "type": "",
+                            "title": "Research",
+                            "slug": "research",
+                            "subtitle": "",
+                            "short_desc": "",
+                            "description": "<p>We conduct extensive trend analysis and stay ahead of the latest washes, fits, and fabrics to ensure innovative and competitive product development. Our dedicated fabric team focuses on sourcing <strong>sustainable<\/strong>, certified fabrics while also developing <strong>local alternatives<\/strong> to imported fabrics for <strong>lower costs<\/strong> and <strong>faster delivery.<\/strong><\/p>",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-27 16:36:07",
+                            "updated_at": "2025-04-28 16:59:20"
+                        },
+                        "images": [
+                            {
+                                "id": 470,
+                                "identifier_type": "PagePost",
+                                "identifier_id": 64,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "path": "uploads\/page\/home\/",
+                                "cloud_path": null,
+                                "img_name": "17457717804cxNn.jpg",
+                                "real_name": null,
+                                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/page\/home\/17457717804cxNn.jpg",
+                                "cdn_path": "17457717804cxNn.jpg"
+                            }
+                        ]
+                    },
+                    {
+                        "data": {
+                            "id": 65,
+                            "page_id": 211,
+                            "type": "",
+                            "title": "Design &amp; Development ",
+                            "slug": "design--development-",
+                            "subtitle": "",
+                            "short_desc": "",
+                            "description": "<p>We have a large team of both <strong>local and foreign designers<\/strong>, as well as expert <strong>wash technicians, CAD operators, and fit technicians<\/strong>, who create new collections aligned with our clients seasonal needs. Our team develops over <strong>100+ samples each month<\/strong>, and ensures ND support, providing brands with multiple options and ensuring a seamless transition from design to production.<\/p>",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-27 16:42:29",
+                            "updated_at": "2025-04-28 17:32:07"
+                        },
+                        "images": [
+                            {
+                                "id": 471,
+                                "identifier_type": "PagePost",
+                                "identifier_id": 65,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "path": "uploads\/page\/home\/",
+                                "cloud_path": null,
+                                "img_name": "1745772164JXdeJ.jpg",
+                                "real_name": null,
+                                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/page\/home\/1745772164JXdeJ.jpg",
+                                "cdn_path": "1745772164JXdeJ.jpg"
+                            }
+                        ]
+                    },
+                    {
+                        "data": {
+                            "id": 66,
+                            "page_id": 211,
+                            "type": "",
+                            "title": "Production Support",
+                            "slug": "production-support",
+                            "subtitle": "",
+                            "short_desc": "",
+                            "description": "<p>We source <strong>top mills and factories for stitching and washing<\/strong>, specific to clients\u2019 needs. Our supplier management ensures smooth operations, while our <strong>own dedicated QA teams<\/strong> at factories maintain quality. Our <strong>in-house wash technicians<\/strong> ensure color accuracy, and <strong>our safety officers<\/strong> oversee compliance, especially for kidswear.<\/p>",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-27 16:43:12",
+                            "updated_at": "2025-04-28 17:34:19"
+                        },
+                        "images": [
+                            {
+                                "id": 472,
+                                "identifier_type": "PagePost",
+                                "identifier_id": 66,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "path": "uploads\/page\/home\/",
+                                "cloud_path": null,
+                                "img_name": "1745772206V2iN0.jpg",
+                                "real_name": null,
+                                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/page\/home\/1745772206V2iN0.jpg",
+                                "cdn_path": "1745772206V2iN0.jpg"
+                            }
+                        ]
+                    },
+                    {
+                        "data": {
+                            "id": 67,
+                            "page_id": 211,
+                            "type": "",
+                            "title": "Buyer Support ",
+                            "slug": "buyer-support-",
+                            "subtitle": "",
+                            "short_desc": "",
+                            "description": "<p>Our dedicated merchandisers provide 24\/7 support, ensuring <strong>quick <\/strong>responses, <strong>competitive pricing<\/strong>, and full production <strong>tracking<\/strong>. We bridge buyers and suppliers seamlessly, optimizing costs and efficiency, while maintaining full transparency.<\/p>",
+                            "notitle": 0,
+                            "form_id": null,
+                            "sort_order": 0,
+                            "template": "",
+                            "status": 1,
+                            "created_by": 1,
+                            "updated_by": 1,
+                            "created_at": "2025-04-27 16:43:53",
+                            "updated_at": "2025-04-28 17:35:18"
+                        },
+                        "images": [
+                            {
+                                "id": 473,
+                                "identifier_type": "PagePost",
+                                "identifier_id": 67,
+                                "short_title": null,
+                                "short_desc": null,
+                                "img_alt": null,
+                                "path": "uploads\/page\/home\/",
+                                "cloud_path": null,
+                                "img_name": "1745773403fOgIS.jpg",
+                                "real_name": null,
+                                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/page\/home\/1745773403fOgIS.jpg",
+                                "cdn_path": "1745773403fOgIS.jpg"
+                            }
+                        ]
+                    }
+                ],
+                "count": 4
+            },
+            "files": {
+                "list": [],
+                "count": 0
+            }
+        }
+    ],
+    "child_pages": {
+        "list": [],
+        "count": 0,
+        "types": [
+            {
+                "id": 8,
+                "title": "Counter",
+                "slug": "counter",
+                "in_page": 0,
+                "in_pagepost": 1,
+                "in_product": 1,
+                "in_gallery": 0,
+                "in_productpost": 0,
+                "in_blogpost": 0,
+                "sort_order": 0,
+                "status": 1,
+                "is_archived": 0,
+                "created_at": "2025-05-27 05:22:16",
+                "updated_at": "2025-05-27 11:22:16",
+                "created_by": 1,
+                "updated_by": 1
+            }
+        ]
+    },
+    "images": {
+        "list": [],
+        "count": 0
+    },
+    "banners": {
+        "type": "banner",
+        "data": [
+            {
+                "id": 3,
+                "postName": "About Banner",
+                "createdAt": "2025-06-22 08:26:29",
+                "updatedAt": null,
+                "title": "About Us",
+                "subTitle": "Multi-line subtitle goes here, this can be an html object",
+                "description": null,
+                "texts": [
+                    {
+                        "title": "This can be multiline and even image can come as html object"
+                    }
+                ],
+                "links": [
+                    {
+                        "name": "Explore",
+                        "path": "/",
+                        "target": ""
+                    }
+                ],
+                "tag": [],
+                "tempalte": "",
+                "assets": [
+                    {
+                        "id": 277,
+                        "identifier_type": "Banner",
+                        "identifier_id": 3,
+                        "short_title": null,
+                        "short_desc": null,
+                        "img_alt": null,
+                        "color_code": "N/A",
+                        "path": "uploads/banner/",
+                        "cloud_path": null,
+                        "img_name": "17505809087JOL9.jpg",
+                        "real_name": null,
+                        "ext": "jpg",
+                        "available_sizes": "[\"Actual size\"]",
+                        "size": "343.17 KB",
+                        "dimension": "1920x1440",
+                        "device": "all",
+                        "sort_order": null,
+                        "created_at": "2025-06-22 08:28:28",
+                        "updated_at": "2025-06-22 08:28:48",
+                        "created_by": 1,
+                        "updated_by": 1,
+                        "full_path": "https://project.bestinbd.com/projects/web/Dataset/admin/uploads/banner/17505809087JOL9.jpg",
+                        "cdn_path": "17505809087JOL9.jpg",
+                        "banner": "on"
+                    },
+                    {
+                        "id": 278,
+                        "identifier_type": "Banner",
+                        "identifier_id": 3,
+                        "short_title": null,
+                        "short_desc": null,
+                        "img_alt": null,
+                        "color_code": "N/A",
+                        "path": "uploads/banner/",
+                        "cloud_path": null,
+                        "img_name": "1750580915rcj91.jpg",
+                        "real_name": null,
+                        "ext": "jpg",
+                        "available_sizes": "[\"Actual size\"]",
+                        "size": "64.95 KB",
+                        "dimension": "640x480",
+                        "device": "all",
+                        "sort_order": null,
+                        "created_at": "2025-06-22 08:28:35",
+                        "updated_at": "2025-06-22 08:28:51",
+                        "created_by": 1,
+                        "updated_by": 1,
+                        "full_path": "https://project.bestinbd.com/projects/web/Dataset/admin/uploads/banner/1750580915rcj91.jpg",
+                        "cdn_path": "1750580915rcj91.jpg",
+                        "thumb": "on"
+                    }
+                ]
+            }
+        ]
+    }
+}

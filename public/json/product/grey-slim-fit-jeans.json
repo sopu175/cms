@@ -1,0 +1,103 @@
+{
+    "product_data": {
+        "id": 78,
+        "category_id": 18,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Grey Slim Fit Jeans",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "grey-slim-fit-jeans",
+        "subtitle": "Grey Slim Fit Jeans",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "grey-slim-fit-jeans",
+        "template": "",
+        "sort_order": 35,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 13:19:47",
+        "updated_at": "2025-05-19 12:46:07",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Men",
+        "category_slug": "men"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 954,
+                "identifier_type": "Product",
+                "identifier_id": 78,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/grey-slim-fit-jeans\/",
+                "cloud_path": null,
+                "img_name": "17460192040AHcT.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-slim-fit-jeans\/17460192040AHcT.jpg",
+                "cdn_path": "17460192040AHcT.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 955,
+                "identifier_type": "Product",
+                "identifier_id": 78,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/grey-slim-fit-jeans\/",
+                "cloud_path": null,
+                "img_name": "1746019204k7z5p.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-slim-fit-jeans\/1746019204k7z5p.jpg",
+                "cdn_path": "1746019204k7z5p.jpg"
+            },
+            {
+                "id": 956,
+                "identifier_type": "Product",
+                "identifier_id": 78,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/grey-slim-fit-jeans\/",
+                "cloud_path": null,
+                "img_name": "174601920453nSo.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/grey-slim-fit-jeans\/174601920453nSo.jpg",
+                "cdn_path": "174601920453nSo.jpg"
+            }
+        ],
+        "count": 3
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}

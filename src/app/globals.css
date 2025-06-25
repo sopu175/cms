@@ -1,0 +1,588 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-BlackItalic.woff2') format('woff2'),
+  url('/fonts/Inter-BlackItalic.woff') format('woff');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Bold.woff2') format('woff2'),
+  url('/fonts/Inter-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-BoldItalic.woff2') format('woff2'),
+  url('/fonts/Inter-BoldItalic.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-ExtraBold.woff2') format('woff2'),
+  url('/fonts/Inter-ExtraBold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-ExtraBoldItalic.woff2') format('woff2'),
+  url('/fonts/Inter-ExtraBoldItalic.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-ExtraLightBETA.woff2') format('woff2'),
+  url('/fonts/Inter-ExtraLightBETA.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-ExtraLightItalicBETA.woff2') format('woff2'),
+  url('/fonts/Inter-ExtraLightItalicBETA.woff') format('woff');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-LightBETA.woff2') format('woff2'),
+  url('/fonts/Inter-LightBETA.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Italic.woff2') format('woff2'),
+  url('/fonts/Inter-Italic.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-LightItalicBETA.woff2') format('woff2'),
+  url('/fonts/Inter-LightItalicBETA.woff') format('woff');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2'),
+  url('/fonts/Inter-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Medium.woff2') format('woff2'),
+  url('/fonts/Inter-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-MediumItalic.woff2') format('woff2'),
+  url('/fonts/Inter-MediumItalic.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2'),
+  url('/fonts/Inter-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-ThinBETA.woff2') format('woff2'),
+  url('/fonts/Inter-ThinBETA.woff') format('woff');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-ThinItalicBETA.woff2') format('woff2'),
+  url('/fonts/Inter-ThinItalicBETA.woff') format('woff');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-SemiBoldItalic.woff2') format('woff2'),
+  url('/fonts/Inter-SemiBoldItalic.woff') format('woff');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@import "tailwindcss";
+
+:root {
+  /* Font Family Variables */
+  --var-dc--font-primary: 'Inter', sans-serif;
+  --var-dc--font-secondary: 'Poppins', sans-serif;
+  --var-dc--font-mono: 'Roboto Mono', monospace;
+
+  /* Font Size Variables */
+  --var-dc--font-size-xs:clamp(0.75rem, 0.878vw, 0.75rem);    /* 12px */
+  --var-dc--font-size-sm: clamp(0.875rem, 1.025vw, 0.875rem);   /* 14px */
+  --var-dc--font-size-base: clamp(1rem, 1.171vw, 1rem);  /* 16px */
+  --var-dc--font-size-lg: clamp(1.125rem, 1.318vw, 1.125);   /* 18px */
+  --var-dc--font-size-xl: 1.25rem;    /* 20px */
+  --var-dc--font-size-2xl: clamp(1rem, 2.5vw, 1.5rem);    /* 24px */
+  --var-dc--font-size-3xl: 1.875rem;  /* 30px */
+  --var-dc--font-size-4xl: 2.25rem;   /* 36px */
+  --var-dc--font-size-5xl: clamp(1.87rem, 2.928vw, 2.5rem);   /* 40px */
+
+  /* Font Weight Variables */
+  --var-dc--font-weight-thin: 100;
+  --var-dc--font-weight-extralight: 200;
+  --var-dc--font-weight-light: 300;
+  --var-dc--font-weight-normal: 400;
+  --var-dc--font-weight-medium: 500;
+  --var-dc--font-weight-semibold: 600;
+  --var-dc--font-weight-bold: 700;
+  --var-dc--font-weight-extrabold: 800;
+  --var-dc--font-weight-black: 900;
+
+  /* Line Height Variables */
+  --var-dc--line-height-none: 1;
+  --var-dc--line-height-tight: 1.25;
+  --var-dc--line-height-snug: 1.375;
+  --var-dc--line-height-normal: 1.5;
+  --var-dc--line-height-relaxed: 1.625;
+  --var-dc--line-height-loose: 2;
+
+  /* Letter Spacing Variables */
+  --var-dc--letter-spacing-tighter: -0.05em;
+  --var-dc--letter-spacing-tight: -0.025em;
+  --var-dc--letter-spacing-normal: 0em;
+  --var-dc--letter-spacing-wide: 0.025em;
+  --var-dc--letter-spacing-wider: 0.05em;
+  --var-dc--letter-spacing-widest: 0.1em;
+
+  /* Existing color variables */
+  --var-dc--primary-color: #0070f3;
+  --var-dc--secondary-color: #7928ca;
+  --var-dc--accent-color: #ff0080;
+  --var-dc--background: #ffffff;
+  --var-dc--foreground: #171717;
+  --var-dc--success-color: #0070f3;
+  --var-dc--error-color: #ff0000;
+  --var-dc--warning-color: #f5a623;
+  --var-dc--info-color: #0070f3;
+  --var-dc--border-radius: 8px;
+  --var-dc--spacing-unit: 8px;
+  --var-dc--transition-speed: 0.3s;
+
+  /* Spacing Variables */
+  /* Base Spacing Units */
+  --var-dc--spacing-0: 0;
+  --var-dc--spacing-20: 20px;
+  --var-dc--spacing-40: 40px;
+  --var-dc--spacing-60: 60px;
+  --var-dc--spacing-80: 80px;
+  --var-dc--spacing-100: 100px;
+  --var-dc--spacing-130: 130px;
+  --var-dc--spacing-150: 150px;
+  --var-dc--spacing-160: 160px;
+  --var-dc--spacing-200: 200px;
+
+  /* Responsive Breakpoints */
+  --var-dc--breakpoint-sm: 576px;
+  --var-dc--breakpoint-md: 768px;
+  --var-dc--breakpoint-lg: 992px;
+  --var-dc--breakpoint-xl: 1200px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --var-dc--background: #0a0a0a;
+    --var-dc--foreground: #ededed;
+  }
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--var-dc--font-primary);
+  font-size: var(--var-dc--font-size-base);
+  line-height: var(--var-dc--line-height-normal);
+  font-weight: var(--var-dc--font-weight-normal);
+  color: var(--var-dc--foreground);
+  background: var(--var-dc--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@-moz-document url-prefix() { /* Disable scrollbar Firefox */
+  html{
+    scrollbar-width: none;
+  }
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;                   /* Chrome, Safari, Opera */
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.m-auto{
+  margin: auto !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+/* Heading Styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--var-dc--font-secondary);
+  font-weight: var(--var-dc--font-weight-bold);
+  line-height: var(--var-dc--line-height-tight);
+}
+
+h1 { font-size: var(--var-dc--font-size-4xl); }
+h2 { font-size: var(--var-dc--font-size-3xl); }
+h3 { font-size: var(--var-dc--font-size-2xl); }
+h4 { font-size: var(--var-dc--font-size-xl); }
+h5 { font-size: var(--var-dc--font-size-lg); }
+h6 { font-size: var(--var-dc--font-size-base); }
+
+/* Code/Mono Text */
+code, pre {
+  font-family: var(--var-dc--font-mono);
+  font-size: var(--var-dc--font-size-sm);
+}
+
+/* Padding Utilities */
+.p-0 { padding: var(--var-dc--spacing-0) !important; }
+.pl-0 { padding-left: var(--var-dc--spacing-0); }
+.pr-0 { padding-right: var(--var-dc--spacing-0); }
+
+/* Large Padding Classes */
+.pt-200 {
+  padding-top: var(--var-dc--spacing-200);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-top: var(--var-dc--spacing-100);
+  }
+}
+
+.pb-200 {
+  padding-bottom: var(--var-dc--spacing-200);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-bottom: var(--var-dc--spacing-100);
+  }
+}
+
+.pt-160 {
+  padding-top: var(--var-dc--spacing-160);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-top: var(--var-dc--spacing-100);
+  }
+}
+
+.pb-160 {
+  padding-bottom: var(--var-dc--spacing-160);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-bottom: var(--var-dc--spacing-100);
+  }
+}
+
+.pt-150 {
+  padding-top: var(--var-dc--spacing-150);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-top: var(--var-dc--spacing-100);
+  }
+}
+
+.pb-150 {
+  padding-bottom: var(--var-dc--spacing-150);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-bottom: var(--var-dc--spacing-100);
+  }
+}
+
+.pb-130 {
+  padding-bottom: var(--var-dc--spacing-130);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-bottom: var(--var-dc--spacing-100);
+  }
+}
+
+.pt-100 {
+  padding-top: var(--var-dc--spacing-100);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-top: var(--var-dc--spacing-60);
+  }
+}
+
+.pb-100 {
+  padding-bottom: var(--var-dc--spacing-100);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-bottom: var(--var-dc--spacing-60);
+  }
+}
+
+.pt-80 {
+  padding-top: var(--var-dc--spacing-80);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-top: var(--var-dc--spacing-40);
+  }
+}
+
+.pb-80 {
+  padding-bottom: var(--var-dc--spacing-80);
+  @media (max-width: var(--var-dc--breakpoint-md)) {
+    padding-bottom: var(--var-dc--spacing-40);
+  }
+}
+
+/* Margin Utilities */
+.mt-20 { margin-top: var(--var-dc--spacing-20); }
+.mt-40 { margin-top: var(--var-dc--spacing-40); }
+.mt-60 { margin-top: var(--var-dc--spacing-60); }
+
+/* Additional Margin Utilities */
+.mb-20 { margin-bottom: var(--var-dc--spacing-20); }
+.mb-40 { margin-bottom: var(--var-dc--spacing-40); }
+.mb-60 { margin-bottom: var(--var-dc--spacing-60); }
+
+.ml-20 { margin-left: var(--var-dc--spacing-20); }
+.ml-40 { margin-left: var(--var-dc--spacing-40); }
+.ml-60 { margin-left: var(--var-dc--spacing-60); }
+
+.mr-20 { margin-right: var(--var-dc--spacing-20); }
+.mr-40 { margin-right: var(--var-dc--spacing-40); }
+.mr-60 { margin-right: var(--var-dc--spacing-60); }
+
+/* Additional Padding Utilities */
+.pt-20 { padding-top: var(--var-dc--spacing-20); }
+.pt-40 { padding-top: var(--var-dc--spacing-40); }
+.pt-60 { padding-top: var(--var-dc--spacing-60); }
+
+.pb-20 { padding-bottom: var(--var-dc--spacing-20); }
+.pb-40 { padding-bottom: var(--var-dc--spacing-40); }
+.pb-60 { padding-bottom: var(--var-dc--spacing-60); }
+
+.pl-20 { padding-left: var(--var-dc--spacing-20); }
+.pl-40 { padding-left: var(--var-dc--spacing-40); }
+.pl-60 { padding-left: var(--var-dc--spacing-60); }
+
+.pr-20 { padding-right: var(--var-dc--spacing-20); }
+.pr-40 { padding-right: var(--var-dc--spacing-40); }
+.pr-60 { padding-right: var(--var-dc--spacing-60); }
+
+/* Navigation Button Animations */
+@keyframes circle-progress {
+  0% {
+    stroke-dasharray: 0 310;
+    transform: rotate(-90deg);
+  }
+  100% {
+    stroke-dasharray: 310 310;
+    transform: rotate(270deg);
+  }
+}
+.group:hover .group-hover\:animate-circle-progress {
+  animation: circle-progress var(--var-dc--transition-speed) ease-in-out forwards;
+}
+.group:hover .group-hover\:stroke-dasharray-310 {
+  stroke-dasharray: 310 310 !important;
+}
+
+
+/* Navigation Button Hover Animation Classes */
+.nav-btn {
+  position: relative;
+  overflow: hidden;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: rgba(0, 22, 124, 1);
+  transition: all 0.3s ease;
+}
+
+.nav-btn::after {
+  content: '';
+  position: absolute;
+  height: 0;
+  width: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  background-color: #001A94;
+  transition: all 0.5s ease;
+  border-radius: 50%;
+}
+
+.nav-btn:hover::after {
+  height: 100%;
+  width: 100%;
+}
+
+.nav-btn svg {
+  position: relative;
+  z-index: 99999;
+  transition: transform 0.3s ease;
+  transform-origin: center;
+}
+
+.nav-btn:hover svg {
+  transform: rotate(45deg);
+}
+
+/* Specific class for previous button (rotated 270deg initially) */
+.nav-btn.prev svg {
+  transform: rotate(270deg);
+}
+
+.nav-btn.prev:hover svg {
+  transform: rotate(225deg);
+}
+
+/* Disabled state */
+.nav-btn.disabled {
+  background-color: rgba(0, 22, 124, 0.25);
+  cursor: not-allowed;
+}
+
+.nav-btn.disabled:hover::after {
+  height: 0;
+  width: 0;
+}
+
+.nav-btn.disabled:hover svg {
+  transform: rotate(270deg); /* Keep original rotation for prev */
+}
+
+.nav-btn.disabled:not(.prev):hover svg {
+  transform: rotate(0deg); /* Keep original rotation for next */
+}
+
+/*Form Style Start*/
+.react-select__control {
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+/* Form Styles End*/
+
+
+/*Form Style Start*/
+
+.video-modal{
+  position: relative;
+  background: black;
+  .close-btn{
+    position: absolute;
+    right: 30px;
+  }
+}
+
+.popup{
+  position: relative;
+}
+/* Form Styles End*/
+
+
+.lg-current .lg-thumb-opener img,
+.lg-current .lg-thumb img {
+  display: none !important;
+}
+
+.lg-outer .gallery-thumb {
+  display: none !important;
+}
+
+
+[data-support-yes],
+[data-support-no] {
+  display: none;
+}
+
+
+@supports (view-transition-name: test) {
+  [data-support] [data-support-yes] {
+    display: inline;
+  }
+  [data-support] [data-support-no] {
+    display: none;
+  }
+}
+
+@supports not (view-transition-name: test) {
+  [data-support] [data-support-yes] {
+    display: none;
+  }
+  [data-support] [data-support-no] {
+    display: inline;
+  }
+}
+
+/* Safari */
+@supports (-webkit-hyphens: none) and (not (-moz-appearance: none)) {
+  [data-support] [data-support-yes] {
+    display: none;
+  }
+  [data-support] [data-support-no] {
+    display: inline;
+  }
+}

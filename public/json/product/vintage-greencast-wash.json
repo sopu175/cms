@@ -1,0 +1,103 @@
+{
+    "product_data": {
+        "id": 86,
+        "category_id": 18,
+        "parent_product_id": null,
+        "product_brand_id": null,
+        "product_type": null,
+        "title": "Vintage Greencast Wash",
+        "sapphire_series": null,
+        "sapphire_sort_order": "",
+        "slug": "vintage-greencast-wash",
+        "subtitle": "Vintage Greencast Wash",
+        "short_desc": "",
+        "description": "",
+        "price": 0,
+        "image_size": "",
+        "is_featured": null,
+        "is_archived": 0,
+        "is_copy": 0,
+        "identifier": "vintage-greencast-wash",
+        "template": "",
+        "sort_order": 43,
+        "feature_sort_order": 0,
+        "status": 1,
+        "title_tag": "",
+        "meta_title": "",
+        "meta_description": "",
+        "og_title": "",
+        "og_description": "",
+        "preview": null,
+        "instructions": null,
+        "created_at": "2025-04-30 13:28:41",
+        "updated_at": "2025-05-19 12:46:07",
+        "created_by": 1,
+        "updated_by": 1,
+        "type": "",
+        "location": null,
+        "area": "",
+        "category_title": "Men",
+        "category_slug": "men"
+    },
+    "images": {
+        "list": [
+            {
+                "id": 982,
+                "identifier_type": "Product",
+                "identifier_id": 86,
+                "short_title": "",
+                "short_desc": "",
+                "img_alt": "",
+                "path": "uploads\/product\/vintage-greencast-wash\/",
+                "cloud_path": null,
+                "img_name": "1746019746URQAS.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/vintage-greencast-wash\/1746019746URQAS.jpg",
+                "cdn_path": "1746019746URQAS.jpg",
+                "thumb": "on"
+            },
+            {
+                "id": 983,
+                "identifier_type": "Product",
+                "identifier_id": 86,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/vintage-greencast-wash\/",
+                "cloud_path": null,
+                "img_name": "1746019746HZX6L.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/vintage-greencast-wash\/1746019746HZX6L.jpg",
+                "cdn_path": "1746019746HZX6L.jpg"
+            },
+            {
+                "id": 984,
+                "identifier_type": "Product",
+                "identifier_id": 86,
+                "short_title": null,
+                "short_desc": null,
+                "img_alt": null,
+                "path": "uploads\/product\/vintage-greencast-wash\/",
+                "cloud_path": null,
+                "img_name": "1746019746x0MLs.jpg",
+                "real_name": null,
+                "full_path": "https:\/\/cms.ecosourcing.org\/admin\/uploads\/product\/vintage-greencast-wash\/1746019746x0MLs.jpg",
+                "cdn_path": "1746019746x0MLs.jpg"
+            }
+        ],
+        "count": 3
+    },
+    "files": {
+        "list": [],
+        "count": 0
+    },
+    "posts": {
+        "list": [],
+        "count": 0
+    },
+    "galleries": {
+        "count": 0
+    },
+    "variations": "",
+    "specifications": []
+}
