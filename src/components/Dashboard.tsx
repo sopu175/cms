@@ -26,6 +26,7 @@ import { useProducts } from '../hooks/useProducts';
 import { useOrders } from '../hooks/useOrders';
 import { useSettings } from '../hooks/useSettings';
 import { useNavigate } from 'react-router-dom';
+import AdvancedPostEditor from './AdvancedPostEditor';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -38,6 +39,8 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [dateRange, setDateRange] = useState('7d');
   const [currencySymbol, setCurrencySymbol] = useState('৳'); // Default to Bangladeshi Taka (TK)
+  const [showPostEditor, setShowPostEditor] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
 
   const publishedPosts = posts.filter(post => post.status === 'published').length;
   const draftPosts = posts.filter(post => post.status === 'draft').length;
@@ -71,11 +74,21 @@ const Dashboard: React.FC = () => {
   };
 
   const handleCreatePost = () => {
-    // Navigate to Posts component with showEditor=true
-    window.location.href = '#posts';
-    // This would be better with React Router, but for now we'll use this approach
-    const event = new CustomEvent('create-new-post');
-    window.dispatchEvent(event);
+    setEditingPost(null);
+    setShowPostEditor(true);
+  };
+
+  const handleSavePost = async (postData: any) => {
+    const result = await createPost({ 
+      ...postData, 
+      author_id: user?.id 
+    });
+
+    if (result.success) {
+      setShowPostEditor(false);
+    }
+
+    return result;
   };
 
   const renderAnalyticsTab = () => (
@@ -93,7 +106,7 @@ const Dashboard: React.FC = () => {
               <li>Go to <a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer" className="underline">Google Analytics</a> and sign in</li>
               <li>Create a new property for your website</li>
               <li>Get your Measurement ID (starts with "G-")</li>
-              <li>Go to Settings &gt; SEO & Analytics in this CMS</li>
+              <li>Go to Settings > SEO & Analytics in this CMS</li>
               <li>Enter your Measurement ID in the Google Analytics field</li>
               <li>Save your settings</li>
             </ol>
@@ -127,7 +140,7 @@ const Dashboard: React.FC = () => {
               <li>Go to <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="underline">Google Search Console</a> and sign in</li>
               <li>Add your website property</li>
               <li>Verify ownership using one of the provided methods</li>
-              <li>Go to Settings &gt; SEO & Analytics in this CMS</li>
+              <li>Go to Settings > SEO & Analytics in this CMS</li>
               <li>Configure your site's meta tags, robots.txt, and sitemap</li>
               <li>Save your settings</li>
             </ol>
@@ -204,6 +217,11 @@ const Dashboard: React.FC = () => {
       </div>
     </div>
   );
+
+  // If showing post editor, render that instead of dashboard
+  if (showPostEditor) {
+    return <AdvancedPostEditor post={editingPost} onSave={handleSavePost} onCancel={() => setShowPostEditor(false)} />;
+  }
 
   return (
     <div className="space-y-8">
