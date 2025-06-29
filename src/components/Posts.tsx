@@ -1,5 +1,5 @@
 import { Calendar, Edit, Eye, Filter, Image, Plus, Search, Trash2, User } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import AdvancedPostEditor from "./AdvancedPostEditor";
 import { useAuth } from "../contexts/AuthContext";
@@ -19,6 +19,19 @@ const Posts: React.FC = () => {
       limit: postsPerPage,
       offset: (currentPage - 1) * postsPerPage,
    });
+
+   useEffect(() => {
+      // Listen for create-new-post event from Dashboard
+      const handleCreateNewPost = () => {
+         handleCreatePost();
+      };
+      
+      window.addEventListener('create-new-post', handleCreateNewPost);
+      
+      return () => {
+         window.removeEventListener('create-new-post', handleCreateNewPost);
+      };
+   }, []);
 
    const handleCreatePost = () => {
       setEditingPost(null);

@@ -25,60 +25,16 @@ import { useCategories } from '../hooks/useCategories';
 import { useProducts } from '../hooks/useProducts';
 import { useOrders } from '../hooks/useOrders';
 import { useSettings } from '../hooks/useSettings';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const { posts, total: totalPosts } = usePosts({ limit: 5 });
+  const { posts, total: totalPosts, createPost } = usePosts({ limit: 5 });
   const { categories } = useCategories();
   const { products } = useProducts();
   const { orders } = useOrders();
   const { settings } = useSettings();
   
-  const [analyticsData, setAnalyticsData] = useState({
-    pageViews: 12458,
-    uniqueVisitors: 3842,
-    bounceRate: 42.3,
-    avgSessionDuration: '2:15',
-    topPages: [
-      { path: '/', views: 3245, title: 'Home' },
-      { path: '/products', views: 2187, title: 'Products' },
-      { path: '/blog/top-10-tips', views: 1543, title: 'Top 10 Tips' },
-      { path: '/about', views: 982, title: 'About Us' },
-      { path: '/contact', views: 756, title: 'Contact' }
-    ],
-    trafficSources: [
-      { source: 'Direct', percentage: 35 },
-      { source: 'Organic Search', percentage: 28 },
-      { source: 'Social Media', percentage: 22 },
-      { source: 'Referral', percentage: 10 },
-      { source: 'Email', percentage: 5 }
-    ],
-    weeklyTrend: [
-      { day: 'Mon', views: 1245 },
-      { day: 'Tue', views: 1356 },
-      { day: 'Wed', views: 1567 },
-      { day: 'Thu', views: 1789 },
-      { day: 'Fri', views: 1890 },
-      { day: 'Sat', views: 1234 },
-      { day: 'Sun', views: 1100 }
-    ]
-  });
-  
-  const [seoData, setSeoData] = useState({
-    averagePosition: 12.4,
-    topKeywords: [
-      { keyword: 'headless cms', position: 3, volume: 1200 },
-      { keyword: 'ecommerce platform', position: 5, volume: 2500 },
-      { keyword: 'content management system', position: 8, volume: 3400 },
-      { keyword: 'online store builder', position: 10, volume: 1800 },
-      { keyword: 'website builder', position: 15, volume: 5600 }
-    ],
-    indexedPages: 128,
-    crawlErrors: 3,
-    mobileUsability: 94.5,
-    pagespeedScore: 87
-  });
-
   const [activeTab, setActiveTab] = useState('overview');
   const [dateRange, setDateRange] = useState('7d');
 
@@ -106,127 +62,43 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleCreatePost = () => {
+    // Navigate to Posts component with showEditor=true
+    window.location.href = '#posts';
+    // This would be better with React Router, but for now we'll use this approach
+    const event = new CustomEvent('create-new-post');
+    window.dispatchEvent(event);
+  };
+
   const renderAnalyticsTab = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-xl flex items-center justify-center">
-              <Eye className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{analyticsData.pageViews.toLocaleString()}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Page Views</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-green-100 dark:bg-green-500/20 rounded-xl flex items-center justify-center">
-              <Users className="w-6 h-6 text-green-600 dark:text-green-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{analyticsData.uniqueVisitors.toLocaleString()}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Unique Visitors</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-500/20 rounded-xl flex items-center justify-center">
-              <MousePointer className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{analyticsData.bounceRate}%</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Bounce Rate</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-500/20 rounded-xl flex items-center justify-center">
-              <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{analyticsData.avgSessionDuration}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Avg. Session</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Traffic Overview</h3>
-          <div className="h-64 flex items-center justify-center">
-            <div className="w-full h-full flex items-end justify-between space-x-2">
-              {analyticsData.weeklyTrend.map((day, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  <div 
-                    className="w-12 bg-blue-500 dark:bg-blue-600 rounded-t-md" 
-                    style={{ height: `${(day.views / 2000) * 100}%` }}
-                  ></div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 mt-2">{day.day}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Traffic Sources</h3>
-          <div className="h-64 flex items-center justify-center">
-            <div className="w-full max-w-md">
-              {analyticsData.trafficSources.map((source, index) => (
-                <div key={index} className="mb-3">
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-700 dark:text-gray-300">{source.source}</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-300">{source.percentage}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                    <div 
-                      className="bg-blue-600 h-2.5 rounded-full" 
-                      style={{ width: `${source.percentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Pages</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-800">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Page</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Views</th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">% of Total</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-              {analyticsData.topPages.map((page, index) => (
-                <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">{page.title}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">{page.path}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {page.views.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500 dark:text-gray-400">
-                    {((page.views / analyticsData.pageViews) * 100).toFixed(1)}%
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Google Analytics Setup</h3>
+        <div className="space-y-4">
+          <p className="text-gray-600 dark:text-gray-400">
+            To view real analytics data, you need to connect your Google Analytics account.
+          </p>
+          
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
+            <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">Setup Instructions</h4>
+            <ol className="list-decimal list-inside space-y-2 text-sm text-blue-700 dark:text-blue-400">
+              <li>Go to <a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer" className="underline">Google Analytics</a> and sign in</li>
+              <li>Create a new property for your website</li>
+              <li>Get your Measurement ID (starts with "G-")</li>
+              <li>Go to Settings &gt; SEO &amp; Analytics in this CMS</li>
+              <li>Enter your Measurement ID in the Google Analytics field</li>
+              <li>Save your settings</li>
+            </ol>
+          </div>
+          
+          <div className="flex justify-end">
+            <button 
+              onClick={() => window.location.href = '#settings'}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+            >
+              Go to Analytics Settings
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -234,249 +106,91 @@ const Dashboard: React.FC = () => {
 
   const renderSeoTab = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-xl flex items-center justify-center">
-              <LineChart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{seoData.averagePosition}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Avg. Position</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-green-100 dark:bg-green-500/20 rounded-xl flex items-center justify-center">
-              <Globe className="w-6 h-6 text-green-600 dark:text-green-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{seoData.indexedPages}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Indexed Pages</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-500/20 rounded-xl flex items-center justify-center">
-              <Smartphone className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{seoData.mobileUsability}%</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">Mobile Usability</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-500/20 rounded-xl flex items-center justify-center">
-              <Zap className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{seoData.pagespeedScore}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">PageSpeed Score</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Keywords</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-800">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Keyword</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Position</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Search Volume</th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Trend</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-              {seoData.topKeywords.map((keyword, index) => (
-                <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                    {keyword.keyword}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {keyword.position}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {keyword.volume.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
-                    {index % 2 === 0 ? (
-                      <span className="text-green-600 dark:text-green-400 flex items-center justify-end">
-                        <ArrowUp className="w-4 h-4 mr-1" />
-                        {Math.floor(Math.random() * 10) + 1}
-                      </span>
-                    ) : (
-                      <span className="text-red-600 dark:text-red-400 flex items-center justify-end">
-                        <ArrowDown className="w-4 h-4 mr-1" />
-                        {Math.floor(Math.random() * 10) + 1}
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Crawl Issues</h3>
-          <div className="flex items-center justify-center h-64">
-            <div className="w-full max-w-md">
-              <div className="relative pt-1">
-                <div className="flex mb-2 items-center justify-between">
-                  <div>
-                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200 dark:bg-green-900 dark:text-green-300">
-                      Healthy
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-semibold inline-block text-green-600 dark:text-green-400">
-                      {seoData.indexedPages - seoData.crawlErrors}/{seoData.indexedPages}
-                    </span>
-                  </div>
-                </div>
-                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-green-200 dark:bg-green-900">
-                  <div style={{ width: `${((seoData.indexedPages - seoData.crawlErrors) / seoData.indexedPages) * 100}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500 dark:bg-green-400"></div>
-                </div>
-              </div>
-              
-              <div className="mt-6">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Issues Found ({seoData.crawlErrors})</h4>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 mr-2"></div>
-                    <div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">404 Not Found - /old-page</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Page no longer exists</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 mr-2"></div>
-                    <div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">Redirect Chain - /products/old</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Too many redirects</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 mr-2"></div>
-                    <div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">Slow Page - /gallery</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Page load time &gt; 3s</p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">SEO Setup</h3>
+        <div className="space-y-4">
+          <p className="text-gray-600 dark:text-gray-400">
+            To improve your site's SEO and view performance data, follow these steps:
+          </p>
+          
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
+            <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">Setup Instructions</h4>
+            <ol className="list-decimal list-inside space-y-2 text-sm text-blue-700 dark:text-blue-400">
+              <li>Go to <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="underline">Google Search Console</a> and sign in</li>
+              <li>Add your website property</li>
+              <li>Verify ownership using one of the provided methods</li>
+              <li>Go to Settings &gt; SEO &amp; Analytics in this CMS</li>
+              <li>Configure your site's meta tags, robots.txt, and sitemap</li>
+              <li>Save your settings</li>
+            </ol>
+          </div>
+          
+          <div className="flex justify-end">
+            <button 
+              onClick={() => window.location.href = '#settings'}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+            >
+              Go to SEO Settings
+            </button>
           </div>
         </div>
-
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Page Speed Insights</h3>
-          <div className="flex items-center justify-center h-64">
-            <div className="w-full max-w-md">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center">
-                  <div className="relative inline-flex items-center justify-center w-20 h-20">
-                    <svg className="w-20 h-20" viewBox="0 0 36 36">
-                      <path
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                        fill="none"
-                        stroke="#E5E7EB"
-                        strokeWidth="3"
-                        className="dark:stroke-gray-700"
-                      />
-                      <path
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                        fill="none"
-                        stroke="#10B981"
-                        strokeWidth="3"
-                        strokeDasharray={`${seoData.pagespeedScore}, 100`}
-                        className="dark:stroke-green-400"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-semibold text-gray-900 dark:text-white">{seoData.pagespeedScore}</span>
-                    </div>
-                  </div>
-                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Desktop</p>
-                </div>
-                <div className="text-center">
-                  <div className="relative inline-flex items-center justify-center w-20 h-20">
-                    <svg className="w-20 h-20" viewBox="0 0 36 36">
-                      <path
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                        fill="none"
-                        stroke="#E5E7EB"
-                        strokeWidth="3"
-                        className="dark:stroke-gray-700"
-                      />
-                      <path
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                        fill="none"
-                        stroke="#3B82F6"
-                        strokeWidth="3"
-                        strokeDasharray={`${seoData.mobileUsability}, 100`}
-                        className="dark:stroke-blue-400"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-lg font-semibold text-gray-900 dark:text-white">{seoData.mobileUsability}</span>
-                    </div>
-                  </div>
-                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Mobile</p>
-                </div>
-              </div>
-              
-              <div className="mt-6 space-y-3">
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-700 dark:text-gray-300">First Contentful Paint</span>
-                    <span className="text-sm text-green-600 dark:text-green-400">0.8s</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div className="bg-green-500 dark:bg-green-400 h-2 rounded-full" style={{ width: '90%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Time to Interactive</span>
-                    <span className="text-sm text-green-600 dark:text-green-400">1.2s</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div className="bg-green-500 dark:bg-green-400 h-2 rounded-full" style={{ width: '85%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Largest Contentful Paint</span>
-                    <span className="text-sm text-yellow-600 dark:text-yellow-400">2.5s</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div className="bg-yellow-500 dark:bg-yellow-400 h-2 rounded-full" style={{ width: '75%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Cumulative Layout Shift</span>
-                    <span className="text-sm text-green-600 dark:text-green-400">0.02</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div className="bg-green-500 dark:bg-green-400 h-2 rounded-full" style={{ width: '95%' }}></div>
-                  </div>
-                </div>
-              </div>
+      </div>
+      
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">SEO Checklist</h3>
+        <div className="space-y-3">
+          <div className="flex items-center">
+            <div className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-3">
+              <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+              </svg>
             </div>
+            <span className="text-gray-700 dark:text-gray-300">Set up meta titles and descriptions for all pages</span>
+          </div>
+          
+          <div className="flex items-center">
+            <div className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-3">
+              <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <span className="text-gray-700 dark:text-gray-300">Configure robots.txt file</span>
+          </div>
+          
+          <div className="flex items-center">
+            <div className="w-6 h-6 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mr-3">
+              <svg className="w-4 h-4 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+            </div>
+            <span className="text-gray-700 dark:text-gray-300">Generate and submit XML sitemap</span>
+          </div>
+          
+          <div className="flex items-center">
+            <div className="w-6 h-6 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mr-3">
+              <svg className="w-4 h-4 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+            </div>
+            <span className="text-gray-700 dark:text-gray-300">Set up Open Graph tags for social sharing</span>
+          </div>
+          
+          <div className="flex items-center">
+            <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-3">
+              <svg className="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </div>
+            <span className="text-gray-700 dark:text-gray-300">Implement structured data (JSON-LD)</span>
+          </div>
+          
+          <div className="flex items-center">
+            <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-3">
+              <svg className="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </div>
+            <span className="text-gray-700 dark:text-gray-300">Optimize images with alt text and compression</span>
           </div>
         </div>
       </div>
@@ -676,7 +390,10 @@ const Dashboard: React.FC = () => {
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Posts</h2>
-              <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+              <button 
+                onClick={handleCreatePost}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
                 <Plus className="w-4 h-4" />
                 <span>New Post</span>
               </button>
