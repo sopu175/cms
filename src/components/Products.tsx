@@ -22,6 +22,7 @@ import {
 import { useProducts } from '../hooks/useProducts';
 import { useAuth } from '../contexts/AuthContext';
 import { useCategories } from '../hooks/useCategories';
+import { useSettings } from '../hooks/useSettings';
 import { Product, ProductVariation } from '../types';
 import ContentBlockEditor from './ContentBlockEditor';
 import PostSectionEditor from './PostSectionEditor';
@@ -35,10 +36,12 @@ const Products: React.FC = () => {
     status: statusFilter
   });
   const { categories } = useCategories();
+  const { settings } = useSettings();
   
   const [showProductModal, setShowProductModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('basic');
+  const [currencySymbol, setCurrencySymbol] = useState('৳'); // Default to Bangladeshi Taka (TK)
   
   const [productForm, setProductForm] = useState({
     name: '',
@@ -78,7 +81,12 @@ const Products: React.FC = () => {
     if (products.length === 0 && !loading && categories.length > 0) {
       addDemoProducts();
     }
-  }, [products, loading, categories]);
+    
+    // Load currency symbol from settings if available
+    if (settings && settings.currency_symbol) {
+      setCurrencySymbol(settings.currency_symbol);
+    }
+  }, [products, loading, categories, settings]);
 
   const addDemoProducts = async () => {
     if (!canEdit || categories.length === 0) return;
@@ -448,8 +456,7 @@ const Products: React.FC = () => {
 
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-1 text-lg font-bold text-gray-900 dark:text-white">
-                  <DollarSign className="w-4 h-4" />
-                  <span>{product.price.toFixed(2)}</span>
+                  <span>{currencySymbol}{product.price.toFixed(2)}</span>
                 </div>
                 {product.average_rating > 0 && (
                   <div className="flex items-center space-x-1 text-yellow-500">
@@ -627,7 +634,7 @@ const Products: React.FC = () => {
                       </label>
                       <div className="relative">
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
-                          $
+                          {currencySymbol}
                         </span>
                         <input
                           type="number"
@@ -650,7 +657,7 @@ const Products: React.FC = () => {
                         className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       >
                         <option value="">Select Category</option>
-                        {categories.map((category) => (
+                        {categories.filter(cat => cat.category_type === 'product').map((category) => (
                           <option key={category.id} value={category.id}>
                             {category.name}
                           </option>
@@ -903,7 +910,7 @@ const Products: React.FC = () => {
                             ))}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                            ${variation.price.toFixed(2)}
+                            {currencySymbol}{variation.price.toFixed(2)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                             {variation.stock}
@@ -1032,7 +1039,7 @@ const Products: React.FC = () => {
                     </label>
                     <div className="relative">
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
-                        $
+                        {currencySymbol}
                       </span>
                       <input
                         type="number"

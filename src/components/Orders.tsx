@@ -19,6 +19,7 @@ import {
 import { useOrders } from '../hooks/useOrders';
 import { useAuth } from '../contexts/AuthContext';
 import { Order } from '../types';
+import { useSettings } from '../hooks/useSettings';
 
 const Orders: React.FC = () => {
   const { user } = useAuth();
@@ -27,10 +28,12 @@ const Orders: React.FC = () => {
   const { orders, loading, updateOrderStatus } = useOrders({
     status: statusFilter
   });
+  const { settings } = useSettings();
   const [showOrderDetails, setShowOrderDetails] = useState<string | null>(null);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [currencySymbol, setCurrencySymbol] = useState('৳'); // Default to Bangladeshi Taka (TK)
   const [newOrderData, setNewOrderData] = useState({
     customer_name: '',
     customer_email: '',
@@ -55,7 +58,12 @@ const Orders: React.FC = () => {
     if (orders.length === 0 && !loading) {
       addDemoOrders();
     }
-  }, [orders, loading]);
+    
+    // Load currency symbol from settings if available
+    if (settings && settings.currency_symbol) {
+      setCurrencySymbol(settings.currency_symbol);
+    }
+  }, [orders, loading, settings]);
 
   const addDemoOrders = () => {
     // This would typically be done through the API
@@ -282,8 +290,7 @@ const Orders: React.FC = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-1 font-medium text-gray-900 dark:text-white">
-                        <DollarSign className="w-4 h-4" />
-                        <span>{order.total_amount}</span>
+                        <span>{currencySymbol}{order.total_amount.toFixed(2)}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -339,7 +346,7 @@ const Orders: React.FC = () => {
                                           {item.quantity}
                                         </td>
                                         <td className="px-4 py-2 text-sm text-gray-900 dark:text-white text-right">
-                                          ${item.unit_price}
+                                          {currencySymbol}{item.unit_price.toFixed(2)}
                                         </td>
                                       </tr>
                                     ))}
@@ -551,7 +558,7 @@ const Orders: React.FC = () => {
                       />
                       <div className="relative w-32">
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
-                          $
+                          {currencySymbol}
                         </span>
                         <input
                           type="number"

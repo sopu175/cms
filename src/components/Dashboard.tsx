@@ -37,6 +37,7 @@ const Dashboard: React.FC = () => {
   
   const [activeTab, setActiveTab] = useState('overview');
   const [dateRange, setDateRange] = useState('7d');
+  const [currencySymbol, setCurrencySymbol] = useState('৳'); // Default to Bangladeshi Taka (TK)
 
   const publishedPosts = posts.filter(post => post.status === 'published').length;
   const draftPosts = posts.filter(post => post.status === 'draft').length;
@@ -44,6 +45,13 @@ const Dashboard: React.FC = () => {
   
   const totalRevenue = orders.reduce((sum, order) => sum + order.total_amount, 0);
   const pendingOrders = orders.filter(order => order.status === 'pending').length;
+
+  useEffect(() => {
+    // Load currency symbol from settings if available
+    if (settings && settings.currency_symbol) {
+      setCurrencySymbol(settings.currency_symbol);
+    }
+  }, [settings]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -85,7 +93,7 @@ const Dashboard: React.FC = () => {
               <li>Go to <a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer" className="underline">Google Analytics</a> and sign in</li>
               <li>Create a new property for your website</li>
               <li>Get your Measurement ID (starts with "G-")</li>
-              <li>Go to Settings &gt; SEO &amp; Analytics in this CMS</li>
+              <li>Go to Settings &gt; SEO & Analytics in this CMS</li>
               <li>Enter your Measurement ID in the Google Analytics field</li>
               <li>Save your settings</li>
             </ol>
@@ -119,7 +127,7 @@ const Dashboard: React.FC = () => {
               <li>Go to <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="underline">Google Search Console</a> and sign in</li>
               <li>Add your website property</li>
               <li>Verify ownership using one of the provided methods</li>
-              <li>Go to Settings &gt; SEO &amp; Analytics in this CMS</li>
+              <li>Go to Settings &gt; SEO & Analytics in this CMS</li>
               <li>Configure your site's meta tags, robots.txt, and sitemap</li>
               <li>Save your settings</li>
             </ol>
@@ -379,7 +387,7 @@ const Dashboard: React.FC = () => {
                   <DollarSign className="w-6 h-6 text-teal-600 dark:text-teal-400" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">${totalRevenue.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{currencySymbol}{totalRevenue.toFixed(2)}</p>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">Total Revenue</p>
                 </div>
               </div>
