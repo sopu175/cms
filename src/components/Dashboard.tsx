@@ -91,6 +91,12 @@ const Dashboard: React.FC = () => {
     return result;
   };
 
+  const goToSettings = () => {
+    // Change the active tab in the parent component
+    const event = new CustomEvent('change-tab', { detail: 'settings' });
+    window.dispatchEvent(event);
+  };
+
   const renderAnalyticsTab = () => (
     <div className="space-y-6">
       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
@@ -106,7 +112,7 @@ const Dashboard: React.FC = () => {
               <li>Go to <a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer" className="underline">Google Analytics</a> and sign in</li>
               <li>Create a new property for your website</li>
               <li>{'Get your Measurement ID (starts with "G-")'}</li>
-              <li>{'Go to Settings > SEO & Analytics in this CMS'}</li>
+              <li>{'Go to Settings &gt; SEO & Analytics in this CMS'}</li>
               <li>Enter your Measurement ID in the Google Analytics field</li>
               <li>Save your settings</li>
             </ol>
@@ -114,7 +120,7 @@ const Dashboard: React.FC = () => {
           
           <div className="flex justify-end">
             <button 
-              onClick={() => window.location.href = '#settings'}
+              onClick={goToSettings}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
             >
               Go to Analytics Settings
@@ -140,7 +146,7 @@ const Dashboard: React.FC = () => {
               <li>Go to <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="underline">Google Search Console</a> and sign in</li>
               <li>Add your website property</li>
               <li>Verify ownership using one of the provided methods</li>
-              <li>{'Go to Settings > SEO & Analytics in this CMS'}</li>
+              <li>{'Go to Settings &gt; SEO & Analytics in this CMS'}</li>
               <li>Configure your site's meta tags, robots.txt, and sitemap</li>
               <li>Save your settings</li>
             </ol>
@@ -148,7 +154,7 @@ const Dashboard: React.FC = () => {
           
           <div className="flex justify-end">
             <button 
-              onClick={() => window.location.href = '#settings'}
+              onClick={goToSettings}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
             >
               Go to SEO Settings

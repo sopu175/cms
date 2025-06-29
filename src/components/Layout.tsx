@@ -37,6 +37,19 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
     return true;
   });
 
+  // Listen for tab change events
+  useEffect(() => {
+    const handleTabChange = (event: CustomEvent) => {
+      onTabChange(event.detail);
+    };
+    
+    window.addEventListener('change-tab', handleTabChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('change-tab', handleTabChange as EventListener);
+    };
+  }, [onTabChange]);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white transition-colors">
       {/* Mobile sidebar backdrop */}
