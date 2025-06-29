@@ -109,9 +109,10 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
                   {user?.role}
                 </p>
               </div>
+              <ThemeToggle />
             </div>
             
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between">
               <button
                 onClick={() => {
                   onTabChange('profile');
@@ -122,16 +123,15 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
                 <User className="w-4 h-4" />
                 <span className="text-sm">Profile</span>
               </button>
-              <ThemeToggle />
+              
+              <button
+                onClick={signOut}
+                className="flex items-center space-x-2 px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm">Logout</span>
+              </button>
             </div>
-            
-            <button
-              onClick={signOut}
-              className="w-full flex items-center justify-center space-x-2 px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="text-sm">Logout</span>
-            </button>
           </div>
         </div>
       </aside>
