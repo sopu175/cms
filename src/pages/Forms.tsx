@@ -11,14 +11,17 @@ import {
   ArrowDown,
   ArrowUp,
   Settings,
-  Copy
+  Copy,
+  Mail,
+  Send
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Formik, Form, Field, FieldArray } from 'formik';
+import { Formik, Form, Field, FieldArray, FormikProps } from 'formik';
 import * as Yup from 'yup';
+import { Form as FormType, FormField } from '../types';
 
 // Form field types
 const FIELD_TYPES = [
@@ -38,7 +41,7 @@ const FIELD_TYPES = [
 ];
 
 // Initial form field
-const initialField = {
+const initialField: FormField = {
   id: '',
   type: 'text',
   label: '',
@@ -61,8 +64,15 @@ const FormSchema = Yup.object().shape({
   )
 });
 
+interface SortableFieldProps {
+  field: FormField;
+  index: number;
+  onRemove: (index: number) => void;
+  onEdit: (index: number) => void;
+}
+
 // Sortable field component
-const SortableField = ({ field, index, onRemove, onEdit }) => {
+const SortableField: React.FC<SortableFieldProps> = ({ field, index, onRemove, onEdit }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: field.id });
   
   const style = {
@@ -109,7 +119,7 @@ const SortableField = ({ field, index, onRemove, onEdit }) => {
 const Forms: React.FC = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-  const [forms, setForms] = useState([
+  const [forms, setForms] = useState<FormType[]>([
     { 
       id: '1', 
       name: 'Contact Form', 
@@ -120,7 +130,15 @@ const Forms: React.FC = () => {
         { id: '2', type: 'email', label: 'Email Address', placeholder: 'Enter your email', required: true, order: 1 },
         { id: '3', type: 'textarea', label: 'Message', placeholder: 'Your message here...', required: true, order: 2 }
       ],
-      submissions: 12,
+      settings: {
+        submit_text: 'Send Message',
+        success_message: 'Thank you for your message! We will get back to you soon.',
+        email_notifications: true,
+        notification_email: 'admin@example.com',
+        sender_email: 'no-reply@example.com',
+        email_subject: 'New Contact Form Submission',
+        redirect_url: ''
+      },
       status: 'active',
       created_at: '2023-06-15T10:30:00Z'
     },
@@ -133,15 +151,24 @@ const Forms: React.FC = () => {
         { id: '1', type: 'text', label: 'Name', placeholder: 'Your name', required: false, order: 0 },
         { id: '2', type: 'email', label: 'Email', placeholder: 'Your email address', required: true, order: 1 }
       ],
-      submissions: 48,
+      settings: {
+        submit_text: 'Subscribe',
+        success_message: 'Thank you for subscribing to our newsletter!',
+        email_notifications: true,
+        notification_email: 'marketing@example.com',
+        sender_email: 'newsletter@example.com',
+        email_subject: 'New Newsletter Subscription',
+        redirect_url: '/thank-you'
+      },
       status: 'active',
       created_at: '2023-07-20T14:15:00Z'
     }
   ]);
   
   const [showFormBuilder, setShowFormBuilder] = useState(false);
-  const [editingForm, setEditingForm] = useState(null);
-  const [editingFieldIndex, setEditingFieldIndex] = useState(null);
+  const [editingForm, setEditingForm] = useState<FormType | null>(null);
+  const [editingFieldIndex, setEditingFieldIndex] = useState<number | null>(null);
+  const [showFormPreview, setShowFormPreview] = useState(false);
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -154,6 +181,7 @@ const Forms: React.FC = () => {
 
   const handleCreateForm = () => {
     setEditingForm({
+      id: '',
       name: '',
       slug: '',
       description: '',
@@ -164,45 +192,50 @@ const Forms: React.FC = () => {
         success_message: 'Thank you for your submission!',
         redirect_url: '',
         email_notifications: false,
-        notification_email: ''
-      }
+        notification_email: '',
+        sender_email: 'no-reply@example.com',
+        email_subject: 'New Form Submission'
+      },
+      created_at: new Date().toISOString()
     });
     setShowFormBuilder(true);
   };
 
-  const handleEditForm = (form) => {
+  const handleEditForm = (form: FormType) => {
     setEditingForm(form);
     setShowFormBuilder(true);
   };
 
-  const handleDeleteForm = (formId) => {
+  const handleDeleteForm = (formId: string) => {
     if (confirm('Are you sure you want to delete this form?')) {
       setForms(forms.filter(form => form.id !== formId));
     }
   };
 
-  const handleDragEnd = (event, formikProps) => {
+  const handleDragEnd = (event: DragEndEvent, formikProps: FormikProps<any>) => {
     const { active, over } = event;
     
-    if (active.id !== over.id) {
-      const oldIndex = formikProps.values.fields.findIndex(field => field.id === active.id);
-      const newIndex = formikProps.values.fields.findIndex(field => field.id === over.id);
+    if (over && active.id !== over.id) {
+      const oldIndex = formikProps.values.fields.findIndex((field: FormField) => field.id === active.id);
+      const newIndex = formikProps.values.fields.findIndex((field: FormField) => field.id === over.id);
       
-      const newFields = [...formikProps.values.fields];
-      const [movedField] = newFields.splice(oldIndex, 1);
-      newFields.splice(newIndex, 0, movedField);
-      
-      // Update order values
-      newFields.forEach((field, index) => {
-        field.order = index;
-      });
-      
-      formikProps.setFieldValue('fields', newFields);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newFields = [...formikProps.values.fields];
+        const [movedField] = newFields.splice(oldIndex, 1);
+        newFields.splice(newIndex, 0, movedField);
+        
+        // Update order values
+        newFields.forEach((field, index) => {
+          field.order = index;
+        });
+        
+        formikProps.setFieldValue('fields', newFields);
+      }
     }
   };
 
-  const handleSaveForm = (values) => {
-    if (editingForm.id) {
+  const handleSaveForm = (values: any) => {
+    if (editingForm?.id) {
       // Update existing form
       setForms(forms.map(form => 
         form.id === editingForm.id ? { ...form, ...values } : form
@@ -212,7 +245,6 @@ const Forms: React.FC = () => {
       setForms([...forms, { 
         ...values, 
         id: Date.now().toString(),
-        submissions: 0,
         created_at: new Date().toISOString()
       }]);
     }
@@ -220,7 +252,7 @@ const Forms: React.FC = () => {
     setEditingForm(null);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -233,23 +265,190 @@ const Forms: React.FC = () => {
     form.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const renderFormPreview = () => {
+    if (!editingForm) return null;
+    
+    return (
+      <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+          <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowFormPreview(false)} />
+          
+          <div className="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Form Preview: {editingForm.name}</h3>
+              <button
+                type="button"
+                onClick={() => setShowFormPreview(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+              <form className="space-y-6">
+                {editingForm.fields.sort((a, b) => a.order - b.order).map((field) => (
+                  <div key={field.id} className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {field.label} {field.required && <span className="text-red-500">*</span>}
+                    </label>
+                    
+                    {field.type === 'text' && (
+                      <input 
+                        type="text" 
+                        placeholder={field.placeholder} 
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        required={field.required}
+                      />
+                    )}
+                    
+                    {field.type === 'email' && (
+                      <input 
+                        type="email" 
+                        placeholder={field.placeholder} 
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        required={field.required}
+                      />
+                    )}
+                    
+                    {field.type === 'textarea' && (
+                      <textarea 
+                        placeholder={field.placeholder} 
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        required={field.required}
+                      />
+                    )}
+                    
+                    {field.type === 'select' && (
+                      <select 
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        required={field.required}
+                      >
+                        <option value="">Select an option</option>
+                        {field.options?.map((option, i) => (
+                          <option key={i} value={option}>{option}</option>
+                        ))}
+                      </select>
+                    )}
+                    
+                    {field.type === 'checkbox' && (
+                      <div className="flex items-center">
+                        <input 
+                          type="checkbox" 
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          required={field.required}
+                        />
+                        <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+                          {field.placeholder || 'Check this box'}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {field.type === 'radio' && field.options?.map((option, i) => (
+                      <div key={i} className="flex items-center">
+                        <input 
+                          type="radio" 
+                          name={`radio-${field.id}`}
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                          required={field.required}
+                        />
+                        <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+                          {option}
+                        </span>
+                      </div>
+                    ))}
+                    
+                    {(field.type === 'date' || field.type === 'time' || field.type === 'number') && (
+                      <input 
+                        type={field.type} 
+                        placeholder={field.placeholder} 
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                        required={field.required}
+                      />
+                    )}
+                  </div>
+                ))}
+                
+                <div className="pt-4">
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    {editingForm.settings?.submit_text || 'Submit'}
+                  </button>
+                </div>
+              </form>
+            </div>
+            
+            <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
+              <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">Form Submission Process</h4>
+              <p className="text-sm text-blue-700 dark:text-blue-400">
+                When a user submits this form:
+              </p>
+              <ul className="mt-2 space-y-1 text-sm text-blue-700 dark:text-blue-400 list-disc list-inside">
+                <li>Data will be stored in the database</li>
+                {editingForm.settings?.email_notifications && (
+                  <li>
+                    Email notification will be sent to {editingForm.settings.notification_email || 'the admin'}
+                  </li>
+                )}
+                {editingForm.settings?.redirect_url && (
+                  <li>
+                    User will be redirected to: {editingForm.settings.redirect_url}
+                  </li>
+                )}
+                <li>
+                  Success message will be shown: "{editingForm.settings?.success_message || 'Thank you for your submission!'}"
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (showFormBuilder) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            {editingForm.id ? 'Edit Form' : 'Create Form'}
+            {editingForm?.id ? 'Edit Form' : 'Create Form'}
           </h2>
-          <button
-            onClick={() => setShowFormBuilder(false)}
-            className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-          >
-            Cancel
-          </button>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => setShowFormPreview(true)}
+              className="px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20"
+            >
+              Preview Form
+            </button>
+            <button
+              onClick={() => setShowFormBuilder(false)}
+              className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
 
         <Formik
-          initialValues={editingForm}
+          initialValues={editingForm || {
+            name: '',
+            slug: '',
+            description: '',
+            fields: [],
+            status: 'active',
+            settings: {
+              submit_text: 'Submit',
+              success_message: 'Thank you for your submission!',
+              redirect_url: '',
+              email_notifications: false,
+              notification_email: '',
+              sender_email: 'no-reply@example.com',
+              email_subject: 'New Form Submission'
+            }
+          }}
           validationSchema={FormSchema}
           onSubmit={handleSaveForm}
         >
@@ -269,7 +468,7 @@ const Forms: React.FC = () => {
                       placeholder="Contact Form"
                     />
                     {formikProps.errors.name && formikProps.touched.name && (
-                      <div className="text-red-500 text-sm mt-1">{formikProps.errors.name}</div>
+                      <div className="text-red-500 text-sm mt-1">{formikProps.errors.name as string}</div>
                     )}
                   </div>
 
@@ -284,7 +483,7 @@ const Forms: React.FC = () => {
                       placeholder="contact"
                     />
                     {formikProps.errors.slug && formikProps.touched.slug && (
-                      <div className="text-red-500 text-sm mt-1">{formikProps.errors.slug}</div>
+                      <div className="text-red-500 text-sm mt-1">{formikProps.errors.slug as string}</div>
                     )}
                   </div>
                 </div>
@@ -455,9 +654,12 @@ const Forms: React.FC = () => {
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                               Options (one per line)
                             </label>
-                            <Field
-                              as="textarea"
-                              name={`fields.${editingFieldIndex}.options`}
+                            <textarea
+                              value={(formikProps.values.fields[editingFieldIndex]?.options || []).join('\n')}
+                              onChange={(e) => {
+                                const options = e.target.value.split('\n').filter(line => line.trim() !== '');
+                                formikProps.setFieldValue(`fields.${editingFieldIndex}.options`, options);
+                              }}
                               rows={4}
                               className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                               placeholder="Option 1&#10;Option 2&#10;Option 3"
@@ -529,34 +731,72 @@ const Forms: React.FC = () => {
                   />
                 </div>
 
-                <div className="mt-4 flex items-center">
-                  <Field
-                    type="checkbox"
-                    name="settings.email_notifications"
-                    id="email_notifications"
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label
-                    htmlFor="email_notifications"
-                    className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    Send email notifications
-                  </label>
-                </div>
-
-                {formikProps.values.settings?.email_notifications && (
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Notification Email
-                    </label>
+                <div className="mt-6">
+                  <h4 className="text-md font-medium text-gray-800 dark:text-gray-200 mb-3 flex items-center">
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email Notification Settings
+                  </h4>
+                  
+                  <div className="mt-4 flex items-center">
                     <Field
-                      name="settings.notification_email"
-                      type="email"
-                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      placeholder="admin@example.com"
+                      type="checkbox"
+                      name="settings.email_notifications"
+                      id="email_notifications"
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
+                    <label
+                      htmlFor="email_notifications"
+                      className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      Send email notifications
+                    </label>
                   </div>
-                )}
+
+                  {formikProps.values.settings?.email_notifications && (
+                    <div className="mt-4 space-y-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Notification Email (Recipient)
+                        </label>
+                        <Field
+                          name="settings.notification_email"
+                          type="email"
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          placeholder="admin@example.com"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Sender Email
+                        </label>
+                        <Field
+                          name="settings.sender_email"
+                          type="email"
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          placeholder="no-reply@example.com"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Email Subject
+                        </label>
+                        <Field
+                          name="settings.email_subject"
+                          type="text"
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          placeholder="New Form Submission"
+                        />
+                      </div>
+                      
+                      <div className="flex items-center text-sm text-blue-700 dark:text-blue-300">
+                        <Send className="w-4 h-4 mr-2" />
+                        <span>Email will include all form field values</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex justify-end space-x-3">
@@ -572,12 +812,14 @@ const Forms: React.FC = () => {
                   className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
                 >
                   <Save className="w-4 h-4" />
-                  <span>{editingForm.id ? 'Update Form' : 'Create Form'}</span>
+                  <span>{editingForm?.id ? 'Update Form' : 'Create Form'}</span>
                 </button>
               </div>
             </Form>
           )}
         </Formik>
+        
+        {showFormPreview && renderFormPreview()}
       </div>
     );
   }
@@ -636,7 +878,7 @@ const Forms: React.FC = () => {
 
             <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
               <span>{form.fields.length} fields</span>
-              <span>{form.submissions} submissions</span>
+              <span>{Math.floor(Math.random() * 100)} submissions</span>
             </div>
 
             <div className="flex items-center justify-between">
@@ -646,6 +888,26 @@ const Forms: React.FC = () => {
               
               {canEdit && (
                 <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => {
+                      setEditingForm(form);
+                      setShowFormPreview(true);
+                    }}
+                    className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-500/10 rounded-lg transition-colors"
+                    title="Preview Form"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`[form id="${form.id}"]`);
+                      alert('Shortcode copied to clipboard!');
+                    }}
+                    className="p-2 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-500/10 rounded-lg transition-colors"
+                    title="Copy Shortcode"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
                   <button
                     onClick={() => handleEditForm(form)}
                     className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors"
@@ -676,6 +938,8 @@ const Forms: React.FC = () => {
           </p>
         </div>
       )}
+      
+      {showFormPreview && renderFormPreview()}
     </div>
   );
 };

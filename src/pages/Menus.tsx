@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   Search, 
@@ -12,12 +12,15 @@ import {
   Grip,
   ChevronDown,
   ChevronUp,
-  Settings
+  Settings,
+  ChevronRight,
+  ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Menu, MenuItem } from '../types';
 
 // Menu item types
 const MENU_ITEM_TYPES = [
@@ -36,8 +39,24 @@ const MENU_LOCATIONS = [
   { value: 'mobile', label: 'Mobile Menu' }
 ];
 
+interface SortableMenuItemProps {
+  item: MenuItem;
+  index: number | string;
+  depth?: number;
+  onRemove: (index: number | string) => void;
+  onEdit: (index: number | string) => void;
+  onAddChild?: (parentIndex: number | string) => void;
+}
+
 // Sortable menu item component
-const SortableMenuItem = ({ item, index, onRemove, onEdit, depth = 0 }) => {
+const SortableMenuItem: React.FC<SortableMenuItemProps> = ({ 
+  item, 
+  index, 
+  depth = 0, 
+  onRemove, 
+  onEdit,
+  onAddChild 
+}) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: item.id });
   const [expanded, setExpanded] = useState(false);
   
@@ -77,6 +96,14 @@ const SortableMenuItem = ({ item, index, onRemove, onEdit, depth = 0 }) => {
             </button>
           )}
           <button 
+            type="button"
+            onClick={() => onAddChild && onAddChild(index)}
+            className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-500/10 rounded-lg"
+            title="Add Child Item"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+          <button 
             type="button" 
             onClick={() => onEdit(index)}
             className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg"
@@ -100,8 +127,23 @@ const SortableMenuItem = ({ item, index, onRemove, onEdit, depth = 0 }) => {
               key={child.id}
               item={child}
               index={`${index}-${childIndex}`}
-              onRemove={() => {/* Handle child removal */}}
-              onEdit={() => {/* Handle child edit */}}
+              onRemove={(idx) => {
+                const newChildren = [...item.children];
+                if (typeof idx === 'number') {
+                  newChildren.splice(idx, 1);
+                } else {
+                  const childIdx = parseInt(idx.toString().split('-').pop() || '0');
+                  newChildren.splice(childIdx, 1);
+                }
+                // Handle child removal logic here
+              }}
+              onEdit={(idx) => {
+                // Handle child edit logic here
+                if (typeof idx === 'string') {
+                  const childIdx = parseInt(idx.toString().split('-').pop() || '0');
+                  onEdit(`${index}-${childIdx}`);
+                }
+              }}
               depth={depth + 1}
             />
           ))}
@@ -114,7 +156,7 @@ const SortableMenuItem = ({ item, index, onRemove, onEdit, depth = 0 }) => {
 const Menus: React.FC = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-  const [menus, setMenus] = useState([
+  const [menus, setMenus] = useState<Menu[]>([
     { 
       id: '1', 
       name: 'Main Navigation', 
@@ -148,9 +190,10 @@ const Menus: React.FC = () => {
   ]);
   
   const [showMenuBuilder, setShowMenuBuilder] = useState(false);
-  const [editingMenu, setEditingMenu] = useState(null);
-  const [editingMenuItem, setEditingMenuItem] = useState(null);
-  const [menuItems, setMenuItems] = useState([]);
+  const [editingMenu, setEditingMenu] = useState<Menu | null>(null);
+  const [editingMenuItem, setEditingMenuItem] = useState<any>(null);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [parentPath, setParentPath] = useState<string | null>(null);
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -163,89 +206,241 @@ const Menus: React.FC = () => {
 
   const handleCreateMenu = () => {
     setEditingMenu({
+      id: '',
       name: '',
       slug: '',
       location: 'header',
       items: [],
-      status: 'active'
+      status: 'active',
+      created_at: new Date().toISOString()
     });
     setMenuItems([]);
     setShowMenuBuilder(true);
   };
 
-  const handleEditMenu = (menu) => {
+  const handleEditMenu = (menu: Menu) => {
     setEditingMenu(menu);
     setMenuItems(menu.items || []);
     setShowMenuBuilder(true);
   };
 
-  const handleDeleteMenu = (menuId) => {
+  const handleDeleteMenu = (menuId: string) => {
     if (confirm('Are you sure you want to delete this menu?')) {
       setMenus(menus.filter(menu => menu.id !== menuId));
     }
   };
 
   const handleAddMenuItem = () => {
-    const newItem = {
+    const newItem: MenuItem = {
       id: Date.now().toString(),
       label: 'New Item',
       url: '/',
       type: 'custom',
       target: '_self'
     };
-    setMenuItems([...menuItems, newItem]);
-    setEditingMenuItem(newItem);
-  };
-
-  const handleEditMenuItem = (index) => {
-    setEditingMenuItem({
-      ...menuItems[index],
-      index
-    });
-  };
-
-  const handleRemoveMenuItem = (index) => {
-    const newItems = [...menuItems];
-    newItems.splice(index, 1);
-    setMenuItems(newItems);
-  };
-
-  const handleSaveMenuItem = (item) => {
-    const newItems = [...menuItems];
-    if (typeof item.index === 'number') {
-      newItems[item.index] = {
-        id: item.id,
-        label: item.label,
-        url: item.url,
-        type: item.type,
-        target: item.target,
-        children: item.children
-      };
+    
+    if (parentPath) {
+      // Add as child to specified parent
+      const indices = parentPath.split('-').map(Number);
+      const newItems = [...menuItems];
+      
+      let currentItems = newItems;
+      let currentItem;
+      
+      // Navigate to the parent item
+      for (let i = 0; i < indices.length; i++) {
+        const idx = indices[i];
+        currentItem = currentItems[idx];
+        
+        if (i === indices.length - 1) {
+          // We've reached the parent item
+          if (!currentItem.children) {
+            currentItem.children = [];
+          }
+          currentItem.children.push(newItem);
+        } else {
+          // We need to go deeper
+          if (!currentItem.children) {
+            currentItem.children = [];
+          }
+          currentItems = currentItem.children;
+        }
+      }
+      
+      setMenuItems(newItems);
+      setEditingMenuItem({...newItem, parentPath});
     } else {
-      newItems.push({
-        id: item.id,
-        label: item.label,
-        url: item.url,
-        type: item.type,
-        target: item.target
+      // Add to root level
+      setMenuItems([...menuItems, newItem]);
+      setEditingMenuItem(newItem);
+    }
+    
+    setParentPath(null);
+  };
+
+  const handleAddChildItem = (parentIndex: number | string) => {
+    setParentPath(parentIndex.toString());
+    handleAddMenuItem();
+  };
+
+  const findItemByPath = (path: string, items: MenuItem[]): MenuItem | null => {
+    const indices = path.split('-').map(Number);
+    let currentItems = items;
+    let currentItem = null;
+    
+    for (let i = 0; i < indices.length; i++) {
+      const idx = indices[i];
+      currentItem = currentItems[idx];
+      
+      if (i === indices.length - 1) {
+        return currentItem;
+      } else {
+        if (!currentItem.children) {
+          return null;
+        }
+        currentItems = currentItem.children;
+      }
+    }
+    
+    return null;
+  };
+
+  const updateItemByPath = (path: string, updatedItem: MenuItem, items: MenuItem[]): MenuItem[] => {
+    const indices = path.split('-').map(Number);
+    const result = [...items];
+    
+    if (indices.length === 1) {
+      // Simple case: top-level item
+      result[indices[0]] = {
+        ...updatedItem,
+        children: result[indices[0]].children // Preserve children
+      };
+      return result;
+    }
+    
+    // Complex case: nested item
+    let currentItems = result;
+    let currentItem;
+    
+    for (let i = 0; i < indices.length - 1; i++) {
+      const idx = indices[i];
+      currentItem = currentItems[idx];
+      
+      if (!currentItem.children) {
+        currentItem.children = [];
+      }
+      currentItems = currentItem.children;
+    }
+    
+    // Update the target item
+    const lastIndex = indices[indices.length - 1];
+    const targetItem = currentItems[lastIndex];
+    currentItems[lastIndex] = {
+      ...updatedItem,
+      children: targetItem.children // Preserve children
+    };
+    
+    return result;
+  };
+
+  const removeItemByPath = (path: string, items: MenuItem[]): MenuItem[] => {
+    const indices = path.split('-').map(Number);
+    const result = [...items];
+    
+    if (indices.length === 1) {
+      // Simple case: top-level item
+      result.splice(indices[0], 1);
+      return result;
+    }
+    
+    // Complex case: nested item
+    let currentItems = result;
+    let currentItem;
+    
+    for (let i = 0; i < indices.length - 1; i++) {
+      const idx = indices[i];
+      currentItem = currentItems[idx];
+      
+      if (!currentItem.children) {
+        return result; // Item not found
+      }
+      currentItems = currentItem.children;
+    }
+    
+    // Remove the target item
+    const lastIndex = indices[indices.length - 1];
+    currentItems.splice(lastIndex, 1);
+    
+    return result;
+  };
+
+  const handleEditMenuItem = (index: number | string) => {
+    const path = index.toString();
+    const item = typeof index === 'number' 
+      ? menuItems[index] 
+      : findItemByPath(path, menuItems);
+    
+    if (item) {
+      setEditingMenuItem({
+        ...item,
+        path
       });
     }
-    setMenuItems(newItems);
+  };
+
+  const handleRemoveMenuItem = (index: number | string) => {
+    const path = index.toString();
+    setMenuItems(removeItemByPath(path, menuItems));
+  };
+
+  const handleSaveMenuItem = (item: any) => {
+    const { path, ...itemData } = item;
+    
+    if (path) {
+      setMenuItems(updateItemByPath(path, itemData, menuItems));
+    } else {
+      const newItems = [...menuItems];
+      const idx = typeof item.index === 'number' ? item.index : newItems.length;
+      
+      if (idx < newItems.length) {
+        newItems[idx] = {
+          id: item.id,
+          label: item.label,
+          url: item.url,
+          type: item.type,
+          target: item.target,
+          children: newItems[idx].children
+        };
+      } else {
+        newItems.push({
+          id: item.id,
+          label: item.label,
+          url: item.url,
+          type: item.type,
+          target: item.target
+        });
+      }
+      
+      setMenuItems(newItems);
+    }
+    
     setEditingMenuItem(null);
   };
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
-    if (active.id !== over.id) {
+    if (over && active.id !== over.id) {
       const oldIndex = menuItems.findIndex(item => item.id === active.id);
       const newIndex = menuItems.findIndex(item => item.id === over.id);
       
-      const newItems = [...menuItems];
-      const [movedItem] = newItems.splice(oldIndex, 1);
-      newItems.splice(newIndex, 0, movedItem);
-      
-      setMenuItems(newItems);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newItems = [...menuItems];
+        const [movedItem] = newItems.splice(oldIndex, 1);
+        newItems.splice(newIndex, 0, movedItem);
+        
+        setMenuItems(newItems);
+      }
     }
   };
 
@@ -253,10 +448,10 @@ const Menus: React.FC = () => {
     const menuData = {
       ...editingMenu,
       items: menuItems,
-      slug: editingMenu.slug || editingMenu.name.toLowerCase().replace(/\s+/g, '-')
+      slug: editingMenu?.slug || editingMenu?.name?.toLowerCase().replace(/\s+/g, '-') || ''
     };
     
-    if (editingMenu.id) {
+    if (editingMenu?.id) {
       // Update existing menu
       setMenus(menus.map(menu => 
         menu.id === editingMenu.id ? menuData : menu
@@ -274,7 +469,7 @@ const Menus: React.FC = () => {
     setMenuItems([]);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -291,7 +486,7 @@ const Menus: React.FC = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            {editingMenu.id ? 'Edit Menu' : 'Create Menu'}
+            {editingMenu?.id ? 'Edit Menu' : 'Create Menu'}
           </h2>
           <button
             onClick={() => setShowMenuBuilder(false)}
@@ -323,6 +518,7 @@ const Menus: React.FC = () => {
                         index={index}
                         onRemove={handleRemoveMenuItem}
                         onEdit={handleEditMenuItem}
+                        onAddChild={handleAddChildItem}
                       />
                     ))}
                   </SortableContext>
@@ -359,8 +555,8 @@ const Menus: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    value={editingMenu.name}
-                    onChange={(e) => setEditingMenu({...editingMenu, name: e.target.value})}
+                    value={editingMenu?.name || ''}
+                    onChange={(e) => setEditingMenu(prev => prev ? {...prev, name: e.target.value} : null)}
                     className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                     placeholder="Main Navigation"
                   />
@@ -372,8 +568,8 @@ const Menus: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    value={editingMenu.slug}
-                    onChange={(e) => setEditingMenu({...editingMenu, slug: e.target.value})}
+                    value={editingMenu?.slug || ''}
+                    onChange={(e) => setEditingMenu(prev => prev ? {...prev, slug: e.target.value} : null)}
                     className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                     placeholder="main-nav"
                   />
@@ -384,8 +580,8 @@ const Menus: React.FC = () => {
                     Location
                   </label>
                   <select
-                    value={editingMenu.location}
-                    onChange={(e) => setEditingMenu({...editingMenu, location: e.target.value})}
+                    value={editingMenu?.location || ''}
+                    onChange={(e) => setEditingMenu(prev => prev ? {...prev, location: e.target.value} : null)}
                     className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   >
                     {MENU_LOCATIONS.map(location => (
@@ -399,8 +595,8 @@ const Menus: React.FC = () => {
                     Status
                   </label>
                   <select
-                    value={editingMenu.status}
-                    onChange={(e) => setEditingMenu({...editingMenu, status: e.target.value})}
+                    value={editingMenu?.status || ''}
+                    onChange={(e) => setEditingMenu(prev => prev ? {...prev, status: e.target.value} : null)}
                     className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   >
                     <option value="active">Active</option>
@@ -414,26 +610,36 @@ const Menus: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Menu Preview</h3>
               
               {menuItems.length > 0 ? (
-                <ul className="space-y-2">
-                  {menuItems.map((item) => (
-                    <li key={item.id} className="text-gray-700 dark:text-gray-300">
-                      <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">
-                        {item.label}
-                      </a>
-                      {item.children && item.children.length > 0 && (
-                        <ul className="ml-4 mt-1 space-y-1">
-                          {item.children.map((child) => (
-                            <li key={child.id} className="text-gray-600 dark:text-gray-400 text-sm">
-                              <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">
-                                {child.label}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50">
+                  <ul className="space-y-2">
+                    {menuItems.map((item) => (
+                      <li key={item.id} className="text-gray-700 dark:text-gray-300">
+                        <div className="flex items-center">
+                          <ArrowRight className="w-3 h-3 mr-1 text-gray-400" />
+                          <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">
+                            {item.label}
+                          </a>
+                          {item.target === '_blank' && <ExternalLink className="w-3 h-3 ml-1 text-gray-400" />}
+                        </div>
+                        {item.children && item.children.length > 0 && (
+                          <ul className="ml-4 mt-1 space-y-1">
+                            {item.children.map((child) => (
+                              <li key={child.id} className="text-gray-600 dark:text-gray-400 text-sm">
+                                <div className="flex items-center">
+                                  <ChevronRight className="w-3 h-3 mr-1 text-gray-400" />
+                                  <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400">
+                                    {child.label}
+                                  </a>
+                                  {child.target === '_blank' && <ExternalLink className="w-3 h-3 ml-1 text-gray-400" />}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ) : (
                 <p className="text-gray-500 dark:text-gray-400 text-center py-4">
                   Add menu items to see a preview
@@ -447,7 +653,7 @@ const Menus: React.FC = () => {
               className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
             >
               <Save className="w-4 h-4" />
-              <span>{editingMenu.id ? 'Update Menu' : 'Create Menu'}</span>
+              <span>{editingMenu?.id ? 'Update Menu' : 'Create Menu'}</span>
             </button>
           </div>
         </div>

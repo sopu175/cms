@@ -170,14 +170,14 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
           </div>
 
           {/* Tabs */}
-          <div className="flex space-x-6 mt-4">
+          <div className="flex flex-wrap space-x-4 mt-4 overflow-x-auto pb-2">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors ${
+                  className={`flex items-center space-x-2 pb-2 border-b-2 transition-colors whitespace-nowrap ${
                     activeTab === tab.id
                       ? 'border-blue-600 text-blue-600'
                       : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
@@ -192,7 +192,7 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
           <div className="max-w-6xl mx-auto">
             {activeTab === 'content' && (
               <div className="space-y-6">

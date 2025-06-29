@@ -313,7 +313,15 @@ export interface Form {
   slug: string;
   description?: string;
   fields: FormField[];
-  settings?: any;
+  settings?: {
+    submit_text?: string;
+    success_message?: string;
+    redirect_url?: string;
+    email_notifications?: boolean;
+    notification_email?: string;
+    sender_email?: string;
+    email_subject?: string;
+  };
   status: string;
   created_by?: string;
   created_at: string;
