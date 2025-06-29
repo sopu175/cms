@@ -10,10 +10,6 @@ import { fileURLToPath } from 'url';
 
 // Import routes
 import authRoutes from './routes/auth.js';
-import productRoutes from './routes/products.js';
-import orderRoutes from './routes/orders.js';
-import categoryRoutes from './routes/categories.js';
-import contentRoutes from './routes/content.js';
 import settingsRoutes from './routes/settings.js';
 
 // Load environment variables
@@ -77,52 +73,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/content', contentRoutes);
 app.use('/api/settings', settingsRoutes);
-
-// API documentation
-if (process.env.NODE_ENV !== 'production') {
-  import('swagger-ui-express').then(swaggerUi => {
-    import('swagger-jsdoc').then(swaggerJsdoc => {
-      const swaggerOptions = {
-        definition: {
-          openapi: '3.0.0',
-          info: {
-            title: 'DC CMS Backend API',
-            version: '1.0.0',
-            description: 'Express.js backend for headless CMS and ecommerce',
-            contact: {
-              name: 'API Support',
-              email: 'support@dccms.com'
-            }
-          },
-          servers: [
-            {
-              url: `http://localhost:${PORT}`,
-              description: 'Development server'
-            }
-          ],
-          components: {
-            securitySchemes: {
-              bearerAuth: {
-                type: 'http',
-                scheme: 'bearer',
-                bearerFormat: 'JWT'
-              }
-            }
-          }
-        },
-        apis: ['./src/routes/*.ts']
-      };
-
-      const specs = swaggerJsdoc.default(swaggerOptions);
-      app.use('/api-docs', swaggerUi.default.serve, swaggerUi.default.setup(specs));
-    });
-  });
-}
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -161,7 +112,6 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 DC CMS Backend API running on port ${PORT}`);
-  console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
   console.log(`🏥 Health Check: http://localhost:${PORT}/health`);
 });
 

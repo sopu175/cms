@@ -9,8 +9,8 @@ import {
   getSiteInfo,
   updateSiteInfo
 } from '../controllers/settingsController.js';
-import { authenticateToken, requireRole } from '../middleware/auth.js';
-import { handleValidationErrors, validateSchema, schemas } from '../middleware/validation.js';
+import { authenticateToken, requireRole, optionalAuth } from '../middleware/auth.js';
+import { handleValidationErrors } from '../middleware/validation.js';
 
 const router = Router();
 
@@ -229,6 +229,6 @@ router.get('/site/info', getSiteInfo);
  *       403:
  *         description: Insufficient permissions
  */
-router.put('/site/info', authenticateToken, requireRole(['admin']), validateSchema(schemas.siteInfo), updateSiteInfo);
+router.put('/site/info', authenticateToken, requireRole(['admin']), updateSiteInfo);
 
 export default router;

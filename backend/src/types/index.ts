@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 export interface User {
   id: string;
   username: string;
@@ -25,7 +27,7 @@ export interface ContentPage {
   description?: string;
   background_image?: string;
   background_color?: string;
-  sections: Section[];
+  sections: any[];
   status: 'draft' | 'published' | 'archived';
   author_id: string;
   created_at: string;

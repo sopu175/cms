@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { body } from 'express-validator';
 import { register, login, getProfile, updateProfile } from '../controllers/authController.js';
 import { authenticateToken } from '../middleware/auth.js';
-import { handleValidationErrors, validateSchema, schemas } from '../middleware/validation.js';
+import { handleValidationErrors } from '../middleware/validation.js';
 
 const router = Router();
 
@@ -43,7 +43,13 @@ const router = Router();
  *       400:
  *         description: Validation error or user already exists
  */
-router.post('/register', validateSchema(schemas.user), register);
+router.post('/register', [
+  body('username').isLength({ min: 3, max: 50 }).trim(),
+  body('email').isEmail().normalizeEmail(),
+  body('password').isLength({ min: 6 }),
+  body('role').optional().isIn(['admin', 'editor', 'author', 'customer']),
+  handleValidationErrors
+], register);
 
 /**
  * @swagger

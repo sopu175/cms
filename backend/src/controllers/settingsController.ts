@@ -19,7 +19,26 @@ export const getSettings = async (req: Request, res: Response): Promise<void> =>
 
     // Convert to key-value object
     const settingsObject = settings.reduce((acc: any, setting) => {
-      acc[setting.key] = setting.value;
+      try {
+        // Parse JSON values
+        if (setting.type === 'json') {
+          acc[setting.key] = JSON.parse(setting.value);
+        } else if (setting.type === 'boolean') {
+          acc[setting.key] = setting.value === 'true';
+        } else if (setting.type === 'number') {
+          acc[setting.key] = parseFloat(setting.value);
+        } else {
+          // Handle string values - remove quotes if they exist
+          if (typeof setting.value === 'string' && setting.value.startsWith('"') && setting.value.endsWith('"')) {
+            acc[setting.key] = setting.value.slice(1, -1);
+          } else {
+            acc[setting.key] = setting.value;
+          }
+        }
+      } catch (e) {
+        // If parsing fails, use the raw value
+        acc[setting.key] = setting.value;
+      }
       return acc;
     }, {});
 
@@ -70,11 +89,23 @@ export const updateSetting = async (req: Request, res: Response): Promise<void> 
     const { key } = req.params;
     const { value, type, description } = req.body;
 
+    // Format the value based on type
+    let formattedValue;
+    if (type === 'boolean') {
+      formattedValue = value.toString();
+    } else if (type === 'number') {
+      formattedValue = value.toString();
+    } else if (type === 'json') {
+      formattedValue = JSON.stringify(value);
+    } else {
+      formattedValue = JSON.stringify(value);
+    }
+
     const { data: setting, error } = await supabase
       .from('settings')
       .upsert([{
         key,
-        value,
+        value: formattedValue,
         type,
         description
       }])
@@ -106,12 +137,26 @@ export const updateMultipleSettings = async (req: Request, res: Response): Promi
   try {
     const { settings } = req.body;
 
-    const settingsToUpsert = Object.entries(settings).map(([key, config]: [string, any]) => ({
-      key,
-      value: config.value,
-      type: config.type || 'string',
-      description: config.description
-    }));
+    const settingsToUpsert = Object.entries(settings).map(([key, config]: [string, any]) => {
+      // Format the value based on type
+      let formattedValue;
+      if (config.type === 'boolean') {
+        formattedValue = config.value.toString();
+      } else if (config.type === 'number') {
+        formattedValue = config.value.toString();
+      } else if (config.type === 'json') {
+        formattedValue = JSON.stringify(config.value);
+      } else {
+        formattedValue = JSON.stringify(config.value);
+      }
+
+      return {
+        key,
+        value: formattedValue,
+        type: config.type || 'string',
+        description: config.description
+      };
+    });
 
     const { data: updatedSettings, error } = await supabase
       .from('settings')
