@@ -20,11 +20,11 @@ import {
   X,
   Plus,
   Trash2,
-  DollarSign,
-  CreditCard as CreditCardIcon,
-  Wallet,
-  ShoppingBag,
-  Lock
+  BarChart,
+  LineChart,
+  PieChart,
+  Search,
+  Zap
 } from 'lucide-react';
 import { useSettings } from '../hooks/useSettings';
 import { useSiteInfo } from '../hooks/useSiteInfo';
@@ -87,30 +87,43 @@ const Settings: React.FC = () => {
   });
 
   const [paymentSettings, setPaymentSettings] = useState({
-    test_mode: settings?.test_mode || true,
     payment_methods: settings?.payment_methods || {
-      credit_card: {
+      stripe: {
         enabled: true,
-        title: 'Credit Card',
-        description: 'Pay with your credit card via Stripe',
-        stripe_publishable_key: '',
-        stripe_secret_key: '',
-        stripe_webhook_secret: ''
+        test_mode: true,
+        public_key: settings?.stripe_public_key || '',
+        secret_key: settings?.stripe_secret_key || '',
+        webhook_secret: settings?.stripe_webhook_secret || '',
+        payment_description: 'Payment for order'
       },
       paypal: {
-        enabled: true,
-        title: 'PayPal',
-        description: 'Pay with your PayPal account',
-        client_id: '',
-        client_secret: ''
+        enabled: false,
+        test_mode: true,
+        client_id: settings?.paypal_client_id || '',
+        client_secret: settings?.paypal_client_secret || '',
+        payment_description: 'Payment for order'
       },
       bank_transfer: {
-        enabled: true,
-        title: 'Bank Transfer',
-        description: 'Make your payment directly into our bank account',
-        instructions: 'Please use your Order ID as the payment reference'
+        enabled: false,
+        account_details: settings?.bank_account_details || '',
+        payment_instructions: 'Please transfer the total amount to our bank account.'
       }
     }
+  });
+
+  const [analyticsSettings, setAnalyticsSettings] = useState({
+    google_analytics_id: settings?.google_analytics_id || '',
+    google_analytics_v4: settings?.google_analytics_v4 || true,
+    enable_enhanced_ecommerce: settings?.enable_enhanced_ecommerce || false,
+    facebook_pixel_id: settings?.facebook_pixel_id || '',
+    enable_facebook_events: settings?.enable_facebook_events || false,
+    hotjar_id: settings?.hotjar_id || '',
+    microsoft_clarity_id: settings?.microsoft_clarity_id || '',
+    enable_page_view_tracking: settings?.enable_page_view_tracking || true,
+    enable_event_tracking: settings?.enable_event_tracking || true,
+    enable_user_tracking: settings?.enable_user_tracking || false,
+    cookie_consent_required: settings?.cookie_consent_required || true,
+    anonymize_ip: settings?.anonymize_ip || true
   });
 
   React.useEffect(() => {
@@ -137,18 +150,6 @@ const Settings: React.FC = () => {
       });
     }
   }, [siteInfo]);
-
-  React.useEffect(() => {
-    if (settings) {
-      // Load payment settings if they exist
-      if (settings.payment_methods) {
-        setPaymentSettings({
-          test_mode: settings.test_mode || true,
-          payment_methods: settings.payment_methods
-        });
-      }
-    }
-  }, [settings]);
 
   const handleSiteInfoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,11 +183,21 @@ const Settings: React.FC = () => {
 
   const handlePaymentSettingsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await updateSettings(paymentSettings);
+    const result = await updateSettings({ payment_methods: paymentSettings.payment_methods });
     if (result.success) {
       alert('Payment settings updated successfully');
     } else {
       alert(result.error || 'Failed to update payment settings');
+    }
+  };
+
+  const handleAnalyticsSettingsSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = await updateSettings(analyticsSettings);
+    if (result.success) {
+      alert('Analytics settings updated successfully');
+    } else {
+      alert(result.error || 'Failed to update analytics settings');
     }
   };
 
@@ -213,27 +224,15 @@ const Settings: React.FC = () => {
     }));
   };
 
-  const updatePaymentMethod = (method: string, field: string, value: any) => {
-    setPaymentSettings(prev => ({
-      ...prev,
-      payment_methods: {
-        ...prev.payment_methods,
-        [method]: {
-          ...prev.payment_methods[method],
-          [field]: value
-        }
-      }
-    }));
-  };
-
   const tabs = [
     { id: 'general', label: 'General', icon: SettingsIcon },
     { id: 'site', label: 'Site Info', icon: Globe },
     { id: 'branding', label: 'Branding', icon: Palette },
     { id: 'social', label: 'Social Media', icon: Share2 },
-    { id: 'ecommerce', label: 'Ecommerce', icon: ShoppingBag },
-    { id: 'payment', label: 'Payment', icon: CreditCardIcon },
-    { id: 'seo', label: 'SEO & Analytics', icon: Eye },
+    { id: 'ecommerce', label: 'Ecommerce', icon: CreditCard },
+    { id: 'payment', label: 'Payment', icon: CreditCard },
+    { id: 'analytics', label: 'Analytics', icon: BarChart },
+    { id: 'seo', label: 'SEO', icon: Search },
     { id: 'advanced', label: 'Advanced', icon: Code }
   ];
 
@@ -924,125 +923,177 @@ const Settings: React.FC = () => {
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Payment Gateway Settings</h3>
             <form onSubmit={handlePaymentSettingsSubmit} className="space-y-6">
-              <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
-                <div>
-                  <label className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                    Test Mode
-                  </label>
-                  <p className="text-xs text-blue-600 dark:text-blue-400">
-                    Use test credentials for payment gateways
-                  </p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={paymentSettings.test_mode}
-                    onChange={(e) => setPaymentSettings({ ...paymentSettings, test_mode: e.target.checked })}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-
-              {/* Credit Card (Stripe) */}
+              {/* Stripe Settings */}
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <CreditCardIcon className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">Credit Card (Stripe)</h4>
+                    <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="currentColor">
+                        <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z" />
+                      </svg>
+                    </div>
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">Stripe</h4>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={paymentSettings.payment_methods.credit_card.enabled}
-                      onChange={(e) => updatePaymentMethod('credit_card', 'enabled', e.target.checked)}
+                      checked={paymentSettings.payment_methods.stripe.enabled}
+                      onChange={(e) => setPaymentSettings({
+                        ...paymentSettings,
+                        payment_methods: {
+                          ...paymentSettings.payment_methods,
+                          stripe: {
+                            ...paymentSettings.payment_methods.stripe,
+                            enabled: e.target.checked
+                          }
+                        }
+                      })}
                       className="sr-only peer"
                     />
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                   </label>
                 </div>
 
-                {paymentSettings.payment_methods.credit_card.enabled && (
+                {paymentSettings.payment_methods.stripe.enabled && (
                   <div className="space-y-4 mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          value={paymentSettings.payment_methods.credit_card.title}
-                          onChange={(e) => updatePaymentMethod('credit_card', 'title', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Description
-                        </label>
-                        <input
-                          type="text"
-                          value={paymentSettings.payment_methods.credit_card.description}
-                          onChange={(e) => updatePaymentMethod('credit_card', 'description', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        />
-                      </div>
+                    <div className="flex items-center mb-4">
+                      <input
+                        type="checkbox"
+                        id="stripe_test_mode"
+                        checked={paymentSettings.payment_methods.stripe.test_mode}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            stripe: {
+                              ...paymentSettings.payment_methods.stripe,
+                              test_mode: e.target.checked
+                            }
+                          }
+                        })}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      />
+                      <label htmlFor="stripe_test_mode" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Test Mode
+                      </label>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Stripe Publishable Key
+                        Public Key
                       </label>
                       <input
                         type="text"
-                        value={paymentSettings.payment_methods.credit_card.stripe_publishable_key}
-                        onChange={(e) => updatePaymentMethod('credit_card', 'stripe_publishable_key', e.target.value)}
+                        value={paymentSettings.payment_methods.stripe.public_key}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            stripe: {
+                              ...paymentSettings.payment_methods.stripe,
+                              public_key: e.target.value
+                            }
+                          }
+                        })}
                         className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        placeholder={paymentSettings.test_mode ? 'pk_test_...' : 'pk_live_...'}
+                        placeholder="pk_test_..."
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Stripe Secret Key
+                        Secret Key
                       </label>
                       <input
                         type="password"
-                        value={paymentSettings.payment_methods.credit_card.stripe_secret_key}
-                        onChange={(e) => updatePaymentMethod('credit_card', 'stripe_secret_key', e.target.value)}
+                        value={paymentSettings.payment_methods.stripe.secret_key}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            stripe: {
+                              ...paymentSettings.payment_methods.stripe,
+                              secret_key: e.target.value
+                            }
+                          }
+                        })}
                         className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        placeholder={paymentSettings.test_mode ? 'sk_test_...' : 'sk_live_...'}
+                        placeholder="sk_test_..."
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Stripe Webhook Secret
+                        Webhook Secret
                       </label>
                       <input
                         type="password"
-                        value={paymentSettings.payment_methods.credit_card.stripe_webhook_secret}
-                        onChange={(e) => updatePaymentMethod('credit_card', 'stripe_webhook_secret', e.target.value)}
+                        value={paymentSettings.payment_methods.stripe.webhook_secret}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            stripe: {
+                              ...paymentSettings.payment_methods.stripe,
+                              webhook_secret: e.target.value
+                            }
+                          }
+                        })}
                         className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         placeholder="whsec_..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Payment Description
+                      </label>
+                      <input
+                        type="text"
+                        value={paymentSettings.payment_methods.stripe.payment_description}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            stripe: {
+                              ...paymentSettings.payment_methods.stripe,
+                              payment_description: e.target.value
+                            }
+                          }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Payment for order #{{order_id}}"
                       />
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* PayPal */}
+              {/* PayPal Settings */}
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <Wallet className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="currentColor">
+                        <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.59 3.025-2.566 4.643-5.783 4.643h-2.189c-.11 0-.203.077-.219.185l-.305 1.938h3.777c.21 0 .38.168.367.377l-.048.692a.383.383 0 0 1-.378.338h-3.73l-.44 2.786c-.024.167-.175.29-.345.29h-2.276a.208.208 0 0 1-.205-.243l.47-2.98a.384.384 0 0 1 .378-.337h3.731c.209 0 .38-.168.367-.377l.048-.692a.383.383 0 0 0-.367-.377h-3.677c-.209 0-.38.168-.367.377l.172 2.461c.024.167-.113.338-.283.338h-2.338a.208.208 0 0 1-.205-.243l.352-2.224a.383.383 0 0 0-.378-.338h-.295a.208.208 0 0 1-.205-.243l.097-.616a.384.384 0 0 1 .378-.338h.341c.21 0 .38-.168.367-.377l.447-2.835c.106-.673.691-1.17 1.371-1.17h2.189c1.85 0 3.069-.593 3.782-1.85-.811-.488-1.94-.74-3.361-.74H6.54l-1.155 7.322a.383.383 0 0 0 .378.445h4.545c.21 0 .38-.168.367-.377l.447-2.835c.106-.673.691-1.17 1.371-1.17h2.189c3.659 0 5.93-1.817 6.699-5.32.34-1.557.152-2.811-.659-3.699z" />
+                      </svg>
+                    </div>
                     <h4 className="text-lg font-medium text-gray-900 dark:text-white">PayPal</h4>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
                       checked={paymentSettings.payment_methods.paypal.enabled}
-                      onChange={(e) => updatePaymentMethod('paypal', 'enabled', e.target.checked)}
+                      onChange={(e) => setPaymentSettings({
+                        ...paymentSettings,
+                        payment_methods: {
+                          ...paymentSettings.payment_methods,
+                          paypal: {
+                            ...paymentSettings.payment_methods.paypal,
+                            enabled: e.target.checked
+                          }
+                        }
+                      })}
                       className="sr-only peer"
                     />
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
@@ -1051,29 +1102,26 @@ const Settings: React.FC = () => {
 
                 {paymentSettings.payment_methods.paypal.enabled && (
                   <div className="space-y-4 mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          value={paymentSettings.payment_methods.paypal.title}
-                          onChange={(e) => updatePaymentMethod('paypal', 'title', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Description
-                        </label>
-                        <input
-                          type="text"
-                          value={paymentSettings.payment_methods.paypal.description}
-                          onChange={(e) => updatePaymentMethod('paypal', 'description', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        />
-                      </div>
+                    <div className="flex items-center mb-4">
+                      <input
+                        type="checkbox"
+                        id="paypal_test_mode"
+                        checked={paymentSettings.payment_methods.paypal.test_mode}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            paypal: {
+                              ...paymentSettings.payment_methods.paypal,
+                              test_mode: e.target.checked
+                            }
+                          }
+                        })}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      />
+                      <label htmlFor="paypal_test_mode" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Sandbox Mode
+                      </label>
                     </div>
 
                     <div>
@@ -1083,8 +1131,18 @@ const Settings: React.FC = () => {
                       <input
                         type="text"
                         value={paymentSettings.payment_methods.paypal.client_id}
-                        onChange={(e) => updatePaymentMethod('paypal', 'client_id', e.target.value)}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            paypal: {
+                              ...paymentSettings.payment_methods.paypal,
+                              client_id: e.target.value
+                            }
+                          }
+                        })}
                         className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Client ID"
                       />
                     </div>
 
@@ -1095,26 +1153,72 @@ const Settings: React.FC = () => {
                       <input
                         type="password"
                         value={paymentSettings.payment_methods.paypal.client_secret}
-                        onChange={(e) => updatePaymentMethod('paypal', 'client_secret', e.target.value)}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            paypal: {
+                              ...paymentSettings.payment_methods.paypal,
+                              client_secret: e.target.value
+                            }
+                          }
+                        })}
                         className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Client Secret"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Payment Description
+                      </label>
+                      <input
+                        type="text"
+                        value={paymentSettings.payment_methods.paypal.payment_description}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            paypal: {
+                              ...paymentSettings.payment_methods.paypal,
+                              payment_description: e.target.value
+                            }
+                          }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Payment for order #{{order_id}}"
                       />
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Bank Transfer */}
+              {/* Bank Transfer Settings */}
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <DollarSign className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                    <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                        <line x1="2" y1="10" x2="22" y2="10" />
+                      </svg>
+                    </div>
                     <h4 className="text-lg font-medium text-gray-900 dark:text-white">Bank Transfer</h4>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"
                       checked={paymentSettings.payment_methods.bank_transfer.enabled}
-                      onChange={(e) => updatePaymentMethod('bank_transfer', 'enabled', e.target.checked)}
+                      onChange={(e) => setPaymentSettings({
+                        ...paymentSettings,
+                        payment_methods: {
+                          ...paymentSettings.payment_methods,
+                          bank_transfer: {
+                            ...paymentSettings.payment_methods.bank_transfer,
+                            enabled: e.target.checked
+                          }
+                        }
+                      })}
                       className="sr-only peer"
                     />
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
@@ -1123,41 +1227,50 @@ const Settings: React.FC = () => {
 
                 {paymentSettings.payment_methods.bank_transfer.enabled && (
                   <div className="space-y-4 mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          value={paymentSettings.payment_methods.bank_transfer.title}
-                          onChange={(e) => updatePaymentMethod('bank_transfer', 'title', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Description
-                        </label>
-                        <input
-                          type="text"
-                          value={paymentSettings.payment_methods.bank_transfer.description}
-                          onChange={(e) => updatePaymentMethod('bank_transfer', 'description', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        />
-                      </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Account Details
+                      </label>
+                      <textarea
+                        value={paymentSettings.payment_methods.bank_transfer.account_details}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            bank_transfer: {
+                              ...paymentSettings.payment_methods.bank_transfer,
+                              account_details: e.target.value
+                            }
+                          }
+                        })}
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Bank: Example Bank
+Account Name: Your Company Name
+Account Number: 1234567890
+Sort Code: 12-34-56"
+                      />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Instructions
+                        Payment Instructions
                       </label>
                       <textarea
-                        value={paymentSettings.payment_methods.bank_transfer.instructions}
-                        onChange={(e) => updatePaymentMethod('bank_transfer', 'instructions', e.target.value)}
-                        rows={4}
+                        value={paymentSettings.payment_methods.bank_transfer.payment_instructions}
+                        onChange={(e) => setPaymentSettings({
+                          ...paymentSettings,
+                          payment_methods: {
+                            ...paymentSettings.payment_methods,
+                            bank_transfer: {
+                              ...paymentSettings.payment_methods.bank_transfer,
+                              payment_instructions: e.target.value
+                            }
+                          }
+                        })}
+                        rows={3}
                         className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        placeholder="Bank: Example Bank&#10;Account Name: Your Company Name&#10;Account Number: 1234567890&#10;Sort Code: 12-34-56"
+                        placeholder="Please transfer the total amount to our bank account. Your order will be processed once the payment is received."
                       />
                     </div>
                   </div>
@@ -1175,47 +1288,218 @@ const Settings: React.FC = () => {
           </div>
         )}
 
-        {activeTab === 'seo' && (
+        {activeTab === 'analytics' && (
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">SEO & Analytics</h3>
-            <form onSubmit={handleSiteInfoSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Google Analytics Tracking ID
-                </label>
-                <input
-                  type="text"
-                  value={siteData.google_analytics}
-                  onChange={(e) => setSiteData({ ...siteData, google_analytics: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="G-XXXXXXXXXX or UA-XXXXXXXXX-X"
-                />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Analytics Settings</h3>
+            <form onSubmit={handleAnalyticsSettingsSubmit} className="space-y-6">
+              {/* Google Analytics */}
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                    <BarChart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <h4 className="text-lg font-medium text-gray-900 dark:text-white">Google Analytics</h4>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Google Analytics ID
+                    </label>
+                    <input
+                      type="text"
+                      value={analyticsSettings.google_analytics_id}
+                      onChange={(e) => setAnalyticsSettings({
+                        ...analyticsSettings,
+                        google_analytics_id: e.target.value
+                      })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      placeholder="G-XXXXXXXXXX or UA-XXXXXXXXX-X"
+                    />
+                  </div>
+
+                  <div className="flex items-center mb-4">
+                    <input
+                      type="checkbox"
+                      id="ga_v4"
+                      checked={analyticsSettings.google_analytics_v4}
+                      onChange={(e) => setAnalyticsSettings({
+                        ...analyticsSettings,
+                        google_analytics_v4: e.target.checked
+                      })}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="ga_v4" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                      Google Analytics 4 (GA4)
+                    </label>
+                  </div>
+
+                  <div className="flex items-center mb-4">
+                    <input
+                      type="checkbox"
+                      id="enhanced_ecommerce"
+                      checked={analyticsSettings.enable_enhanced_ecommerce}
+                      onChange={(e) => setAnalyticsSettings({
+                        ...analyticsSettings,
+                        enable_enhanced_ecommerce: e.target.checked
+                      })}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="enhanced_ecommerce" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                      Enable Enhanced Ecommerce
+                    </label>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Facebook Pixel ID
-                </label>
-                <input
-                  type="text"
-                  value={siteData.facebook_pixel}
-                  onChange={(e) => setSiteData({ ...siteData, facebook_pixel: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="Facebook Pixel ID"
-                />
+              {/* Facebook Pixel */}
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="currentColor">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-medium text-gray-900 dark:text-white">Facebook Pixel</h4>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Facebook Pixel ID
+                    </label>
+                    <input
+                      type="text"
+                      value={analyticsSettings.facebook_pixel_id}
+                      onChange={(e) => setAnalyticsSettings({
+                        ...analyticsSettings,
+                        facebook_pixel_id: e.target.value
+                      })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      placeholder="XXXXXXXXXXXXXXXXXX"
+                    />
+                  </div>
+
+                  <div className="flex items-center mb-4">
+                    <input
+                      type="checkbox"
+                      id="fb_events"
+                      checked={analyticsSettings.enable_facebook_events}
+                      onChange={(e) => setAnalyticsSettings({
+                        ...analyticsSettings,
+                        enable_facebook_events: e.target.checked
+                      })}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="fb_events" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                      Enable Facebook Events
+                    </label>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Google Tag Manager ID
-                </label>
-                <input
-                  type="text"
-                  value={siteData.google_tag_manager}
-                  onChange={(e) => setSiteData({ ...siteData, google_tag_manager: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  placeholder="GTM-XXXXXXX"
-                />
+              {/* Other Analytics Tools */}
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                    <LineChart className="w-6 h-6 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h4 className="text-lg font-medium text-gray-900 dark:text-white">Other Analytics Tools</h4>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Hotjar ID
+                    </label>
+                    <input
+                      type="text"
+                      value={analyticsSettings.hotjar_id}
+                      onChange={(e) => setAnalyticsSettings({
+                        ...analyticsSettings,
+                        hotjar_id: e.target.value
+                      })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      placeholder="XXXXXXX"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Microsoft Clarity ID
+                    </label>
+                    <input
+                      type="text"
+                      value={analyticsSettings.microsoft_clarity_id}
+                      onChange={(e) => setAnalyticsSettings({
+                        ...analyticsSettings,
+                        microsoft_clarity_id: e.target.value
+                      })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      placeholder="XXXXXXX"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Privacy Settings */}
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-red-600 dark:text-red-400" />
+                  </div>
+                  <h4 className="text-lg font-medium text-gray-900 dark:text-white">Privacy Settings</h4>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center mb-4">
+                    <input
+                      type="checkbox"
+                      id="cookie_consent"
+                      checked={analyticsSettings.cookie_consent_required}
+                      onChange={(e) => setAnalyticsSettings({
+                        ...analyticsSettings,
+                        cookie_consent_required: e.target.checked
+                      })}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="cookie_consent" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                      Require Cookie Consent
+                    </label>
+                  </div>
+
+                  <div className="flex items-center mb-4">
+                    <input
+                      type="checkbox"
+                      id="anonymize_ip"
+                      checked={analyticsSettings.anonymize_ip}
+                      onChange={(e) => setAnalyticsSettings({
+                        ...analyticsSettings,
+                        anonymize_ip: e.target.checked
+                      })}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="anonymize_ip" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                      Anonymize IP Addresses
+                    </label>
+                  </div>
+
+                  <div className="flex items-center mb-4">
+                    <input
+                      type="checkbox"
+                      id="user_tracking"
+                      checked={analyticsSettings.enable_user_tracking}
+                      onChange={(e) => setAnalyticsSettings({
+                        ...analyticsSettings,
+                        enable_user_tracking: e.target.checked
+                      })}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="user_tracking" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                      Enable User Tracking
+                    </label>
+                  </div>
+                </div>
               </div>
 
               <button
@@ -1223,7 +1507,138 @@ const Settings: React.FC = () => {
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
               >
                 <Save className="w-4 h-4" />
-                <span>Save SEO & Analytics</span>
+                <span>Save Analytics Settings</span>
+              </button>
+            </form>
+          </div>
+        )}
+
+        {activeTab === 'seo' && (
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">SEO Settings</h3>
+            <form onSubmit={handleSiteInfoSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Default Meta Title
+                </label>
+                <input
+                  type="text"
+                  value={siteData.seo_title || siteData.site_name}
+                  onChange={(e) => setSiteData({ ...siteData, seo_title: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="Your Site Name - Tagline"
+                />
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Used when no specific meta title is provided for a page
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Default Meta Description
+                </label>
+                <textarea
+                  value={siteData.seo_description || siteData.description}
+                  onChange={(e) => setSiteData({ ...siteData, seo_description: e.target.value })}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="Brief description of your site for search engines"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Default Keywords (comma separated)
+                </label>
+                <input
+                  type="text"
+                  value={siteData.seo_keywords || ''}
+                  onChange={(e) => setSiteData({ ...siteData, seo_keywords: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="keyword1, keyword2, keyword3"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Default Open Graph Image
+                </label>
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="url"
+                    value={siteData.og_image || ''}
+                    onChange={(e) => setSiteData({ ...siteData, og_image: e.target.value })}
+                    className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    placeholder="https://example.com/og-image.jpg"
+                  />
+                  <button
+                    type="button"
+                    className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    <Upload className="w-4 h-4" />
+                  </button>
+                </div>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  Used for social media sharing when no specific image is provided
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Robots.txt Content
+                </label>
+                <textarea
+                  value={siteData.robots_txt || `User-agent: *\nAllow: /`}
+                  onChange={(e) => setSiteData({ ...siteData, robots_txt: e.target.value })}
+                  rows={5}
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Structured Data (JSON-LD)
+                </label>
+                <textarea
+                  value={siteData.structured_data || `{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "${siteData.site_name}",
+  "url": "https://example.com",
+  "logo": "${siteData.logo_light}"
+}`}
+                  onChange={(e) => setSiteData({ ...siteData, structured_data: e.target.value })}
+                  rows={8}
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-sm"
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Enable XML Sitemap
+                  </label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Automatically generate and update XML sitemap
+                  </p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={siteData.enable_sitemap || true}
+                    onChange={(e) => setSiteData({ ...siteData, enable_sitemap: e.target.checked })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                <Save className="w-4 h-4" />
+                <span>Save SEO Settings</span>
               </button>
             </form>
           </div>

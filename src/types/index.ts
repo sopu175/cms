@@ -30,6 +30,7 @@ export interface Category {
   featured_image?: string;
   sections?: PostSection[];
   post_count?: number;
+  category_type?: 'post' | 'product'; // Added category type
   created_at: string;
 }
 
@@ -154,6 +155,9 @@ export interface Product {
   variations_count?: number;
   average_rating?: number;
   reviews_count?: number;
+  content_blocks?: ContentBlock[]; // Added content blocks
+  sections?: PostSection[]; // Added sections
+  specifications?: {name: string, value: string}[]; // Added specifications
   created_at: string;
   updated_at: string;
 }
@@ -282,6 +286,13 @@ export interface SiteInfo {
   custom_footer_code?: string;
   maintenance_mode?: boolean;
   maintenance_message?: string;
+  seo_title?: string;
+  seo_description?: string;
+  seo_keywords?: string;
+  og_image?: string;
+  robots_txt?: string;
+  structured_data?: string;
+  enable_sitemap?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -347,4 +358,37 @@ export interface FormSubmission {
   user_agent?: string;
   submitted_by?: string;
   created_at: string;
+}
+
+export interface AnalyticsData {
+  pageViews: number;
+  uniqueVisitors: number;
+  bounceRate: number;
+  avgSessionDuration: string;
+  topPages: {
+    path: string;
+    views: number;
+    title: string;
+  }[];
+  trafficSources: {
+    source: string;
+    percentage: number;
+  }[];
+  weeklyTrend: {
+    day: string;
+    views: number;
+  }[];
+}
+
+export interface SEOData {
+  averagePosition: number;
+  topKeywords: {
+    keyword: string;
+    position: number;
+    volume: number;
+  }[];
+  indexedPages: number;
+  crawlErrors: number;
+  mobileUsability: number;
+  pagespeedScore: number;
 }

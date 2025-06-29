@@ -1,9 +1,9 @@
 import { Edit, FolderOpen, Plus, Save, Search, Trash2, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Category } from "../types";
-import { MediaUploadButton } from "../components/MediaUploadButton";
-import SectionEditor from "../components/PostSectionEditor"; // Reuse your Post Section tab component
+import { MediaUploadButton } from "./MediaUploadButton";
+import SectionEditor from "./PostSectionEditor";
 import { useAuth } from "../contexts/AuthContext";
 import { useCategories } from "../hooks/useCategories";
 
@@ -20,6 +20,7 @@ const Categories: React.FC = () => {
       parent_id: "",
       featured_image: "",
       sections: [],
+      category_type: "post" // New field to distinguish between post and product categories
    });
 
    const canEdit = ["admin", "editor"].includes(user?.role || "");
@@ -45,7 +46,15 @@ const Categories: React.FC = () => {
       if (result.success) {
          setShowModal(false);
          setEditingCategory(null);
-         setFormData({ name: "", description: "", color: "#3B82F6", parent_id: "", featured_image: "", sections: [] });
+         setFormData({ 
+            name: "", 
+            description: "", 
+            color: "#3B82F6", 
+            parent_id: "", 
+            featured_image: "", 
+            sections: [],
+            category_type: "post"
+         });
       } else {
          alert(result.error || "Failed to save category");
       }
@@ -60,6 +69,7 @@ const Categories: React.FC = () => {
          parent_id: category.parent_id || "",
          featured_image: category.featured_image || "",
          sections: category.sections || [],
+         category_type: category.category_type || "post"
       });
       setShowModal(true);
    };
@@ -73,6 +83,15 @@ const Categories: React.FC = () => {
       }
    };
 
+   // Filter categories by type for parent selection
+   const getParentCategoriesOptions = () => {
+      return categories.filter(cat => 
+         cat.category_type === formData.category_type && 
+         (!editingCategory || cat.id !== editingCategory.id)
+      );
+   };
+
+   // Filter categories for display
    const filteredCategories = categories.filter(
       (category) =>
          category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -135,7 +154,14 @@ const Categories: React.FC = () => {
                         </div>
                         <div>
                            <h3 className="font-semibold text-gray-900 dark:text-white">{category.name}</h3>
-                           <p className="text-sm text-gray-500 dark:text-gray-400">{category.post_count || 0} posts</p>
+                           <div className="flex items-center space-x-2">
+                              <p className="text-sm text-gray-500 dark:text-gray-400">{category.post_count || 0} items</p>
+                              {category.category_type && (
+                                 <span className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                                    {category.category_type === 'post' ? 'Post' : 'Product'}
+                                 </span>
+                              )}
+                           </div>
                         </div>
                      </div>
                      {canEdit && (
@@ -157,6 +183,11 @@ const Categories: React.FC = () => {
                   </div>
                   {category.description && (
                      <p className="text-gray-600 dark:text-gray-400 text-sm">{category.description}</p>
+                  )}
+                  {category.parent_id && (
+                     <div className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                        Parent: {categories.find(c => c.id === category.parent_id)?.name || 'Unknown'}
+                     </div>
                   )}
                </div>
             ))}
@@ -224,6 +255,20 @@ const Categories: React.FC = () => {
 
                         <div>
                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                              Category Type
+                           </label>
+                           <select
+                              value={formData.category_type}
+                              onChange={(e) => setFormData({ ...formData, category_type: e.target.value, parent_id: '' })}
+                              className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                           >
+                              <option value="post">Post Category</option>
+                              <option value="product">Product Category</option>
+                           </select>
+                        </div>
+
+                        <div>
+                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                               Color
                            </label>
                            <input
@@ -245,13 +290,11 @@ const Categories: React.FC = () => {
                               className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                            >
                               <option value="">None</option>
-                              {categories
-                                 .filter((cat) => !editingCategory || cat.id !== editingCategory.id)
-                                 .map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                       {cat.name}
-                                    </option>
-                                 ))}
+                              {getParentCategoriesOptions().map((cat) => (
+                                 <option key={cat.id} value={cat.id}>
+                                    {cat.name}
+                                 </option>
+                              ))}
                            </select>
                         </div>
 
@@ -268,6 +311,7 @@ const Categories: React.FC = () => {
                               <img
                                  src={formData.featured_image}
                                  alt="Featured"
+                                 className="mt-2 max-w-xs rounded"
                                  style={{ maxWidth: 120, marginTop: 8 }}
                               />
                            )}
