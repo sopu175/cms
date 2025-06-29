@@ -1,234 +1,109 @@
 import { Router } from 'express';
-import { param } from 'express-validator';
-import {
-  getSettings,
-  getSetting,
-  updateSetting,
-  updateMultipleSettings,
-  deleteSetting,
-  getSiteInfo,
-  updateSiteInfo
-} from '../controllers/settingsController.js';
-import { authenticateToken, requireRole, optionalAuth } from '../middleware/auth.js';
-import { handleValidationErrors } from '../middleware/validation.js';
+import { createClient } from '@supabase/supabase-js';
 
 const router = Router();
 
-/**
- * @swagger
- * /api/settings:
- *   get:
- *     summary: Get all settings
- *     tags: [Settings]
- *     responses:
- *       200:
- *         description: Settings retrieved successfully
- */
-router.get('/', getSettings);
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-/**
- * @swagger
- * /api/settings/{key}:
- *   get:
- *     summary: Get setting by key
- *     tags: [Settings]
- *     parameters:
- *       - in: path
- *         name: key
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Setting retrieved successfully
- *       404:
- *         description: Setting not found
- */
-router.get('/:key', [
-  param('key').isString().isLength({ min: 1 }),
-  handleValidationErrors
-], getSetting);
+// Get all settings
+router.get('/', async (req, res) => {
+  try {
+    const { data: settings, error } = await supabase
+      .from('settings')
+      .select('*');
 
-/**
- * @swagger
- * /api/settings/{key}:
- *   put:
- *     summary: Update setting
- *     tags: [Settings]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: key
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - value
- *               - type
- *             properties:
- *               value:
- *                 oneOf:
- *                   - type: string
- *                   - type: number
- *                   - type: boolean
- *                   - type: object
- *               type:
- *                 type: string
- *                 enum: [string, number, boolean, json]
- *               description:
- *                 type: string
- *     responses:
- *       200:
- *         description: Setting updated successfully
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Insufficient permissions
- */
-router.put('/:key', authenticateToken, requireRole(['admin']), [
-  param('key').isString().isLength({ min: 1 }),
-  handleValidationErrors
-], updateSetting);
+    if (error) {
+      console.error('Error fetching settings:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch settings'
+      });
+    }
 
-/**
- * @swagger
- * /api/settings:
- *   put:
- *     summary: Update multiple settings
- *     tags: [Settings]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               settings:
- *                 type: object
- *                 additionalProperties:
- *                   type: object
- *                   properties:
- *                     value:
- *                       oneOf:
- *                         - type: string
- *                         - type: number
- *                         - type: boolean
- *                         - type: object
- *                     type:
- *                       type: string
- *                       enum: [string, number, boolean, json]
- *                     description:
- *                       type: string
- *     responses:
- *       200:
- *         description: Settings updated successfully
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Insufficient permissions
- */
-router.put('/', authenticateToken, requireRole(['admin']), updateMultipleSettings);
+    // Convert settings array to key-value object
+    const settingsObj: Record<string, any> = {};
+    settings?.forEach(setting => {
+      settingsObj[setting.key] = setting.value;
+    });
 
-/**
- * @swagger
- * /api/settings/{key}:
- *   delete:
- *     summary: Delete setting
- *     tags: [Settings]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: key
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Setting deleted successfully
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Insufficient permissions
- */
-router.delete('/:key', authenticateToken, requireRole(['admin']), [
-  param('key').isString().isLength({ min: 1 }),
-  handleValidationErrors
-], deleteSetting);
+    // Provide default values if no settings exist
+    const defaultSettings = {
+      currency: 'BDT',
+      currency_symbol: '৳',
+      currency_position: 'left',
+      thousand_separator: ',',
+      decimal_separator: '.',
+      decimal_places: 2,
+      enable_taxes: false,
+      tax_rate: 0,
+      enable_shipping: true,
+      free_shipping_threshold: 100,
+      default_shipping_cost: 10,
+      enable_coupons: true,
+      enable_reviews: true,
+      enable_wishlist: true,
+      stock_management: true,
+      low_stock_threshold: 5,
+      ...settingsObj
+    };
 
-// Site Info
-/**
- * @swagger
- * /api/settings/site/info:
- *   get:
- *     summary: Get site information
- *     tags: [Settings]
- *     responses:
- *       200:
- *         description: Site info retrieved successfully
- */
-router.get('/site/info', getSiteInfo);
+    res.json({
+      success: true,
+      data: defaultSettings
+    });
+  } catch (error) {
+    console.error('Settings API error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    });
+  }
+});
 
-/**
- * @swagger
- * /api/settings/site/info:
- *   put:
- *     summary: Update site information
- *     tags: [Settings]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - site_name
- *             properties:
- *               site_name:
- *                 type: string
- *               logo_url:
- *                 type: string
- *                 format: uri
- *               description:
- *                 type: string
- *               contact_email:
- *                 type: string
- *                 format: email
- *               phone:
- *                 type: string
- *               address:
- *                 type: string
- *               social_icons:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     name:
- *                       type: string
- *                     icon:
- *                       type: string
- *                     url:
- *                       type: string
- *                       format: uri
- *     responses:
- *       200:
- *         description: Site info updated successfully
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Insufficient permissions
- */
-router.put('/site/info', authenticateToken, requireRole(['admin']), updateSiteInfo);
+// Update settings
+router.put('/', async (req, res) => {
+  try {
+    const updates = req.body;
+    const results = [];
+
+    for (const [key, value] of Object.entries(updates)) {
+      const { data, error } = await supabase
+        .from('settings')
+        .upsert({
+          key,
+          value,
+          type: typeof value === 'boolean' ? 'boolean' : 
+                typeof value === 'number' ? 'number' : 'string'
+        }, {
+          onConflict: 'key'
+        });
+
+      if (error) {
+        console.error(`Error updating setting ${key}:`, error);
+        return res.status(500).json({
+          success: false,
+          error: `Failed to update setting: ${key}`
+        });
+      }
+
+      results.push(data);
+    }
+
+    res.json({
+      success: true,
+      message: 'Settings updated successfully',
+      data: results
+    });
+  } catch (error) {
+    console.error('Settings update error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    });
+  }
+});
 
 export default router;

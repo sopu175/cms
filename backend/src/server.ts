@@ -8,6 +8,9 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// Import routes
+import settingsRoutes from './routes/settings.js';
+
 // Load environment variables
 dotenv.config();
 
@@ -68,30 +71,7 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
-app.get('/api/settings', (req, res) => {
-  // Temporary mock response for settings
-  res.json({
-    success: true,
-    data: {
-      currency: 'BDT',
-      currency_symbol: '৳',
-      currency_position: 'left',
-      thousand_separator: ',',
-      decimal_separator: '.',
-      decimal_places: 2,
-      enable_taxes: false,
-      tax_rate: 0,
-      enable_shipping: true,
-      free_shipping_threshold: 100,
-      default_shipping_cost: 10,
-      enable_coupons: true,
-      enable_reviews: true,
-      enable_wishlist: true,
-      stock_management: true,
-      low_stock_threshold: 5
-    }
-  });
-});
+app.use('/api/settings', settingsRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
