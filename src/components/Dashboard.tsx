@@ -105,8 +105,8 @@ const Dashboard: React.FC = () => {
             <ol className="list-decimal list-inside space-y-2 text-sm text-blue-700 dark:text-blue-400">
               <li>Go to <a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer" className="underline">Google Analytics</a> and sign in</li>
               <li>Create a new property for your website</li>
-              <li>Get your Measurement ID (starts with "G-")</li>
-              <li>Go to Settings > SEO & Analytics in this CMS</li>
+              <li>{'Get your Measurement ID (starts with "G-")'}</li>
+              <li>{'Go to Settings > SEO & Analytics in this CMS'}</li>
               <li>Enter your Measurement ID in the Google Analytics field</li>
               <li>Save your settings</li>
             </ol>
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
               <li>Go to <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="underline">Google Search Console</a> and sign in</li>
               <li>Add your website property</li>
               <li>Verify ownership using one of the provided methods</li>
-              <li>Go to Settings > SEO & Analytics in this CMS</li>
+              <li>{'Go to Settings > SEO & Analytics in this CMS'}</li>
               <li>Configure your site's meta tags, robots.txt, and sitemap</li>
               <li>Save your settings</li>
             </ol>
