@@ -22,7 +22,9 @@ import {
   Trash2,
   DollarSign,
   CreditCard as CreditCardIcon,
-  Percent
+  Wallet,
+  ShoppingBag,
+  Lock
 } from 'lucide-react';
 import { useSettings } from '../hooks/useSettings';
 import { useSiteInfo } from '../hooks/useSiteInfo';
@@ -85,29 +87,30 @@ const Settings: React.FC = () => {
   });
 
   const [paymentSettings, setPaymentSettings] = useState({
+    test_mode: settings?.test_mode || true,
     payment_methods: settings?.payment_methods || {
       credit_card: {
         enabled: true,
         title: 'Credit Card',
-        description: 'Pay with your credit card via Stripe'
+        description: 'Pay with your credit card via Stripe',
+        stripe_publishable_key: '',
+        stripe_secret_key: '',
+        stripe_webhook_secret: ''
       },
       paypal: {
         enabled: true,
         title: 'PayPal',
-        description: 'Pay with your PayPal account'
+        description: 'Pay with your PayPal account',
+        client_id: '',
+        client_secret: ''
       },
       bank_transfer: {
-        enabled: false,
+        enabled: true,
         title: 'Bank Transfer',
-        description: 'Make your payment directly into our bank account'
+        description: 'Make your payment directly into our bank account',
+        instructions: 'Please use your Order ID as the payment reference'
       }
-    },
-    stripe_publishable_key: settings?.stripe_publishable_key || '',
-    stripe_secret_key: settings?.stripe_secret_key || '',
-    stripe_webhook_secret: settings?.stripe_webhook_secret || '',
-    paypal_client_id: settings?.paypal_client_id || '',
-    paypal_client_secret: settings?.paypal_client_secret || '',
-    test_mode: settings?.test_mode || true
+    }
   });
 
   React.useEffect(() => {
@@ -134,6 +137,18 @@ const Settings: React.FC = () => {
       });
     }
   }, [siteInfo]);
+
+  React.useEffect(() => {
+    if (settings) {
+      // Load payment settings if they exist
+      if (settings.payment_methods) {
+        setPaymentSettings({
+          test_mode: settings.test_mode || true,
+          payment_methods: settings.payment_methods
+        });
+      }
+    }
+  }, [settings]);
 
   const handleSiteInfoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -198,20 +213,7 @@ const Settings: React.FC = () => {
     }));
   };
 
-  const togglePaymentMethod = (method: string, enabled: boolean) => {
-    setPaymentSettings(prev => ({
-      ...prev,
-      payment_methods: {
-        ...prev.payment_methods,
-        [method]: {
-          ...prev.payment_methods[method],
-          enabled
-        }
-      }
-    }));
-  };
-
-  const updatePaymentMethodField = (method: string, field: string, value: string) => {
+  const updatePaymentMethod = (method: string, field: string, value: any) => {
     setPaymentSettings(prev => ({
       ...prev,
       payment_methods: {
@@ -229,8 +231,8 @@ const Settings: React.FC = () => {
     { id: 'site', label: 'Site Info', icon: Globe },
     { id: 'branding', label: 'Branding', icon: Palette },
     { id: 'social', label: 'Social Media', icon: Share2 },
-    { id: 'ecommerce', label: 'Ecommerce', icon: CreditCard },
-    { id: 'payment', label: 'Payment', icon: DollarSign },
+    { id: 'ecommerce', label: 'Ecommerce', icon: ShoppingBag },
+    { id: 'payment', label: 'Payment', icon: CreditCardIcon },
     { id: 'seo', label: 'SEO & Analytics', icon: Eye },
     { id: 'advanced', label: 'Advanced', icon: Code }
   ];
@@ -922,12 +924,12 @@ const Settings: React.FC = () => {
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Payment Gateway Settings</h3>
             <form onSubmit={handlePaymentSettingsSubmit} className="space-y-6">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label className="text-sm font-medium text-blue-700 dark:text-blue-300">
                     Test Mode
                   </label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-blue-600 dark:text-blue-400">
                     Use test credentials for payment gateways
                   </p>
                 </div>
@@ -942,30 +944,27 @@ const Settings: React.FC = () => {
                 </label>
               </div>
 
-              <div className="space-y-6">
-                {/* Credit Card / Stripe */}
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <CreditCardIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                      <div>
-                        <h4 className="text-md font-medium text-gray-900 dark:text-white">Credit Card (Stripe)</h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Accept credit card payments</p>
-                      </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={paymentSettings.payment_methods.credit_card.enabled}
-                        onChange={(e) => togglePaymentMethod('credit_card', e.target.checked)}
-                        className="sr-only peer"
-                      />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                    </label>
+              {/* Credit Card (Stripe) */}
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <CreditCardIcon className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">Credit Card (Stripe)</h4>
                   </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={paymentSettings.payment_methods.credit_card.enabled}
+                      onChange={(e) => updatePaymentMethod('credit_card', 'enabled', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
 
-                  {paymentSettings.payment_methods.credit_card.enabled && (
-                    <div className="space-y-4 mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                {paymentSettings.payment_methods.credit_card.enabled && (
+                  <div className="space-y-4 mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Title
@@ -973,7 +972,7 @@ const Settings: React.FC = () => {
                         <input
                           type="text"
                           value={paymentSettings.payment_methods.credit_card.title}
-                          onChange={(e) => updatePaymentMethodField('credit_card', 'title', e.target.value)}
+                          onChange={(e) => updatePaymentMethod('credit_card', 'title', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
                       </div>
@@ -984,73 +983,75 @@ const Settings: React.FC = () => {
                         <input
                           type="text"
                           value={paymentSettings.payment_methods.credit_card.description}
-                          onChange={(e) => updatePaymentMethodField('credit_card', 'description', e.target.value)}
+                          onChange={(e) => updatePaymentMethod('credit_card', 'description', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Stripe Publishable Key
-                        </label>
-                        <input
-                          type="text"
-                          value={paymentSettings.stripe_publishable_key}
-                          onChange={(e) => setPaymentSettings({ ...paymentSettings, stripe_publishable_key: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                          placeholder={paymentSettings.test_mode ? 'pk_test_...' : 'pk_live_...'}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Stripe Secret Key
-                        </label>
-                        <input
-                          type="password"
-                          value={paymentSettings.stripe_secret_key}
-                          onChange={(e) => setPaymentSettings({ ...paymentSettings, stripe_secret_key: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                          placeholder={paymentSettings.test_mode ? 'sk_test_...' : 'sk_live_...'}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Stripe Webhook Secret
-                        </label>
-                        <input
-                          type="password"
-                          value={paymentSettings.stripe_webhook_secret}
-                          onChange={(e) => setPaymentSettings({ ...paymentSettings, stripe_webhook_secret: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                          placeholder="whsec_..."
                         />
                       </div>
                     </div>
-                  )}
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Stripe Publishable Key
+                      </label>
+                      <input
+                        type="text"
+                        value={paymentSettings.payment_methods.credit_card.stripe_publishable_key}
+                        onChange={(e) => updatePaymentMethod('credit_card', 'stripe_publishable_key', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder={paymentSettings.test_mode ? 'pk_test_...' : 'pk_live_...'}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Stripe Secret Key
+                      </label>
+                      <input
+                        type="password"
+                        value={paymentSettings.payment_methods.credit_card.stripe_secret_key}
+                        onChange={(e) => updatePaymentMethod('credit_card', 'stripe_secret_key', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder={paymentSettings.test_mode ? 'sk_test_...' : 'sk_live_...'}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Stripe Webhook Secret
+                      </label>
+                      <input
+                        type="password"
+                        value={paymentSettings.payment_methods.credit_card.stripe_webhook_secret}
+                        onChange={(e) => updatePaymentMethod('credit_card', 'stripe_webhook_secret', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="whsec_..."
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* PayPal */}
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <Wallet className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">PayPal</h4>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={paymentSettings.payment_methods.paypal.enabled}
+                      onChange={(e) => updatePaymentMethod('paypal', 'enabled', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  </label>
                 </div>
 
-                {/* PayPal */}
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <DollarSign className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                      <div>
-                        <h4 className="text-md font-medium text-gray-900 dark:text-white">PayPal</h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Accept payments via PayPal</p>
-                      </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={paymentSettings.payment_methods.paypal.enabled}
-                        onChange={(e) => togglePaymentMethod('paypal', e.target.checked)}
-                        className="sr-only peer"
-                      />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                    </label>
-                  </div>
-
-                  {paymentSettings.payment_methods.paypal.enabled && (
-                    <div className="space-y-4 mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                {paymentSettings.payment_methods.paypal.enabled && (
+                  <div className="space-y-4 mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Title
@@ -1058,7 +1059,7 @@ const Settings: React.FC = () => {
                         <input
                           type="text"
                           value={paymentSettings.payment_methods.paypal.title}
-                          onChange={(e) => updatePaymentMethodField('paypal', 'title', e.target.value)}
+                          onChange={(e) => updatePaymentMethod('paypal', 'title', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
                       </div>
@@ -1069,59 +1070,60 @@ const Settings: React.FC = () => {
                         <input
                           type="text"
                           value={paymentSettings.payment_methods.paypal.description}
-                          onChange={(e) => updatePaymentMethodField('paypal', 'description', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          PayPal Client ID
-                        </label>
-                        <input
-                          type="text"
-                          value={paymentSettings.paypal_client_id}
-                          onChange={(e) => setPaymentSettings({ ...paymentSettings, paypal_client_id: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          PayPal Client Secret
-                        </label>
-                        <input
-                          type="password"
-                          value={paymentSettings.paypal_client_secret}
-                          onChange={(e) => setPaymentSettings({ ...paymentSettings, paypal_client_secret: e.target.value })}
+                          onChange={(e) => updatePaymentMethod('paypal', 'description', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
                       </div>
                     </div>
-                  )}
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Client ID
+                      </label>
+                      <input
+                        type="text"
+                        value={paymentSettings.payment_methods.paypal.client_id}
+                        onChange={(e) => updatePaymentMethod('paypal', 'client_id', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Client Secret
+                      </label>
+                      <input
+                        type="password"
+                        value={paymentSettings.payment_methods.paypal.client_secret}
+                        onChange={(e) => updatePaymentMethod('paypal', 'client_secret', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Bank Transfer */}
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <DollarSign className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">Bank Transfer</h4>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={paymentSettings.payment_methods.bank_transfer.enabled}
+                      onChange={(e) => updatePaymentMethod('bank_transfer', 'enabled', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  </label>
                 </div>
 
-                {/* Bank Transfer */}
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <CreditCardIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                      <div>
-                        <h4 className="text-md font-medium text-gray-900 dark:text-white">Bank Transfer</h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Accept payments via bank transfer</p>
-                      </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={paymentSettings.payment_methods.bank_transfer.enabled}
-                        onChange={(e) => togglePaymentMethod('bank_transfer', e.target.checked)}
-                        className="sr-only peer"
-                      />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                    </label>
-                  </div>
-
-                  {paymentSettings.payment_methods.bank_transfer.enabled && (
-                    <div className="space-y-4 mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                {paymentSettings.payment_methods.bank_transfer.enabled && (
+                  <div className="space-y-4 mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Title
@@ -1129,7 +1131,7 @@ const Settings: React.FC = () => {
                         <input
                           type="text"
                           value={paymentSettings.payment_methods.bank_transfer.title}
-                          onChange={(e) => updatePaymentMethodField('bank_transfer', 'title', e.target.value)}
+                          onChange={(e) => updatePaymentMethod('bank_transfer', 'title', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
                       </div>
@@ -1137,17 +1139,29 @@ const Settings: React.FC = () => {
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Description
                         </label>
-                        <textarea
+                        <input
+                          type="text"
                           value={paymentSettings.payment_methods.bank_transfer.description}
-                          onChange={(e) => updatePaymentMethodField('bank_transfer', 'description', e.target.value)}
-                          rows={3}
+                          onChange={(e) => updatePaymentMethod('bank_transfer', 'description', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                          placeholder="Enter bank account details and instructions"
                         />
                       </div>
                     </div>
-                  )}
-                </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Instructions
+                      </label>
+                      <textarea
+                        value={paymentSettings.payment_methods.bank_transfer.instructions}
+                        onChange={(e) => updatePaymentMethod('bank_transfer', 'instructions', e.target.value)}
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Bank: Example Bank&#10;Account Name: Your Company Name&#10;Account Number: 1234567890&#10;Sort Code: 12-34-56"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <button
