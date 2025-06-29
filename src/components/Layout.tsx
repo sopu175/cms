@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, FileText, FolderOpen, Users, Settings, LogOut, Menu, X, ShoppingBag, ShoppingCart, Globe, User, Image, Image as Images, Navigation, FileInput } from 'lucide-react';
+import { LayoutDashboard, FileText, FolderOpen, Users, Settings, LogOut, Menu, X, ShoppingBag, ShoppingCart, Globe, User, Image, Image as Images, Navigation, FileInput, MessageSquare, Tag } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
@@ -25,6 +25,8 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
     { id: 'forms', label: 'Forms', icon: FileInput, adminEditorOnly: true },
     { id: 'products', label: 'Products', icon: ShoppingBag, adminEditorOnly: true },
     { id: 'orders', label: 'Orders', icon: ShoppingCart, adminEditorOnly: true },
+    { id: 'reviews', label: 'Reviews', icon: MessageSquare, adminEditorOnly: true },
+    { id: 'coupons', label: 'Coupons', icon: Tag, adminOnly: true },
     { id: 'users', label: 'Users', icon: Users, adminOnly: true },
     { id: 'settings', label: 'Settings', icon: Settings, adminOnly: true },
   ];

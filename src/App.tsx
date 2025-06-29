@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { ThemeProvider } from './contexts/ThemeContext';
+import React, {useState} from 'react';
+import {AuthProvider, useAuth} from './contexts/AuthContext';
+import {ThemeProvider} from './contexts/ThemeContext';
 import Layout from './components/Layout';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
@@ -9,11 +9,16 @@ import Categories from './components/Categories';
 import ContentPages from './components/ContentPages';
 import Products from './components/Products';
 import Orders from './components/Orders';
+import Reviews from './components/Reviews';
+import Coupons from './components/Coupons';
 import Users from './components/Users';
 import Settings from './components/Settings';
 import Profile from './components/Profile';
 import MediaLibrary from './components/MediaLibrary';
 import Gallery from './components/Gallery';
+import {Menu} from "lucide-react";
+import Menus from "./pages/Menus.tsx";
+import Forms from "./pages/Forms.tsx";
 
 const AppContent: React.FC = () => {
   const { isAuthenticated, loading } = useAuth();
@@ -45,6 +50,10 @@ const AppContent: React.FC = () => {
         return <Products />;
       case 'orders':
         return <Orders />;
+      case 'reviews':
+        return <Reviews/>;
+      case 'coupons':
+        return <Coupons/>;
       case 'users':
         return <Users />;
       case 'settings':
@@ -56,9 +65,9 @@ const AppContent: React.FC = () => {
       case 'galleries':
         return <Gallery />;
       case 'menus':
-        return <div className="text-center py-12"><h2 className="text-xl font-semibold text-gray-900 dark:text-white">Menu Builder - Coming Soon</h2></div>;
+        return <Menus/>;
       case 'forms':
-        return <div className="text-center py-12"><h2 className="text-xl font-semibold text-gray-900 dark:text-white">Form Builder - Coming Soon</h2></div>;
+        return <Forms/>;
       default:
         return <Dashboard />;
     }
