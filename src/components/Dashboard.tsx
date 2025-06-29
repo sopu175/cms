@@ -372,7 +372,7 @@ const Dashboard: React.FC = () => {
                     <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 mr-2"></div>
                     <div>
                       <p className="text-sm text-gray-700 dark:text-gray-300">Slow Page - /gallery</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Page load time > 3s</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Page load time &gt; 3s</p>
                     </div>
                   </li>
                 </ul>
