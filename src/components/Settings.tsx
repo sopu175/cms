@@ -1,34 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Save, 
-  X, 
-  Upload, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Facebook, 
-  Twitter, 
-  Instagram, 
-  Linkedin, 
-  Youtube, 
-  GitHub, 
-  Globe, 
-  Plus, 
-  Trash2,
-  ShoppingBag,
-  DollarSign,
-  Truck,
-  Tag,
-  BarChart,
-  Search,
-  Code,
-  FileText,
-  Server,
-  Shield,
-  Settings as SettingsIcon,
-  Image,
-  Eye
-} from 'lucide-react';
+import { Save, X, Upload, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, Youtube, Github as GitHub, Globe, Plus, Trash2, ShoppingBag, DollarSign, Truck, Tag, BarChart, Search, Code, FileText, Server, Shield, Settings as SettingsIcon, Image, Eye } from 'lucide-react';
 import { useSettings } from '../hooks/useSettings';
 import { useSiteInfo } from '../hooks/useSiteInfo';
 import { useAuth } from '../contexts/AuthContext';
