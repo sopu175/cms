@@ -35,6 +35,13 @@ export const useMedia = () => {
 
   const uploadMedia = async (file: File, folder: string = 'uploads') => {
     try {
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error('User must be authenticated to upload media');
+      }
+
       // In a real implementation, you would upload to a storage service
       // For now, we'll simulate the upload
       const url = URL.createObjectURL(file);
@@ -47,7 +54,8 @@ export const useMedia = () => {
           mime_type: file.type,
           file_size: file.size,
           url: url,
-          folder: folder
+          folder: folder,
+          uploaded_by: user.id // This is required by the RLS policy
         }])
         .select()
         .single();
