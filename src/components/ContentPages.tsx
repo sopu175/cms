@@ -2,7 +2,6 @@ import { Calendar, Edit, Eye, Globe, Plus, Search, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 
 import AdvancedPageEditor from "./AdvancedPageEditor";
-import ContentPageEditor from "./ContentPageEditor";
 import { useAuth } from "../contexts/AuthContext";
 import { useContentPages } from "../hooks/useContentPages";
 
@@ -12,7 +11,7 @@ const ContentPages: React.FC = () => {
    const [statusFilter, setStatusFilter] = useState("all");
    const [showEditor, setShowEditor] = useState(false);
    const [editingPage, setEditingPage] = useState(null);
-   const { contentPages, loading, deleteContentPage } = useContentPages({
+   const { contentPages, loading, createContentPage, updateContentPage, deleteContentPage } = useContentPages({
       status: statusFilter,
    });
 
@@ -25,6 +24,30 @@ const ContentPages: React.FC = () => {
       if (!result.success) {
          alert(result.error || "Failed to delete content page");
       }
+   };
+
+   const handleEditPage = (page: any) => {
+      setEditingPage(page);
+      setShowEditor(true);
+   };
+
+   const handleSavePage = async (data: any) => {
+      let result;
+      if (editingPage) {
+         result = await updateContentPage(editingPage.id, data);
+      } else {
+         result = await createContentPage({
+            ...data,
+            author_id: user?.id
+         });
+      }
+
+      if (result.success) {
+         setShowEditor(false);
+         setEditingPage(null);
+      }
+
+      return result;
    };
 
    const filteredPages = contentPages.filter(
@@ -54,20 +77,16 @@ const ContentPages: React.FC = () => {
       }
    };
 
-   // Example: handle saving the new page
-   const handleSavePage = async (data) => {
-      // Call your API or state update here
-      // await createContentPage(data);
-      setShowEditor(false);
-      setEditingPage(null);
-   };
-
    if (loading) {
       return (
          <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
          </div>
       );
+   }
+
+   if (showEditor) {
+      return <AdvancedPageEditor page={editingPage} onSave={handleSavePage} onCancel={() => setShowEditor(false)} />;
    }
 
    return (
@@ -86,7 +105,8 @@ const ContentPages: React.FC = () => {
                   }}
                   className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                >
-                  <span>+ New Page</span>
+                  <Plus className="w-4 h-4" />
+                  <span>New Page</span>
                </button>
             )}
          </div>
@@ -168,7 +188,10 @@ const ContentPages: React.FC = () => {
                            <button className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors">
                               <Eye className="w-4 h-4" />
                            </button>
-                           <button className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors">
+                           <button 
+                              onClick={() => handleEditPage(page)}
+                              className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors"
+                           >
                               <Edit className="w-4 h-4" />
                            </button>
                            <button
@@ -194,10 +217,6 @@ const ContentPages: React.FC = () => {
                   {searchTerm ? "Try adjusting your search terms" : "Create your first content page to get started"}
                </p>
             </div>
-         )}
-
-         {showEditor && (
-            <AdvancedPageEditor page={editingPage} onSave={handleSavePage} onCancel={() => setShowEditor(false)} />
          )}
       </div>
    );
