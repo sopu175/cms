@@ -13,7 +13,8 @@ import {
   X,
   Save,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Plus
 } from 'lucide-react';
 import { useOrders } from '../hooks/useOrders';
 import { useAuth } from '../contexts/AuthContext';
@@ -29,6 +30,20 @@ const Orders: React.FC = () => {
   const [showOrderDetails, setShowOrderDetails] = useState<string | null>(null);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newOrderData, setNewOrderData] = useState({
+    customer_name: '',
+    customer_email: '',
+    items: [{ product_name: '', quantity: 1, price: 0 }],
+    shipping_address: '',
+    shipping_city: '',
+    shipping_postal_code: '',
+    shipping_country: '',
+    shipping_phone: '',
+    payment_method: 'credit_card',
+    status: 'pending',
+    payment_status: 'pending'
+  });
 
   const [formData, setFormData] = useState({
     status: '',
@@ -106,6 +121,19 @@ const Orders: React.FC = () => {
     }
   };
 
+  const handleDeleteOrder = async (orderId: string) => {
+    if (!confirm('Are you sure you want to delete this order?')) return;
+    
+    // In a real implementation, you would call an API endpoint to delete the order
+    alert('Order deletion would be implemented here');
+  };
+
+  const handleCreateOrder = () => {
+    // In a real implementation, you would call an API endpoint to create the order
+    alert('Order creation would be implemented here');
+    setShowCreateModal(false);
+  };
+
   const toggleOrderDetails = (orderId: string) => {
     if (showOrderDetails === orderId) {
       setShowOrderDetails(null);
@@ -113,6 +141,33 @@ const Orders: React.FC = () => {
       setShowOrderDetails(orderId);
     }
   };
+
+  const addOrderItem = () => {
+    setNewOrderData({
+      ...newOrderData,
+      items: [...newOrderData.items, { product_name: '', quantity: 1, price: 0 }]
+    });
+  };
+
+  const removeOrderItem = (index: number) => {
+    const newItems = [...newOrderData.items];
+    newItems.splice(index, 1);
+    setNewOrderData({
+      ...newOrderData,
+      items: newItems
+    });
+  };
+
+  const updateOrderItem = (index: number, field: string, value: any) => {
+    const newItems = [...newOrderData.items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    setNewOrderData({
+      ...newOrderData,
+      items: newItems
+    });
+  };
+
+  const canEdit = ['admin', 'editor'].includes(user?.role || '');
 
   if (loading) {
     return (
@@ -130,6 +185,15 @@ const Orders: React.FC = () => {
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Orders</h2>
           <p className="text-gray-600 dark:text-gray-400">Manage customer orders</p>
         </div>
+        {canEdit && (
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>New Order</span>
+          </button>
+        )}
       </div>
 
       {/* Filters */}
@@ -236,8 +300,11 @@ const Orders: React.FC = () => {
                         >
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors">
-                          <Eye className="w-4 h-4" />
+                        <button 
+                          onClick={() => handleDeleteOrder(order.id)}
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
@@ -395,6 +462,225 @@ const Orders: React.FC = () => {
                   >
                     <Save className="w-4 h-4" />
                     <span>Update Order</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Order Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowCreateModal(false)} />
+            
+            <div className="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Create New Order
+                </h3>
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Customer Name
+                    </label>
+                    <input
+                      type="text"
+                      value={newOrderData.customer_name}
+                      onChange={(e) => setNewOrderData({ ...newOrderData, customer_name: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Customer Email
+                    </label>
+                    <input
+                      type="email"
+                      value={newOrderData.customer_email}
+                      onChange={(e) => setNewOrderData({ ...newOrderData, customer_email: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Order Items
+                    </label>
+                    <button
+                      type="button"
+                      onClick={addOrderItem}
+                      className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                    >
+                      + Add Item
+                    </button>
+                  </div>
+                  
+                  {newOrderData.items.map((item, index) => (
+                    <div key={index} className="flex items-center space-x-2 mb-2">
+                      <input
+                        type="text"
+                        value={item.product_name}
+                        onChange={(e) => updateOrderItem(index, 'product_name', e.target.value)}
+                        className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Product name"
+                        required
+                      />
+                      <input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => updateOrderItem(index, 'quantity', parseInt(e.target.value) || 1)}
+                        className="w-20 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        min="1"
+                        required
+                      />
+                      <div className="relative w-32">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
+                          $
+                        </span>
+                        <input
+                          type="number"
+                          value={item.price}
+                          onChange={(e) => updateOrderItem(index, 'price', parseFloat(e.target.value) || 0)}
+                          className="w-full pl-7 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          step="0.01"
+                          min="0"
+                          required
+                        />
+                      </div>
+                      {newOrderData.items.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeOrderItem(index)}
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Shipping Information
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <input
+                        type="text"
+                        value={newOrderData.shipping_address}
+                        onChange={(e) => setNewOrderData({ ...newOrderData, shipping_address: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Address"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={newOrderData.shipping_city}
+                        onChange={(e) => setNewOrderData({ ...newOrderData, shipping_city: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="City"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={newOrderData.shipping_postal_code}
+                        onChange={(e) => setNewOrderData({ ...newOrderData, shipping_postal_code: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Postal Code"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={newOrderData.shipping_country}
+                        onChange={(e) => setNewOrderData({ ...newOrderData, shipping_country: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Country"
+                        required
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <input
+                        type="text"
+                        value={newOrderData.shipping_phone}
+                        onChange={(e) => setNewOrderData({ ...newOrderData, shipping_phone: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Phone Number"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Payment Method
+                    </label>
+                    <select
+                      value={newOrderData.payment_method}
+                      onChange={(e) => setNewOrderData({ ...newOrderData, payment_method: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    >
+                      <option value="credit_card">Credit Card</option>
+                      <option value="paypal">PayPal</option>
+                      <option value="bank_transfer">Bank Transfer</option>
+                      <option value="cash_on_delivery">Cash on Delivery</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Order Status
+                    </label>
+                    <select
+                      value={newOrderData.status}
+                      onChange={(e) => setNewOrderData({ ...newOrderData, status: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="processing">Processing</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="delivered">Delivered</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateModal(false)}
+                    className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCreateOrder}
+                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Create Order</span>
                   </button>
                 </div>
               </div>

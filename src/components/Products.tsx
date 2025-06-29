@@ -11,50 +11,38 @@ import {
   Eye,
   X,
   Save,
+  Image,
   Upload,
-  Image as ImageIcon,
-  Check,
-  ChevronDown,
-  ChevronUp,
+  FileText,
   Layers,
-  List,
-  FileText
+  List
 } from 'lucide-react';
 import { useProducts } from '../hooks/useProducts';
-import { useCategories } from '../hooks/useCategories';
 import { useAuth } from '../contexts/AuthContext';
+import { useCategories } from '../hooks/useCategories';
 import { Product, ProductVariation, ContentBlock, PostSection } from '../types';
 import ContentBlockEditor from './ContentBlockEditor';
 import PostSectionEditor from './PostSectionEditor';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const Products: React.FC = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('active');
-  const { 
-    products, 
-    loading, 
-    createProduct, 
-    updateProduct, 
-    deleteProduct,
-    getProductVariations,
-    createProductVariation,
-    updateProductVariation,
-    deleteProductVariation
-  } = useProducts({
+  const { products, loading, createProduct, updateProduct, deleteProduct, getProductVariations, createProductVariation, updateProductVariation, deleteProductVariation } = useProducts({
     status: statusFilter
   });
   const { categories } = useCategories();
-
+  
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [activeTab, setActiveTab] = useState('basic');
   const [showVariationModal, setShowVariationModal] = useState(false);
   const [editingVariation, setEditingVariation] = useState<ProductVariation | null>(null);
-  const [currentProductId, setCurrentProductId] = useState<string | null>(null);
   const [productVariations, setProductVariations] = useState<ProductVariation[]>([]);
-  const [loadingVariations, setLoadingVariations] = useState(false);
-  const [showVariationsList, setShowVariationsList] = useState(false);
-  const [activeTab, setActiveTab] = useState('basic');
+  const [showMediaModal, setShowMediaModal] = useState(false);
+  const [mediaCallback, setMediaCallback] = useState<((url: string) => void) | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -68,7 +56,8 @@ const Products: React.FC = () => {
     sections: [] as PostSection[]
   });
 
-  const [variationData, setVariationData] = useState({
+  const [variationForm, setVariationForm] = useState({
+    product_id: '',
     sku: '',
     options: {} as Record<string, string>,
     price: 0,
@@ -76,49 +65,45 @@ const Products: React.FC = () => {
     status: 'active'
   });
 
-  const [optionKeys, setOptionKeys] = useState<string[]>(['color', 'size']);
-  const [newOptionKey, setNewOptionKey] = useState('');
-  const [showMediaModal, setShowMediaModal] = useState(false);
-  const [mediaCallback, setMediaCallback] = useState<((url: string) => void) | null>(null);
-
-  const canEdit = ['admin', 'editor'].includes(user?.role || '');
+  const [optionKeys, setOptionKeys] = useState<string[]>(['color']);
+  const [optionValues, setOptionValues] = useState<Record<string, string>>({
+    color: ''
+  });
 
   useEffect(() => {
-    // Add demo products if none exist
+    // Create demo products if none exist
     if (products.length === 0 && !loading) {
-      addDemoProducts();
+      createDemoProducts();
     }
   }, [products, loading]);
 
-  const addDemoProducts = async () => {
-    // Get category IDs
-    const techCategory = categories.find(c => c.slug === 'technology')?.id;
-    const lifestyleCategory = categories.find(c => c.slug === 'lifestyle')?.id;
+  const createDemoProducts = async () => {
+    // Get categories
+    if (categories.length === 0) return;
     
-    // Demo products
     const demoProducts = [
       {
-        name: 'Premium Laptop',
-        slug: 'premium-laptop',
-        description: 'High-performance laptop with the latest processor and ample storage.',
-        images: ['https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'],
+        name: 'Professional DSLR Camera',
+        slug: 'professional-dslr-camera',
+        description: 'High-quality professional DSLR camera with advanced features for photography enthusiasts.',
+        images: ['https://images.pexels.com/photos/51383/photo-camera-subject-photographer-51383.jpeg'],
         price: 1299.99,
-        category_id: techCategory || '',
+        category_id: categories[0].id,
         status: 'active',
         content_blocks: [
           {
             id: '1',
             type: 'rich_text',
-            content: '<h2>Premium Laptop Features</h2><ul><li>Latest generation processor</li><li>16GB RAM</li><li>512GB SSD storage</li><li>15.6" 4K display</li><li>Backlit keyboard</li></ul>',
+            content: '<h2>Professional Quality</h2><p>This camera offers exceptional image quality and performance for professional photographers.</p>',
             order: 0
           },
           {
             id: '2',
             type: 'image',
             content: {
-              url: 'https://images.pexels.com/photos/459653/pexels-photo-459653.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-              alt: 'Laptop keyboard closeup',
-              caption: 'Ergonomic backlit keyboard for comfortable typing'
+              url: 'https://images.pexels.com/photos/243757/pexels-photo-243757.jpeg',
+              alt: 'Camera in action',
+              caption: 'Capture every moment with stunning clarity'
             },
             order: 1
           }
@@ -128,98 +113,47 @@ const Products: React.FC = () => {
             id: '1',
             title: 'Technical Specifications',
             type: 'section',
-            content: '<h3>Technical Specifications</h3><table><tr><td>Processor</td><td>Intel Core i7-12700H</td></tr><tr><td>Memory</td><td>16GB DDR4</td></tr><tr><td>Storage</td><td>512GB NVMe SSD</td></tr><tr><td>Display</td><td>15.6" 4K UHD (3840 x 2160)</td></tr><tr><td>Graphics</td><td>NVIDIA GeForce RTX 3060 6GB</td></tr><tr><td>Battery</td><td>Up to 10 hours</td></tr></table>',
+            content: '<ul><li>24.2 Megapixel CMOS Sensor</li><li>4K Video Recording</li><li>ISO Range: 100-25600</li><li>Built-in Wi-Fi and Bluetooth</li></ul>',
             order: 0
-          },
-          {
-            id: '2',
-            title: 'What\'s in the Box',
-            type: 'section',
-            content: '<h3>What\'s in the Box</h3><ul><li>Premium Laptop</li><li>Power adapter</li><li>Quick start guide</li><li>Warranty information</li></ul>',
-            order: 1
           }
         ]
       },
       {
-        name: 'Wireless Earbuds',
-        slug: 'wireless-earbuds',
-        description: 'True wireless earbuds with active noise cancellation and long battery life.',
-        images: ['https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'],
-        price: 149.99,
-        category_id: techCategory || '',
+        name: 'Wireless Bluetooth Headphones',
+        slug: 'wireless-bluetooth-headphones',
+        description: 'Premium noise-cancelling wireless headphones with long battery life and superior sound quality.',
+        images: ['https://images.pexels.com/photos/577769/pexels-photo-577769.jpeg'],
+        price: 249.99,
+        category_id: categories[0].id,
         status: 'active',
         content_blocks: [
           {
             id: '1',
             type: 'rich_text',
-            content: '<h2>Wireless Earbuds Features</h2><ul><li>Active noise cancellation</li><li>8 hours of playback time</li><li>24 hours with charging case</li><li>Water and sweat resistant</li><li>Touch controls</li></ul>',
+            content: '<h2>Immersive Sound Experience</h2><p>Experience crystal clear audio with deep bass and noise cancellation technology.</p>',
             order: 0
           }
         ],
         sections: [
           {
             id: '1',
-            title: 'Sound Quality',
+            title: 'Features',
             type: 'section',
-            content: '<h3>Superior Sound Quality</h3><p>Experience crystal clear audio with deep bass and crisp highs. The advanced audio drivers deliver an immersive listening experience for music, podcasts, and calls.</p>',
+            content: '<ul><li>Active Noise Cancellation</li><li>30-hour Battery Life</li><li>Quick Charge: 5 min = 3 hours playback</li><li>Bluetooth 5.0</li></ul>',
             order: 0
           }
         ]
       }
     ];
     
-    // Create demo products
     for (const product of demoProducts) {
-      const result = await createProduct(product);
-      
-      if (result.success && result.data) {
-        // Add variations for the product
-        if (product.name === 'Premium Laptop') {
-          await createProductVariation({
-            product_id: result.data.id,
-            sku: 'LAPTOP-16GB-512GB',
-            options: { memory: '16GB', storage: '512GB' },
-            price: 1299.99,
-            stock: 10,
-            status: 'active'
-          });
-          
-          await createProductVariation({
-            product_id: result.data.id,
-            sku: 'LAPTOP-32GB-1TB',
-            options: { memory: '32GB', storage: '1TB' },
-            price: 1599.99,
-            stock: 5,
-            status: 'active'
-          });
-        } else if (product.name === 'Wireless Earbuds') {
-          await createProductVariation({
-            product_id: result.data.id,
-            sku: 'EARBUDS-BLACK',
-            options: { color: 'Black' },
-            price: 149.99,
-            stock: 20,
-            status: 'active'
-          });
-          
-          await createProductVariation({
-            product_id: result.data.id,
-            sku: 'EARBUDS-WHITE',
-            options: { color: 'White' },
-            price: 149.99,
-            stock: 15,
-            status: 'active'
-          });
-        }
-      }
+      await createProduct(product);
     }
-    
-    // Create demo orders
-    // This would typically be done through the orders API
-    console.log('Demo products and variations created');
   };
 
-  const handleCreateProduct = () => {
+  const canEdit = ['admin', 'editor'].includes(user?.role || '');
+
+  const handleCreate = () => {
     setEditingProduct(null);
     setFormData({
       name: '',
@@ -236,8 +170,17 @@ const Products: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleEditProduct = (product: Product) => {
+  const handleEdit = async (product: Product) => {
     setEditingProduct(product);
+    
+    // Fetch variations
+    const result = await getProductVariations(product.id);
+    if (result.success) {
+      setProductVariations(result.data || []);
+    } else {
+      setProductVariations([]);
+    }
+    
     setFormData({
       name: product.name,
       slug: product.slug,
@@ -253,13 +196,32 @@ const Products: React.FC = () => {
     setShowModal(true);
   };
 
+  const handleDelete = async (productId: string) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+
+    const result = await deleteProduct(productId);
+    if (!result.success) {
+      alert(result.error || 'Failed to delete product');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Generate slug if empty
+    let slug = formData.slug;
+    if (!slug) {
+      slug = formData.name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+    }
+    
     const productData = {
       ...formData,
-      slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
-      price: Number(formData.price)
+      slug
     };
 
     let result;
@@ -277,86 +239,15 @@ const Products: React.FC = () => {
     }
   };
 
-  const handleDelete = async (productId: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
-
-    const result = await deleteProduct(productId);
-    if (!result.success) {
-      alert(result.error || 'Failed to delete product');
-    }
-  };
-
-  const handleAddImage = () => {
-    const url = prompt('Enter image URL:');
-    if (url) {
-      setFormData(prev => ({
-        ...prev,
-        images: [...prev.images, url]
-      }));
-    }
-  };
-
-  const handleRemoveImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
-  };
-
-  const handleAddOption = () => {
-    if (newOptionKey && !optionKeys.includes(newOptionKey)) {
-      setOptionKeys([...optionKeys, newOptionKey]);
-      setNewOptionKey('');
-    }
-  };
-
-  const handleRemoveOption = (key: string) => {
-    setOptionKeys(optionKeys.filter(k => k !== key));
-    setVariationData(prev => {
-      const newOptions = { ...prev.options };
-      delete newOptions[key];
-      return { ...prev, options: newOptions };
-    });
-  };
-
-  const handleVariationChange = (key: string, value: string) => {
-    setVariationData(prev => ({
-      ...prev,
-      options: {
-        ...prev.options,
-        [key]: value
-      }
-    }));
-  };
-
-  const handleManageVariations = async (productId: string) => {
-    setCurrentProductId(productId);
-    setLoadingVariations(true);
-    
-    try {
-      const result = await getProductVariations(productId);
-      if (result.success) {
-        setProductVariations(result.data || []);
-      } else {
-        console.error('Failed to fetch variations:', result.error);
-        setProductVariations([]);
-      }
-    } catch (error) {
-      console.error('Error fetching variations:', error);
-      setProductVariations([]);
-    } finally {
-      setLoadingVariations(false);
-    }
-    
-    setShowVariationsList(true);
-  };
-
   const handleCreateVariation = () => {
+    if (!editingProduct) return;
+    
     setEditingVariation(null);
-    setVariationData({
+    setVariationForm({
+      product_id: editingProduct.id,
       sku: '',
-      options: {},
-      price: 0,
+      options: optionKeys.reduce((acc, key) => ({ ...acc, [key]: '' }), {}),
+      price: formData.price,
       stock: 0,
       status: 'active'
     });
@@ -365,20 +256,18 @@ const Products: React.FC = () => {
 
   const handleEditVariation = (variation: ProductVariation) => {
     setEditingVariation(variation);
-    setVariationData({
+    setVariationForm({
+      product_id: variation.product_id,
       sku: variation.sku,
-      options: variation.options || {},
+      options: variation.options,
       price: variation.price,
       stock: variation.stock,
       status: variation.status
     });
     
-    // Update option keys based on the variation's options
-    const keys = Object.keys(variation.options || {});
-    if (keys.length > 0) {
-      setOptionKeys(keys);
-    }
-    
+    // Update option keys based on the variation
+    const keys = Object.keys(variation.options);
+    setOptionKeys(keys.length > 0 ? keys : ['color']);
     setShowVariationModal(true);
   };
 
@@ -393,23 +282,29 @@ const Products: React.FC = () => {
     }
   };
 
-  const handleSaveVariation = async () => {
-    if (!currentProductId) return;
+  const handleSubmitVariation = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    const variationToSave = {
-      ...variationData,
-      product_id: currentProductId,
-      price: Number(variationData.price),
-      stock: Number(variationData.stock)
+    // Ensure all option values are set
+    const options = { ...variationForm.options };
+    optionKeys.forEach(key => {
+      if (!options[key]) {
+        options[key] = '';
+      }
+    });
+    
+    const variationData = {
+      ...variationForm,
+      options
     };
-    
+
     let result;
     if (editingVariation) {
-      result = await updateProductVariation(editingVariation.id, variationToSave);
+      result = await updateProductVariation(editingVariation.id, variationData);
     } else {
-      result = await createProductVariation(variationToSave);
+      result = await createProductVariation(variationData);
     }
-    
+
     if (result.success) {
       if (editingVariation) {
         setProductVariations(productVariations.map(v => 
@@ -423,6 +318,52 @@ const Products: React.FC = () => {
     } else {
       alert(result.error || 'Failed to save variation');
     }
+  };
+
+  const addOptionKey = () => {
+    setOptionKeys([...optionKeys, '']);
+  };
+
+  const updateOptionKey = (index: number, value: string) => {
+    const newKeys = [...optionKeys];
+    newKeys[index] = value;
+    setOptionKeys(newKeys);
+    
+    // Update options object with new key
+    const newOptions = { ...variationForm.options };
+    const oldKey = Object.keys(newOptions)[index];
+    if (oldKey && oldKey !== value) {
+      const oldValue = newOptions[oldKey];
+      delete newOptions[oldKey];
+      if (value) {
+        newOptions[value] = oldValue;
+      }
+    } else if (value && !newOptions[value]) {
+      newOptions[value] = '';
+    }
+    
+    setVariationForm({
+      ...variationForm,
+      options: newOptions
+    });
+  };
+
+  const removeOptionKey = (index: number) => {
+    const newKeys = [...optionKeys];
+    const removedKey = newKeys[index];
+    newKeys.splice(index, 1);
+    setOptionKeys(newKeys);
+    
+    // Remove from options object
+    const newOptions = { ...variationForm.options };
+    if (removedKey && newOptions[removedKey]) {
+      delete newOptions[removedKey];
+    }
+    
+    setVariationForm({
+      ...variationForm,
+      options: newOptions
+    });
   };
 
   const handleMediaSelect = (callback: (url: string) => void) => {
@@ -470,7 +411,7 @@ const Products: React.FC = () => {
         </div>
         {canEdit && (
           <button 
-            onClick={handleCreateProduct}
+            onClick={handleCreate}
             className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
@@ -570,14 +511,7 @@ const Products: React.FC = () => {
               {canEdit && (
                 <div className="flex items-center justify-end space-x-2">
                   <button 
-                    onClick={() => handleManageVariations(product.id)}
-                    className="p-2 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-500/10 rounded-lg transition-colors"
-                    title="Manage Variations"
-                  >
-                    <Package className="w-4 h-4" />
-                  </button>
-                  <button 
-                    onClick={() => handleEditProduct(product)}
+                    onClick={() => handleEdit(product)}
                     className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors"
                   >
                     <Edit className="w-4 h-4" />
@@ -627,52 +561,73 @@ const Products: React.FC = () => {
               </div>
 
               {/* Tabs */}
-              <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-700 mb-6">
+              <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
                 <button
                   onClick={() => setActiveTab('basic')}
                   className={`pb-2 border-b-2 transition-colors ${
                     activeTab === 'basic'
                       ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                      : 'border-transparent text-gray-600 dark:text-gray-400'
                   }`}
                 >
-                  <div className="flex items-center space-x-2">
-                    <FileText className="w-4 h-4" />
-                    <span>Basic Info</span>
-                  </div>
+                  Basic Info
+                </button>
+                <button
+                  onClick={() => setActiveTab('images')}
+                  className={`pb-2 border-b-2 transition-colors ${
+                    activeTab === 'images'
+                      ? 'border-blue-600 text-blue-600'
+                      : 'border-transparent text-gray-600 dark:text-gray-400'
+                  }`}
+                >
+                  Images
+                </button>
+                <button
+                  onClick={() => setActiveTab('variations')}
+                  className={`pb-2 border-b-2 transition-colors ${
+                    activeTab === 'variations'
+                      ? 'border-blue-600 text-blue-600'
+                      : 'border-transparent text-gray-600 dark:text-gray-400'
+                  }`}
+                >
+                  Variations
+                </button>
+                <button
+                  onClick={() => setActiveTab('content')}
+                  className={`pb-2 border-b-2 transition-colors ${
+                    activeTab === 'content'
+                      ? 'border-blue-600 text-blue-600'
+                      : 'border-transparent text-gray-600 dark:text-gray-400'
+                  }`}
+                >
+                  Content
                 </button>
                 <button
                   onClick={() => setActiveTab('blocks')}
                   className={`pb-2 border-b-2 transition-colors ${
                     activeTab === 'blocks'
                       ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                      : 'border-transparent text-gray-600 dark:text-gray-400'
                   }`}
                 >
-                  <div className="flex items-center space-x-2">
-                    <Layers className="w-4 h-4" />
-                    <span>Content Blocks</span>
-                  </div>
+                  Content Blocks
                 </button>
                 <button
                   onClick={() => setActiveTab('sections')}
                   className={`pb-2 border-b-2 transition-colors ${
                     activeTab === 'sections'
                       ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                      : 'border-transparent text-gray-600 dark:text-gray-400'
                   }`}
                 >
-                  <div className="flex items-center space-x-2">
-                    <List className="w-4 h-4" />
-                    <span>Sections</span>
-                  </div>
+                  Sections
                 </button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {activeTab === 'basic' && (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Product Name
@@ -680,8 +635,20 @@ const Products: React.FC = () => {
                         <input
                           type="text"
                           value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          onChange={(e) => {
+                            setFormData({ ...formData, name: e.target.value });
+                            // Auto-generate slug if not editing
+                            if (!editingProduct) {
+                              const slug = e.target.value
+                                .toLowerCase()
+                                .replace(/[^a-z0-9\s-]/g, '')
+                                .replace(/\s+/g, '-')
+                                .replace(/-+/g, '-')
+                                .trim();
+                              setFormData(prev => ({ ...prev, slug }));
+                            }
+                          }}
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                           required
                         />
                       </div>
@@ -694,8 +661,7 @@ const Products: React.FC = () => {
                           type="text"
                           value={formData.slug}
                           onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="auto-generated-if-empty"
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
                       </div>
                     </div>
@@ -708,11 +674,11 @@ const Products: React.FC = () => {
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Price
@@ -725,7 +691,7 @@ const Products: React.FC = () => {
                             type="number"
                             value={formData.price}
                             onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                            className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full pl-7 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                             step="0.01"
                             min="0"
                             required
@@ -740,11 +706,13 @@ const Products: React.FC = () => {
                         <select
                           value={formData.category_id}
                           onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         >
                           <option value="">Select Category</option>
-                          {categories.map(category => (
-                            <option key={category.id} value={category.id}>{category.name}</option>
+                          {categories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                              {category.name}
+                            </option>
                           ))}
                         </select>
                       </div>
@@ -757,90 +725,227 @@ const Products: React.FC = () => {
                       <select
                         value={formData.status}
                         onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       >
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                         <option value="archived">Archived</option>
                       </select>
                     </div>
+                  </div>
+                )}
 
+                {activeTab === 'images' && (
+                  <div className="space-y-4">
                     <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Product Images
-                        </label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Product Images
+                      </label>
+                      <div className="flex items-center space-x-2 mb-4">
+                        <input
+                          type="url"
+                          placeholder="Image URL"
+                          className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              const input = e.target as HTMLInputElement;
+                              if (input.value) {
+                                setFormData({
+                                  ...formData,
+                                  images: [...formData.images, input.value]
+                                });
+                                input.value = '';
+                              }
+                            }
+                          }}
+                        />
                         <button
                           type="button"
-                          onClick={handleAddImage}
-                          className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700"
+                          onClick={() => handleMediaSelect((url) => {
+                            setFormData({
+                              ...formData,
+                              images: [...formData.images, url]
+                            });
+                          })}
+                          className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                         >
-                          <Plus className="w-4 h-4" />
-                          <span>Add Image</span>
+                          <Image className="w-4 h-4" />
                         </button>
                       </div>
-                      
-                      {formData.images.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                          {formData.images.map((image, index) => (
-                            <div key={index} className="relative group">
-                              <img
-                                src={image}
-                                alt={`Product ${index + 1}`}
-                                className="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveImage(index)}
-                                className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center">
-                          <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            No images added yet
-                          </p>
-                          <button
-                            type="button"
-                            onClick={handleAddImage}
-                            className="mt-2 text-sm text-blue-600 hover:text-blue-700"
-                          >
-                            Add product images
-                          </button>
-                        </div>
-                      )}
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {formData.images.map((image, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={image}
+                              alt={`Product ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newImages = [...formData.images];
+                                newImages.splice(index, 1);
+                                setFormData({ ...formData, images: newImages });
+                              }}
+                              className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </>
+                  </div>
+                )}
+
+                {activeTab === 'variations' && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="text-lg font-medium text-gray-900 dark:text-white">Product Variations</h4>
+                      <button
+                        type="button"
+                        onClick={handleCreateVariation}
+                        className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Add Variation</span>
+                      </button>
+                    </div>
+
+                    {productVariations.length > 0 ? (
+                      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                          <thead className="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">SKU</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Options</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Price</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Stock</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            {productVariations.map((variation) => (
+                              <tr key={variation.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{variation.sku}</td>
+                                <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                                  {Object.entries(variation.options).map(([key, value]) => (
+                                    <span key={key} className="inline-block px-2 py-1 mr-2 mb-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">
+                                      {key}: {value}
+                                    </span>
+                                  ))}
+                                </td>
+                                <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">${variation.price}</td>
+                                <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{variation.stock}</td>
+                                <td className="px-4 py-3 text-sm">
+                                  <span className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(variation.status)}`}>
+                                    {variation.status}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 text-sm text-right">
+                                  <div className="flex items-center justify-end space-x-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleEditVariation(variation)}
+                                      className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded"
+                                    >
+                                      <Edit className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDeleteVariation(variation.id)}
+                                      className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 rounded"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
+                        <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                        <p className="text-gray-500 dark:text-gray-400">No variations added yet</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Add variations for different options like color, size, etc.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'content' && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Product Content
+                      </label>
+                      <div className="bg-white dark:bg-gray-800 rounded-lg">
+                        <ReactQuill
+                          value={formData.description}
+                          onChange={(content) => setFormData({ ...formData, description: content })}
+                          modules={{
+                            toolbar: [
+                              [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                              ['bold', 'italic', 'underline', 'strike'],
+                              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                              [{ 'script': 'sub'}, { 'script': 'super' }],
+                              [{ 'indent': '-1'}, { 'indent': '+1' }],
+                              [{ 'direction': 'rtl' }],
+                              [{ 'color': [] }, { 'background': [] }],
+                              [{ 'align': [] }],
+                              ['link', 'image', 'video'],
+                              ['clean']
+                            ]
+                          }}
+                          formats={[
+                            'header', 'bold', 'italic', 'underline', 'strike',
+                            'list', 'bullet', 'script', 'indent', 'direction',
+                            'color', 'background', 'align', 'link', 'image', 'video'
+                          ]}
+                          placeholder="Write detailed product description here..."
+                          style={{ minHeight: '300px' }}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 )}
 
                 {activeTab === 'blocks' && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Content Blocks</h3>
-                    <ContentBlockEditor
-                      blocks={formData.content_blocks}
-                      onChange={(blocks) => setFormData({ ...formData, content_blocks: blocks })}
-                      onMediaSelect={handleMediaSelect}
-                    />
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Content Blocks
+                      </label>
+                      <ContentBlockEditor
+                        blocks={formData.content_blocks}
+                        onChange={(blocks) => setFormData({ ...formData, content_blocks: blocks })}
+                        onMediaSelect={handleMediaSelect}
+                      />
+                    </div>
                   </div>
                 )}
 
                 {activeTab === 'sections' && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Sections</h3>
-                    <PostSectionEditor
-                      sections={formData.sections}
-                      onChange={(sections) => setFormData({ ...formData, sections: sections })}
-                      onMediaSelect={handleMediaSelect}
-                    />
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Sections
+                      </label>
+                      <PostSectionEditor
+                        sections={formData.sections}
+                        onChange={(sections) => setFormData({ ...formData, sections: sections })}
+                        onMediaSelect={handleMediaSelect}
+                      />
+                    </div>
                   </div>
                 )}
 
-                <div className="flex items-center justify-end space-x-3 pt-4">
+                <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
@@ -862,136 +967,16 @@ const Products: React.FC = () => {
         </div>
       )}
 
-      {/* Variations List Modal */}
-      {showVariationsList && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowVariationsList(false)} />
-            
-            <div className="inline-block w-full max-w-3xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Product Variations
-                </h3>
-                <button
-                  onClick={() => setShowVariationsList(false)}
-                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {loadingVariations ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                </div>
-              ) : (
-                <>
-                  <div className="mb-4">
-                    <button
-                      type="button"
-                      onClick={handleCreateVariation}
-                      className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
-                    >
-                      <Plus className="w-4 h-4" />
-                      <span>Add Variation</span>
-                    </button>
-                  </div>
-
-                  {productVariations.length > 0 ? (
-                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead className="bg-gray-50 dark:bg-gray-800">
-                          <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                              SKU
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                              Options
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                              Price
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                              Stock
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                              Status
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                              Actions
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                          {productVariations.map((variation) => (
-                            <tr key={variation.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                {variation.sku}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                {Object.entries(variation.options || {}).map(([key, value]) => (
-                                  <span key={key} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-300 mr-2">
-                                    {key}: {value}
-                                  </span>
-                                ))}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                ${variation.price}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                {variation.stock}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(variation.status)}`}>
-                                  {variation.status}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div className="flex items-center justify-end space-x-2">
-                                  <button
-                                    onClick={() => handleEditVariation(variation)}
-                                    className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded"
-                                  >
-                                    <Edit className="w-4 h-4" />
-                                  </button>
-                                  <button
-                                    onClick={() => handleDeleteVariation(variation.id)}
-                                    className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 rounded"
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
-                      <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-500 dark:text-gray-400">No variations found</p>
-                      <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">Add variations to create different options for this product</p>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Variation Modal */}
       {showVariationModal && (
         <div className="fixed inset-0 z-60 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowVariationModal(false)} />
             
-            <div className="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
+            <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {editingVariation ? 'Edit Variation' : 'New Variation'}
+                  {editingVariation ? 'Edit Variation' : 'Add Variation'}
                 </h3>
                 <button
                   onClick={() => setShowVariationModal(false)}
@@ -1001,16 +986,16 @@ const Products: React.FC = () => {
                 </button>
               </div>
 
-              <div className="space-y-6">
+              <form onSubmit={handleSubmitVariation} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     SKU
                   </label>
                   <input
                     type="text"
-                    value={variationData.sku}
-                    onChange={(e) => setVariationData({ ...variationData, sku: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={variationForm.sku}
+                    onChange={(e) => setVariationForm({ ...variationForm, sku: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                     required
                   />
                 </div>
@@ -1020,52 +1005,49 @@ const Products: React.FC = () => {
                     <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Options
                     </label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="text"
-                        value={newOptionKey}
-                        onChange={(e) => setNewOptionKey(e.target.value)}
-                        placeholder="New option key"
-                        className="px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleAddOption}
-                        className="p-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={addOptionKey}
+                      className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                    >
+                      + Add Option
+                    </button>
                   </div>
                   
-                  <div className="space-y-3">
-                    {optionKeys.map(key => (
-                      <div key={key} className="flex items-center space-x-2">
-                        <div className="flex-1 flex items-center space-x-2">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize w-20">
-                            {key}:
-                          </span>
-                          <input
-                            type="text"
-                            value={variationData.options[key] || ''}
-                            onChange={(e) => handleVariationChange(key, e.target.value)}
-                            className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                            placeholder={`Enter ${key}`}
-                          />
-                        </div>
+                  {optionKeys.map((key, index) => (
+                    <div key={index} className="flex items-center space-x-2 mb-2">
+                      <input
+                        type="text"
+                        value={key}
+                        onChange={(e) => updateOptionKey(index, e.target.value)}
+                        className="w-1/3 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Option name"
+                      />
+                      <input
+                        type="text"
+                        value={variationForm.options[key] || ''}
+                        onChange={(e) => {
+                          const newOptions = { ...variationForm.options };
+                          newOptions[key] = e.target.value;
+                          setVariationForm({ ...variationForm, options: newOptions });
+                        }}
+                        className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Option value"
+                      />
+                      {optionKeys.length > 1 && (
                         <button
                           type="button"
-                          onClick={() => handleRemoveOption(key)}
-                          className="p-1 text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg"
+                          onClick={() => removeOptionKey(index)}
+                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg"
                         >
                           <X className="w-4 h-4" />
                         </button>
-                      </div>
-                    ))}
-                  </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Price
@@ -1076,9 +1058,9 @@ const Products: React.FC = () => {
                       </span>
                       <input
                         type="number"
-                        value={variationData.price}
-                        onChange={(e) => setVariationData({ ...variationData, price: parseFloat(e.target.value) || 0 })}
-                        className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={variationForm.price}
+                        onChange={(e) => setVariationForm({ ...variationForm, price: parseFloat(e.target.value) || 0 })}
+                        className="w-full pl-7 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         step="0.01"
                         min="0"
                         required
@@ -1092,9 +1074,9 @@ const Products: React.FC = () => {
                     </label>
                     <input
                       type="number"
-                      value={variationData.stock}
-                      onChange={(e) => setVariationData({ ...variationData, stock: parseInt(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={variationForm.stock}
+                      onChange={(e) => setVariationForm({ ...variationForm, stock: parseInt(e.target.value) || 0 })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       min="0"
                       required
                     />
@@ -1106,9 +1088,9 @@ const Products: React.FC = () => {
                     Status
                   </label>
                   <select
-                    value={variationData.status}
-                    onChange={(e) => setVariationData({ ...variationData, status: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={variationForm.status}
+                    onChange={(e) => setVariationForm({ ...variationForm, status: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                   >
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
@@ -1124,15 +1106,14 @@ const Products: React.FC = () => {
                     Cancel
                   </button>
                   <button
-                    type="button"
-                    onClick={handleSaveVariation}
+                    type="submit"
                     className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                   >
                     <Save className="w-4 h-4" />
-                    <span>{editingVariation ? 'Update' : 'Create'}</span>
+                    <span>{editingVariation ? 'Update' : 'Add'}</span>
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
@@ -1140,7 +1121,7 @@ const Products: React.FC = () => {
 
       {/* Media Modal */}
       {showMediaModal && (
-        <div className="fixed inset-0 z-60 overflow-y-auto">
+        <div className="fixed inset-0 z-70 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowMediaModal(false)} />
             
@@ -1155,38 +1136,33 @@ const Products: React.FC = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
-                {/* This would typically be populated with media from your media library */}
-                <div
-                  onClick={() => selectMedia({ url: 'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' })}
-                  className="relative group cursor-pointer hover:opacity-75 transition-opacity"
-                >
-                  <img
-                    src="https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    alt="Laptop"
-                    className="w-full h-24 object-cover rounded-lg"
-                  />
-                </div>
-                <div
-                  onClick={() => selectMedia({ url: 'https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' })}
-                  className="relative group cursor-pointer hover:opacity-75 transition-opacity"
-                >
-                  <img
-                    src="https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    alt="Earbuds"
-                    className="w-full h-24 object-cover rounded-lg"
-                  />
-                </div>
-                <div
-                  onClick={() => selectMedia({ url: 'https://images.pexels.com/photos/459653/pexels-photo-459653.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' })}
-                  className="relative group cursor-pointer hover:opacity-75 transition-opacity"
-                >
-                  <img
-                    src="https://images.pexels.com/photos/459653/pexels-photo-459653.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    alt="Keyboard"
-                    className="w-full h-24 object-cover rounded-lg"
-                  />
-                </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 max-h-96 overflow-y-auto">
+                {/* This would typically fetch from your media library */}
+                {[
+                  'https://images.pexels.com/photos/51383/photo-camera-subject-photographer-51383.jpeg',
+                  'https://images.pexels.com/photos/577769/pexels-photo-577769.jpeg',
+                  'https://images.pexels.com/photos/243757/pexels-photo-243757.jpeg',
+                  'https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg'
+                ].map((url, index) => (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      if (mediaCallback) {
+                        mediaCallback(url);
+                        setMediaCallback(null);
+                        setShowMediaModal(false);
+                      }
+                    }}
+                    className="relative group cursor-pointer hover:opacity-75 transition-opacity"
+                  >
+                    <img
+                      src={url}
+                      alt={`Media ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all" />
+                  </div>
+                ))}
               </div>
 
               <div className="mt-6 flex justify-center">

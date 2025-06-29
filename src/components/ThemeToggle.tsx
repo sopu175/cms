@@ -21,7 +21,7 @@ const ThemeToggle: React.FC = () => {
           <button
             key={themeOption.id}
             onClick={() => setTheme(themeOption.id)}
-            className={`flex items-center space-x-1 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+            className={`p-1.5 rounded-md transition-all duration-200 ${
               isActive
                 ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
@@ -29,7 +29,6 @@ const ThemeToggle: React.FC = () => {
             title={`Switch to ${themeOption.label.toLowerCase()} theme`}
           >
             <Icon className="w-4 h-4" />
-            <span className="hidden sm:inline">{themeOption.label}</span>
           </button>
         );
       })}
