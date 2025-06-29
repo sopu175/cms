@@ -13,7 +13,8 @@ import {
   Settings,
   Copy,
   Mail,
-  Send
+  Send,
+  Eye
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
