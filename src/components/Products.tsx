@@ -8,20 +8,106 @@ import {
   DollarSign,
   Package,
   Star,
-  Eye
+  Eye,
+  X,
+  Save,
+  Upload,
+  Image as ImageIcon
 } from 'lucide-react';
 import { useProducts } from '../hooks/useProducts';
+import { useCategories } from '../hooks/useCategories';
 import { useAuth } from '../contexts/AuthContext';
+import { Product, ProductVariation } from '../types';
 
 const Products: React.FC = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('active');
-  const { products, loading, deleteProduct } = useProducts({
+  const { products, loading, createProduct, updateProduct, deleteProduct } = useProducts({
     status: statusFilter
   });
+  const { categories } = useCategories();
+
+  const [showModal, setShowModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [showVariationModal, setShowVariationModal] = useState(false);
+  const [editingVariation, setEditingVariation] = useState<ProductVariation | null>(null);
+  const [currentProductId, setCurrentProductId] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    slug: '',
+    description: '',
+    images: [] as string[],
+    price: 0,
+    category_id: '',
+    status: 'active'
+  });
+
+  const [variationData, setVariationData] = useState({
+    sku: '',
+    options: {} as Record<string, string>,
+    price: 0,
+    stock: 0,
+    status: 'active'
+  });
+
+  const [optionKeys, setOptionKeys] = useState<string[]>(['color', 'size']);
+  const [newOptionKey, setNewOptionKey] = useState('');
 
   const canEdit = ['admin', 'editor'].includes(user?.role || '');
+
+  const handleCreateProduct = () => {
+    setEditingProduct(null);
+    setFormData({
+      name: '',
+      slug: '',
+      description: '',
+      images: [],
+      price: 0,
+      category_id: '',
+      status: 'active'
+    });
+    setShowModal(true);
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setFormData({
+      name: product.name,
+      slug: product.slug,
+      description: product.description || '',
+      images: product.images || [],
+      price: product.price,
+      category_id: product.category_id || '',
+      status: product.status
+    });
+    setShowModal(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const productData = {
+      ...formData,
+      slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+      price: Number(formData.price)
+    };
+
+    let result;
+    if (editingProduct) {
+      result = await updateProduct(editingProduct.id, productData);
+    } else {
+      result = await createProduct(productData);
+    }
+
+    if (result.success) {
+      setShowModal(false);
+      setEditingProduct(null);
+    } else {
+      alert(result.error || 'Failed to save product');
+    }
+  };
 
   const handleDelete = async (productId: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
@@ -30,6 +116,73 @@ const Products: React.FC = () => {
     if (!result.success) {
       alert(result.error || 'Failed to delete product');
     }
+  };
+
+  const handleAddImage = () => {
+    const url = prompt('Enter image URL:');
+    if (url) {
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, url]
+      }));
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleAddOption = () => {
+    if (newOptionKey && !optionKeys.includes(newOptionKey)) {
+      setOptionKeys([...optionKeys, newOptionKey]);
+      setNewOptionKey('');
+    }
+  };
+
+  const handleRemoveOption = (key: string) => {
+    setOptionKeys(optionKeys.filter(k => k !== key));
+    setVariationData(prev => {
+      const newOptions = { ...prev.options };
+      delete newOptions[key];
+      return { ...prev, options: newOptions };
+    });
+  };
+
+  const handleVariationChange = (key: string, value: string) => {
+    setVariationData(prev => ({
+      ...prev,
+      options: {
+        ...prev.options,
+        [key]: value
+      }
+    }));
+  };
+
+  const handleManageVariations = (productId: string) => {
+    setCurrentProductId(productId);
+    // In a real implementation, you would fetch variations for this product
+    // For now, we'll just show the modal to add a new variation
+    setEditingVariation(null);
+    setVariationData({
+      sku: '',
+      options: {},
+      price: 0,
+      stock: 0,
+      status: 'active'
+    });
+    setShowVariationModal(true);
+  };
+
+  const handleSaveVariation = () => {
+    // In a real implementation, you would save the variation to the database
+    console.log('Saving variation:', {
+      ...variationData,
+      product_id: currentProductId
+    });
+    setShowVariationModal(false);
   };
 
   const filteredProducts = products.filter(product =>
@@ -63,7 +216,10 @@ const Products: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-400">Manage your product catalog</p>
         </div>
         {canEdit && (
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+          <button 
+            onClick={handleCreateProduct}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          >
             <Plus className="w-4 h-4" />
             <span>New Product</span>
           </button>
@@ -150,17 +306,27 @@ const Products: React.FC = () => {
               <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
                 <div className="flex items-center space-x-1">
                   <Package className="w-4 h-4" />
-                  <span>{product.variations_count} variants</span>
+                  <span>{product.variations_count || 0} variants</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Eye className="w-4 h-4" />
-                  <span>{product.reviews_count} reviews</span>
+                  <span>{product.reviews_count || 0} reviews</span>
                 </div>
               </div>
 
               {canEdit && (
                 <div className="flex items-center justify-end space-x-2">
-                  <button className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors">
+                  <button 
+                    onClick={() => handleManageVariations(product.id)}
+                    className="p-2 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-500/10 rounded-lg transition-colors"
+                    title="Manage Variations"
+                  >
+                    <Package className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => handleEditProduct(product)}
+                    className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors"
+                  >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button 
@@ -185,6 +351,348 @@ const Products: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-400">
             {searchTerm ? 'Try adjusting your search terms' : 'Create your first product to get started'}
           </p>
+        </div>
+      )}
+
+      {/* Product Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowModal(false)} />
+            
+            <div className="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {editingProduct ? 'Edit Product' : 'New Product'}
+                </h3>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Product Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Slug
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.slug}
+                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="auto-generated-if-empty"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Price
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        value={formData.price}
+                        onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                        className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        step="0.01"
+                        min="0"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Category
+                    </label>
+                    <select
+                      value={formData.category_id}
+                      onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map(category => (
+                        <option key={category.id} value={category.id}>{category.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Status
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Product Images
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleAddImage}
+                      className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Image</span>
+                    </button>
+                  </div>
+                  
+                  {formData.images.length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      {formData.images.map((image, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={image}
+                            alt={`Product ${index + 1}`}
+                            className="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(index)}
+                            className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center">
+                      <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        No images added yet
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleAddImage}
+                        className="mt-2 text-sm text-blue-600 hover:text-blue-700"
+                      >
+                        Add product images
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-end space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{editingProduct ? 'Update' : 'Create'}</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Variation Modal */}
+      {showVariationModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowVariationModal(false)} />
+            
+            <div className="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {editingVariation ? 'Edit Variation' : 'New Variation'}
+                </h3>
+                <button
+                  onClick={() => setShowVariationModal(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    SKU
+                  </label>
+                  <input
+                    type="text"
+                    value={variationData.sku}
+                    onChange={(e) => setVariationData({ ...variationData, sku: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Options
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        value={newOptionKey}
+                        onChange={(e) => setNewOptionKey(e.target.value)}
+                        placeholder="New option key"
+                        className="px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddOption}
+                        className="p-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {optionKeys.map(key => (
+                      <div key={key} className="flex items-center space-x-2">
+                        <div className="flex-1 flex items-center space-x-2">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize w-20">
+                            {key}:
+                          </span>
+                          <input
+                            type="text"
+                            value={variationData.options[key] || ''}
+                            onChange={(e) => handleVariationChange(key, e.target.value)}
+                            className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                            placeholder={`Enter ${key}`}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveOption(key)}
+                          className="p-1 text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Price
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        value={variationData.price}
+                        onChange={(e) => setVariationData({ ...variationData, price: parseFloat(e.target.value) || 0 })}
+                        className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        step="0.01"
+                        min="0"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Stock
+                    </label>
+                    <input
+                      type="number"
+                      value={variationData.stock}
+                      onChange={(e) => setVariationData({ ...variationData, stock: parseInt(e.target.value) || 0 })}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      min="0"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Status
+                  </label>
+                  <select
+                    value={variationData.status}
+                    onChange={(e) => setVariationData({ ...variationData, status: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-end space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowVariationModal(false)}
+                    className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveVariation}
+                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{editingVariation ? 'Update' : 'Create'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

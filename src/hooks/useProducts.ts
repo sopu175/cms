@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Product } from '../types';
+import { Product, ProductVariation } from '../types';
 
 interface UseProductsOptions {
   status?: string;
@@ -106,6 +106,71 @@ export const useProducts = (options: UseProductsOptions = {}) => {
     }
   };
 
+  // Product Variations
+  const getProductVariations = async (productId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('product_variations')
+        .select('*')
+        .eq('product_id', productId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      return { success: true, data };
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Failed to get product variations' };
+    }
+  };
+
+  const createProductVariation = async (variationData: Omit<ProductVariation, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('product_variations')
+        .insert([variationData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return { success: true, data };
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Failed to create product variation' };
+    }
+  };
+
+  const updateProductVariation = async (id: string, updates: Partial<ProductVariation>) => {
+    try {
+      const { data, error } = await supabase
+        .from('product_variations')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return { success: true, data };
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Failed to update product variation' };
+    }
+  };
+
+  const deleteProductVariation = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('product_variations')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Failed to delete product variation' };
+    }
+  };
+
   return {
     products,
     loading,
@@ -114,6 +179,10 @@ export const useProducts = (options: UseProductsOptions = {}) => {
     createProduct,
     updateProduct,
     deleteProduct,
+    getProductVariations,
+    createProductVariation,
+    updateProductVariation,
+    deleteProductVariation,
     refetch: fetchProducts
   };
 };
