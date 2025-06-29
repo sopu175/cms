@@ -27,7 +27,7 @@ export interface ContentPage {
   description?: string;
   background_image?: string;
   background_color?: string;
-  sections: any[];
+  sections: Section[];
   status: 'draft' | 'published' | 'archived';
   author_id: string;
   created_at: string;

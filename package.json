@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "import-demo": "tsx scripts/import-demo-data.ts"
+    "import-demo": "tsx scripts/import-demo-data.ts",
+    "backend:dev": "cd backend && npm run dev"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",

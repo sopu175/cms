@@ -1,7 +1,5 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { register, login, getProfile, updateProfile } from '../controllers/authController.js';
-import { authenticateToken } from '../middleware/auth.js';
 import { handleValidationErrors } from '../middleware/validation.js';
 
 const router = Router();
@@ -49,7 +47,22 @@ router.post('/register', [
   body('password').isLength({ min: 6 }),
   body('role').optional().isIn(['admin', 'editor', 'author', 'customer']),
   handleValidationErrors
-], register);
+], (req, res) => {
+  // Temporary mock response
+  res.status(201).json({
+    success: true,
+    data: {
+      user: {
+        id: 'mock-user-id',
+        username: req.body.username,
+        email: req.body.email,
+        role: req.body.role || 'customer'
+      },
+      token: 'mock-jwt-token'
+    },
+    message: 'User registered successfully'
+  });
+});
 
 /**
  * @swagger
@@ -82,7 +95,22 @@ router.post('/login', [
   body('email').isEmail().normalizeEmail(),
   body('password').notEmpty(),
   handleValidationErrors
-], login);
+], (req, res) => {
+  // Temporary mock response
+  res.json({
+    success: true,
+    data: {
+      user: {
+        id: 'mock-user-id',
+        username: 'mockuser',
+        email: req.body.email,
+        role: 'admin'
+      },
+      token: 'mock-jwt-token'
+    },
+    message: 'Login successful'
+  });
+});
 
 /**
  * @swagger
@@ -98,7 +126,21 @@ router.post('/login', [
  *       401:
  *         description: Unauthorized
  */
-router.get('/profile', authenticateToken, getProfile);
+router.get('/profile', (req, res) => {
+  // Temporary mock response
+  res.json({
+    success: true,
+    data: {
+      id: 'mock-user-id',
+      username: 'mockuser',
+      email: 'admin@dccms.com',
+      role: 'admin',
+      avatar_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  });
+});
 
 /**
  * @swagger
@@ -126,10 +168,25 @@ router.get('/profile', authenticateToken, getProfile);
  *       401:
  *         description: Unauthorized
  */
-router.put('/profile', authenticateToken, [
+router.put('/profile', [
   body('username').optional().isLength({ min: 3, max: 50 }),
   body('avatar_url').optional().isURL(),
   handleValidationErrors
-], updateProfile);
+], (req, res) => {
+  // Temporary mock response
+  res.json({
+    success: true,
+    data: {
+      id: 'mock-user-id',
+      username: req.body.username || 'mockuser',
+      email: 'admin@dccms.com',
+      role: 'admin',
+      avatar_url: req.body.avatar_url || null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    message: 'Profile updated successfully'
+  });
+});
 
 export default router;
