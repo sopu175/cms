@@ -9,22 +9,22 @@ import {
   Package,
   Star,
   Eye,
-  X,
   Save,
+  X,
   Image,
   Upload,
-  FileText,
   Layers,
-  List
+  List,
+  Settings,
+  Tag,
+  FileText
 } from 'lucide-react';
 import { useProducts } from '../hooks/useProducts';
 import { useAuth } from '../contexts/AuthContext';
 import { useCategories } from '../hooks/useCategories';
-import { Product, ProductVariation, ContentBlock, PostSection } from '../types';
+import { Product, ProductVariation } from '../types';
 import ContentBlockEditor from './ContentBlockEditor';
 import PostSectionEditor from './PostSectionEditor';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 
 const Products: React.FC = () => {
   const { user } = useAuth();
@@ -38,12 +38,10 @@ const Products: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('basic');
-  const [showVariationModal, setShowVariationModal] = useState(false);
-  const [editingVariation, setEditingVariation] = useState<ProductVariation | null>(null);
   const [productVariations, setProductVariations] = useState<ProductVariation[]>([]);
-  const [showMediaModal, setShowMediaModal] = useState(false);
-  const [mediaCallback, setMediaCallback] = useState<((url: string) => void) | null>(null);
-
+  const [editingVariation, setEditingVariation] = useState<ProductVariation | null>(null);
+  const [showVariationModal, setShowVariationModal] = useState(false);
+  
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -52,97 +50,56 @@ const Products: React.FC = () => {
     price: 0,
     category_id: '',
     status: 'active',
-    content_blocks: [] as ContentBlock[],
-    sections: [] as PostSection[]
+    content_blocks: [],
+    sections: []
   });
 
   const [variationForm, setVariationForm] = useState({
-    product_id: '',
     sku: '',
-    options: {} as Record<string, string>,
+    options: {
+      color: '',
+      size: '',
+      material: ''
+    },
     price: 0,
     stock: 0,
     status: 'active'
   });
 
-  const [optionKeys, setOptionKeys] = useState<string[]>(['color']);
-  const [optionValues, setOptionValues] = useState<Record<string, string>>({
-    color: ''
-  });
+  const canEdit = ['admin', 'editor'].includes(user?.role || '');
 
   useEffect(() => {
-    // Create demo products if none exist
+    // Add demo products if none exist
     if (products.length === 0 && !loading) {
-      createDemoProducts();
+      addDemoProducts();
     }
   }, [products, loading]);
 
-  const createDemoProducts = async () => {
-    // Get categories
-    if (categories.length === 0) return;
+  const addDemoProducts = async () => {
+    if (!canEdit) return;
     
+    // Get a category ID
+    const categoryId = categories.length > 0 ? categories[0].id : null;
+    
+    // Create demo products
     const demoProducts = [
       {
-        name: 'Professional DSLR Camera',
-        slug: 'professional-dslr-camera',
-        description: 'High-quality professional DSLR camera with advanced features for photography enthusiasts.',
-        images: ['https://images.pexels.com/photos/51383/photo-camera-subject-photographer-51383.jpeg'],
-        price: 1299.99,
-        category_id: categories[0].id,
-        status: 'active',
-        content_blocks: [
-          {
-            id: '1',
-            type: 'rich_text',
-            content: '<h2>Professional Quality</h2><p>This camera offers exceptional image quality and performance for professional photographers.</p>',
-            order: 0
-          },
-          {
-            id: '2',
-            type: 'image',
-            content: {
-              url: 'https://images.pexels.com/photos/243757/pexels-photo-243757.jpeg',
-              alt: 'Camera in action',
-              caption: 'Capture every moment with stunning clarity'
-            },
-            order: 1
-          }
-        ],
-        sections: [
-          {
-            id: '1',
-            title: 'Technical Specifications',
-            type: 'section',
-            content: '<ul><li>24.2 Megapixel CMOS Sensor</li><li>4K Video Recording</li><li>ISO Range: 100-25600</li><li>Built-in Wi-Fi and Bluetooth</li></ul>',
-            order: 0
-          }
-        ]
+        name: 'Premium Wireless Headphones',
+        slug: 'premium-wireless-headphones',
+        description: 'High-quality wireless headphones with noise cancellation and premium sound quality.',
+        images: ['https://images.pexels.com/photos/3394650/pexels-photo-3394650.jpeg'],
+        price: 199.99,
+        category_id: categoryId,
+        status: 'active'
       },
       {
-        name: 'Wireless Bluetooth Headphones',
-        slug: 'wireless-bluetooth-headphones',
-        description: 'Premium noise-cancelling wireless headphones with long battery life and superior sound quality.',
-        images: ['https://images.pexels.com/photos/577769/pexels-photo-577769.jpeg'],
-        price: 249.99,
-        category_id: categories[0].id,
-        status: 'active',
-        content_blocks: [
-          {
-            id: '1',
-            type: 'rich_text',
-            content: '<h2>Immersive Sound Experience</h2><p>Experience crystal clear audio with deep bass and noise cancellation technology.</p>',
-            order: 0
-          }
-        ],
-        sections: [
-          {
-            id: '1',
-            title: 'Features',
-            type: 'section',
-            content: '<ul><li>Active Noise Cancellation</li><li>30-hour Battery Life</li><li>Quick Charge: 5 min = 3 hours playback</li><li>Bluetooth 5.0</li></ul>',
-            order: 0
-          }
-        ]
+        name: 'Smart Fitness Watch',
+        slug: 'smart-fitness-watch',
+        description: 'Track your fitness goals with this advanced smart watch featuring heart rate monitoring, GPS, and more.',
+        images: ['https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg'],
+        price: 149.99,
+        category_id: categoryId,
+        status: 'active'
       }
     ];
     
@@ -151,9 +108,7 @@ const Products: React.FC = () => {
     }
   };
 
-  const canEdit = ['admin', 'editor'].includes(user?.role || '');
-
-  const handleCreate = () => {
+  const handleCreateProduct = () => {
     setEditingProduct(null);
     setFormData({
       name: '',
@@ -166,21 +121,13 @@ const Products: React.FC = () => {
       content_blocks: [],
       sections: []
     });
+    setProductVariations([]);
     setActiveTab('basic');
     setShowModal(true);
   };
 
-  const handleEdit = async (product: Product) => {
+  const handleEditProduct = async (product: Product) => {
     setEditingProduct(product);
-    
-    // Fetch variations
-    const result = await getProductVariations(product.id);
-    if (result.success) {
-      setProductVariations(result.data || []);
-    } else {
-      setProductVariations([]);
-    }
-    
     setFormData({
       name: product.name,
       slug: product.slug,
@@ -192,25 +139,23 @@ const Products: React.FC = () => {
       content_blocks: product.content_blocks || [],
       sections: product.sections || []
     });
+    
+    // Fetch variations
+    const result = await getProductVariations(product.id);
+    if (result.success) {
+      setProductVariations(result.data || []);
+    }
+    
     setActiveTab('basic');
     setShowModal(true);
-  };
-
-  const handleDelete = async (productId: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
-
-    const result = await deleteProduct(productId);
-    if (!result.success) {
-      alert(result.error || 'Failed to delete product');
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Generate slug if empty
+    // Auto-generate slug if empty
     let slug = formData.slug;
-    if (!slug) {
+    if (!slug && formData.name) {
       slug = formData.name
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, '')
@@ -239,16 +184,26 @@ const Products: React.FC = () => {
     }
   };
 
-  const handleCreateVariation = () => {
-    if (!editingProduct) return;
-    
+  const handleDelete = async (productId: string) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+
+    const result = await deleteProduct(productId);
+    if (!result.success) {
+      alert(result.error || 'Failed to delete product');
+    }
+  };
+
+  const handleAddVariation = () => {
     setEditingVariation(null);
     setVariationForm({
-      product_id: editingProduct.id,
       sku: '',
-      options: optionKeys.reduce((acc, key) => ({ ...acc, [key]: '' }), {}),
+      options: {
+        color: '',
+        size: '',
+        material: ''
+      },
       price: formData.price,
-      stock: 0,
+      stock: 10,
       status: 'active'
     });
     setShowVariationModal(true);
@@ -257,62 +212,39 @@ const Products: React.FC = () => {
   const handleEditVariation = (variation: ProductVariation) => {
     setEditingVariation(variation);
     setVariationForm({
-      product_id: variation.product_id,
       sku: variation.sku,
-      options: variation.options,
+      options: variation.options || {
+        color: '',
+        size: '',
+        material: ''
+      },
       price: variation.price,
       stock: variation.stock,
       status: variation.status
     });
-    
-    // Update option keys based on the variation
-    const keys = Object.keys(variation.options);
-    setOptionKeys(keys.length > 0 ? keys : ['color']);
     setShowVariationModal(true);
   };
 
-  const handleDeleteVariation = async (variationId: string) => {
-    if (!confirm('Are you sure you want to delete this variation?')) return;
-
-    const result = await deleteProductVariation(variationId);
-    if (result.success) {
-      setProductVariations(productVariations.filter(v => v.id !== variationId));
-    } else {
-      alert(result.error || 'Failed to delete variation');
-    }
-  };
-
-  const handleSubmitVariation = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveVariation = async () => {
+    if (!editingProduct) return;
     
-    // Ensure all option values are set
-    const options = { ...variationForm.options };
-    optionKeys.forEach(key => {
-      if (!options[key]) {
-        options[key] = '';
-      }
-    });
-    
-    const variationData = {
-      ...variationForm,
-      options
-    };
-
     let result;
     if (editingVariation) {
-      result = await updateProductVariation(editingVariation.id, variationData);
+      result = await updateProductVariation(editingVariation.id, variationForm);
     } else {
-      result = await createProductVariation(variationData);
+      result = await createProductVariation({
+        ...variationForm,
+        product_id: editingProduct.id
+      });
     }
 
     if (result.success) {
-      if (editingVariation) {
-        setProductVariations(productVariations.map(v => 
-          v.id === editingVariation.id ? result.data : v
-        ));
-      } else {
-        setProductVariations([...productVariations, result.data]);
+      // Refresh variations
+      const variationsResult = await getProductVariations(editingProduct.id);
+      if (variationsResult.success) {
+        setProductVariations(variationsResult.data || []);
       }
+      
       setShowVariationModal(false);
       setEditingVariation(null);
     } else {
@@ -320,63 +252,36 @@ const Products: React.FC = () => {
     }
   };
 
-  const addOptionKey = () => {
-    setOptionKeys([...optionKeys, '']);
-  };
+  const handleDeleteVariation = async (variationId: string) => {
+    if (!confirm('Are you sure you want to delete this variation?')) return;
 
-  const updateOptionKey = (index: number, value: string) => {
-    const newKeys = [...optionKeys];
-    newKeys[index] = value;
-    setOptionKeys(newKeys);
-    
-    // Update options object with new key
-    const newOptions = { ...variationForm.options };
-    const oldKey = Object.keys(newOptions)[index];
-    if (oldKey && oldKey !== value) {
-      const oldValue = newOptions[oldKey];
-      delete newOptions[oldKey];
-      if (value) {
-        newOptions[value] = oldValue;
+    const result = await deleteProductVariation(variationId);
+    if (result.success && editingProduct) {
+      // Refresh variations
+      const variationsResult = await getProductVariations(editingProduct.id);
+      if (variationsResult.success) {
+        setProductVariations(variationsResult.data || []);
       }
-    } else if (value && !newOptions[value]) {
-      newOptions[value] = '';
+    } else {
+      alert(result.error || 'Failed to delete variation');
     }
-    
-    setVariationForm({
-      ...variationForm,
-      options: newOptions
+  };
+
+  const handleAddImage = () => {
+    const url = prompt('Enter image URL:');
+    if (url) {
+      setFormData({
+        ...formData,
+        images: [...formData.images, url]
+      });
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setFormData({
+      ...formData,
+      images: formData.images.filter((_, i) => i !== index)
     });
-  };
-
-  const removeOptionKey = (index: number) => {
-    const newKeys = [...optionKeys];
-    const removedKey = newKeys[index];
-    newKeys.splice(index, 1);
-    setOptionKeys(newKeys);
-    
-    // Remove from options object
-    const newOptions = { ...variationForm.options };
-    if (removedKey && newOptions[removedKey]) {
-      delete newOptions[removedKey];
-    }
-    
-    setVariationForm({
-      ...variationForm,
-      options: newOptions
-    });
-  };
-
-  const handleMediaSelect = (callback: (url: string) => void) => {
-    setMediaCallback(() => callback);
-    setShowMediaModal(true);
-  };
-
-  const selectMedia = (mediaItem: any) => {
-    if (mediaCallback) {
-      mediaCallback(mediaItem.url);
-      setMediaCallback(null);
-    }
-    setShowMediaModal(false);
   };
 
   const filteredProducts = products.filter(product =>
@@ -411,7 +316,7 @@ const Products: React.FC = () => {
         </div>
         {canEdit && (
           <button 
-            onClick={handleCreate}
+            onClick={handleCreateProduct}
             className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
@@ -487,7 +392,7 @@ const Products: React.FC = () => {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-1 text-lg font-bold text-gray-900 dark:text-white">
                   <DollarSign className="w-4 h-4" />
-                  <span>{product.price}</span>
+                  <span>{product.price.toFixed(2)}</span>
                 </div>
                 {product.average_rating > 0 && (
                   <div className="flex items-center space-x-1 text-yellow-500">
@@ -503,7 +408,7 @@ const Products: React.FC = () => {
                   <span>{product.variations_count || 0} variants</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Eye className="w-4 h-4" />
+                  <Star className="w-4 h-4" />
                   <span>{product.reviews_count || 0} reviews</span>
                 </div>
               </div>
@@ -511,7 +416,7 @@ const Products: React.FC = () => {
               {canEdit && (
                 <div className="flex items-center justify-end space-x-2">
                   <button 
-                    onClick={() => handleEdit(product)}
+                    onClick={() => handleEditProduct(product)}
                     className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors"
                   >
                     <Edit className="w-4 h-4" />
@@ -547,7 +452,7 @@ const Products: React.FC = () => {
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowModal(false)} />
             
-            <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
+            <div className="inline-block w-full max-w-5xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   {editingProduct ? 'Edit Product' : 'New Product'}
@@ -561,63 +466,63 @@ const Products: React.FC = () => {
               </div>
 
               {/* Tabs */}
-              <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto">
+              <div className="flex flex-wrap space-x-4 mb-6 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
                 <button
                   onClick={() => setActiveTab('basic')}
-                  className={`pb-2 border-b-2 transition-colors ${
+                  className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
                     activeTab === 'basic'
                       ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-600 dark:text-gray-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
                   }`}
                 >
                   Basic Info
                 </button>
                 <button
                   onClick={() => setActiveTab('images')}
-                  className={`pb-2 border-b-2 transition-colors ${
+                  className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
                     activeTab === 'images'
                       ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-600 dark:text-gray-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
                   }`}
                 >
                   Images
                 </button>
                 <button
                   onClick={() => setActiveTab('variations')}
-                  className={`pb-2 border-b-2 transition-colors ${
+                  className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
                     activeTab === 'variations'
                       ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-600 dark:text-gray-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
                   }`}
                 >
                   Variations
                 </button>
                 <button
                   onClick={() => setActiveTab('content')}
-                  className={`pb-2 border-b-2 transition-colors ${
+                  className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
                     activeTab === 'content'
                       ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-600 dark:text-gray-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
                   }`}
                 >
                   Content
                 </button>
                 <button
                   onClick={() => setActiveTab('blocks')}
-                  className={`pb-2 border-b-2 transition-colors ${
+                  className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
                     activeTab === 'blocks'
                       ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-600 dark:text-gray-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
                   }`}
                 >
                   Content Blocks
                 </button>
                 <button
                   onClick={() => setActiveTab('sections')}
-                  className={`pb-2 border-b-2 transition-colors ${
+                  className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
                     activeTab === 'sections'
                       ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-600 dark:text-gray-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300'
                   }`}
                 >
                   Sections
@@ -635,19 +540,7 @@ const Products: React.FC = () => {
                         <input
                           type="text"
                           value={formData.name}
-                          onChange={(e) => {
-                            setFormData({ ...formData, name: e.target.value });
-                            // Auto-generate slug if not editing
-                            if (!editingProduct) {
-                              const slug = e.target.value
-                                .toLowerCase()
-                                .replace(/[^a-z0-9\s-]/g, '')
-                                .replace(/\s+/g, '-')
-                                .replace(/-+/g, '-')
-                                .trim();
-                              setFormData(prev => ({ ...prev, slug }));
-                            }
-                          }}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                           required
                         />
@@ -662,6 +555,7 @@ const Products: React.FC = () => {
                           value={formData.slug}
                           onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          placeholder="auto-generated-if-empty"
                         />
                       </div>
                     </div>
@@ -673,12 +567,12 @@ const Products: React.FC = () => {
                       <textarea
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        rows={3}
+                        rows={4}
                         className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Price
@@ -716,163 +610,156 @@ const Products: React.FC = () => {
                           ))}
                         </select>
                       </div>
-                    </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Status
-                      </label>
-                      <select
-                        value={formData.status}
-                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      >
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="archived">Archived</option>
-                      </select>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Status
+                        </label>
+                        <select
+                          value={formData.status}
+                          onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        >
+                          <option value="active">Active</option>
+                          <option value="inactive">Inactive</option>
+                          <option value="archived">Archived</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'images' && (
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Product Images
-                      </label>
-                      <div className="flex items-center space-x-2 mb-4">
-                        <input
-                          type="url"
-                          placeholder="Image URL"
-                          className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault();
-                              const input = e.target as HTMLInputElement;
-                              if (input.value) {
-                                setFormData({
-                                  ...formData,
-                                  images: [...formData.images, input.value]
-                                });
-                                input.value = '';
-                              }
-                            }
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleMediaSelect((url) => {
-                            setFormData({
-                              ...formData,
-                              images: [...formData.images, url]
-                            });
-                          })}
-                          className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                        >
-                          <Image className="w-4 h-4" />
-                        </button>
-                      </div>
-
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {formData.images.map((image, index) => (
-                          <div key={index} className="relative group">
-                            <img
-                              src={image}
-                              alt={`Product ${index + 1}`}
-                              className="w-full h-32 object-cover rounded-lg"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const newImages = [...formData.images];
-                                newImages.splice(index, 1);
-                                setFormData({ ...formData, images: newImages });
-                              }}
-                              className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-md font-medium text-gray-900 dark:text-white">Product Images</h4>
+                      <button
+                        type="button"
+                        onClick={handleAddImage}
+                        className="flex items-center space-x-2 px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Add Image</span>
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {formData.images.map((image, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={image}
+                            alt={`Product ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(index)}
+                            className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                      
+                      {formData.images.length === 0 && (
+                        <div className="col-span-full text-center py-8 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
+                          <Image className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                          <p className="text-gray-500 dark:text-gray-400">No images added yet</p>
+                          <p className="text-sm text-gray-400 dark:text-gray-500">Click "Add Image" to upload product images</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'variations' && (
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-lg font-medium text-gray-900 dark:text-white">Product Variations</h4>
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-md font-medium text-gray-900 dark:text-white">Product Variations</h4>
                       <button
                         type="button"
-                        onClick={handleCreateVariation}
-                        className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+                        onClick={handleAddVariation}
+                        className="flex items-center space-x-2 px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        disabled={!editingProduct}
                       >
                         <Plus className="w-4 h-4" />
                         <span>Add Variation</span>
                       </button>
                     </div>
-
-                    {productVariations.length > 0 ? (
-                      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    
+                    {!editingProduct && (
+                      <div className="text-center py-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                        <p className="text-yellow-700 dark:text-yellow-400">
+                          Save the product first to add variations
+                        </p>
+                      </div>
+                    )}
+                    
+                    {editingProduct && (
+                      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                          <thead className="bg-gray-50 dark:bg-gray-700">
+                          <thead className="bg-gray-50 dark:bg-gray-800">
                             <tr>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">SKU</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Options</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Price</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Stock</th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">SKU</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Options</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Price</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Stock</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                             </tr>
                           </thead>
-                          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                            {productVariations.map((variation) => (
-                              <tr key={variation.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{variation.sku}</td>
-                                <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                                  {Object.entries(variation.options).map(([key, value]) => (
-                                    <span key={key} className="inline-block px-2 py-1 mr-2 mb-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">
-                                      {key}: {value}
+                          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                            {productVariations.length > 0 ? (
+                              productVariations.map((variation) => (
+                                <tr key={variation.id}>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                    {variation.sku}
+                                  </td>
+                                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                                    {Object.entries(variation.options || {}).map(([key, value]) => (
+                                      value ? <span key={key} className="inline-block px-2 py-1 mr-1 mb-1 text-xs bg-gray-100 dark:bg-gray-800 rounded-full">
+                                        {key}: {value}
+                                      </span> : null
+                                    ))}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                    ${variation.price.toFixed(2)}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                    {variation.stock}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap">
+                                    <span className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(variation.status)}`}>
+                                      {variation.status}
                                     </span>
-                                  ))}
-                                </td>
-                                <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">${variation.price}</td>
-                                <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{variation.stock}</td>
-                                <td className="px-4 py-3 text-sm">
-                                  <span className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(variation.status)}`}>
-                                    {variation.status}
-                                  </span>
-                                </td>
-                                <td className="px-4 py-3 text-sm text-right">
-                                  <div className="flex items-center justify-end space-x-2">
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button
                                       type="button"
                                       onClick={() => handleEditVariation(variation)}
-                                      className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded"
+                                      className="text-blue-600 hover:text-blue-900 dark:hover:text-blue-400 mr-3"
                                     >
-                                      <Edit className="w-4 h-4" />
+                                      Edit
                                     </button>
                                     <button
                                       type="button"
                                       onClick={() => handleDeleteVariation(variation.id)}
-                                      className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 rounded"
+                                      className="text-red-600 hover:text-red-900 dark:hover:text-red-400"
                                     >
-                                      <Trash2 className="w-4 h-4" />
+                                      Delete
                                     </button>
-                                  </div>
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                  No variations added yet
                                 </td>
                               </tr>
-                            ))}
+                            )}
                           </tbody>
                         </table>
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
-                        <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                        <p className="text-gray-500 dark:text-gray-400">No variations added yet</p>
-                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Add variations for different options like color, size, etc.</p>
                       </div>
                     )}
                   </div>
@@ -880,68 +767,38 @@ const Products: React.FC = () => {
 
                 {activeTab === 'content' && (
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Product Content
-                      </label>
-                      <div className="bg-white dark:bg-gray-800 rounded-lg">
-                        <ReactQuill
-                          value={formData.description}
-                          onChange={(content) => setFormData({ ...formData, description: content })}
-                          modules={{
-                            toolbar: [
-                              [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                              ['bold', 'italic', 'underline', 'strike'],
-                              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                              [{ 'script': 'sub'}, { 'script': 'super' }],
-                              [{ 'indent': '-1'}, { 'indent': '+1' }],
-                              [{ 'direction': 'rtl' }],
-                              [{ 'color': [] }, { 'background': [] }],
-                              [{ 'align': [] }],
-                              ['link', 'image', 'video'],
-                              ['clean']
-                            ]
-                          }}
-                          formats={[
-                            'header', 'bold', 'italic', 'underline', 'strike',
-                            'list', 'bullet', 'script', 'indent', 'direction',
-                            'color', 'background', 'align', 'link', 'image', 'video'
-                          ]}
-                          placeholder="Write detailed product description here..."
-                          style={{ minHeight: '300px' }}
-                        />
-                      </div>
-                    </div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Detailed Description
+                    </label>
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      rows={8}
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      placeholder="Detailed product description with features, specifications, etc."
+                    />
                   </div>
                 )}
 
                 {activeTab === 'blocks' && (
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Content Blocks
-                      </label>
-                      <ContentBlockEditor
-                        blocks={formData.content_blocks}
-                        onChange={(blocks) => setFormData({ ...formData, content_blocks: blocks })}
-                        onMediaSelect={handleMediaSelect}
-                      />
-                    </div>
+                    <h4 className="text-md font-medium text-gray-900 dark:text-white mb-4">Content Blocks</h4>
+                    <ContentBlockEditor
+                      blocks={formData.content_blocks}
+                      onChange={(blocks) => setFormData({ ...formData, content_blocks: blocks })}
+                      onMediaSelect={() => {}}
+                    />
                   </div>
                 )}
 
                 {activeTab === 'sections' && (
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Sections
-                      </label>
-                      <PostSectionEditor
-                        sections={formData.sections}
-                        onChange={(sections) => setFormData({ ...formData, sections: sections })}
-                        onMediaSelect={handleMediaSelect}
-                      />
-                    </div>
+                    <h4 className="text-md font-medium text-gray-900 dark:text-white mb-4">Product Sections</h4>
+                    <PostSectionEditor
+                      sections={formData.sections}
+                      onChange={(sections) => setFormData({ ...formData, sections })}
+                      onMediaSelect={() => {}}
+                    />
                   </div>
                 )}
 
@@ -958,7 +815,7 @@ const Products: React.FC = () => {
                     className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                   >
                     <Save className="w-4 h-4" />
-                    <span>{editingProduct ? 'Update' : 'Create'}</span>
+                    <span>{editingProduct ? 'Update Product' : 'Create Product'}</span>
                   </button>
                 </div>
               </form>
@@ -986,7 +843,7 @@ const Products: React.FC = () => {
                 </button>
               </div>
 
-              <form onSubmit={handleSubmitVariation} className="space-y-4">
+              <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     SKU
@@ -1001,53 +858,50 @@ const Products: React.FC = () => {
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Options
-                    </label>
-                    <button
-                      type="button"
-                      onClick={addOptionKey}
-                      className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                    >
-                      + Add Option
-                    </button>
-                  </div>
-                  
-                  {optionKeys.map((key, index) => (
-                    <div key={index} className="flex items-center space-x-2 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Options
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
                       <input
                         type="text"
-                        value={key}
-                        onChange={(e) => updateOptionKey(index, e.target.value)}
-                        className="w-1/3 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        placeholder="Option name"
+                        value={variationForm.options.color}
+                        onChange={(e) => setVariationForm({
+                          ...variationForm,
+                          options: { ...variationForm.options, color: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Color"
                       />
-                      <input
-                        type="text"
-                        value={variationForm.options[key] || ''}
-                        onChange={(e) => {
-                          const newOptions = { ...variationForm.options };
-                          newOptions[key] = e.target.value;
-                          setVariationForm({ ...variationForm, options: newOptions });
-                        }}
-                        className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        placeholder="Option value"
-                      />
-                      {optionKeys.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeOptionKey(index)}
-                          className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
                     </div>
-                  ))}
+                    <div>
+                      <input
+                        type="text"
+                        value={variationForm.options.size}
+                        onChange={(e) => setVariationForm({
+                          ...variationForm,
+                          options: { ...variationForm.options, size: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Size"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={variationForm.options.material}
+                        onChange={(e) => setVariationForm({
+                          ...variationForm,
+                          options: { ...variationForm.options, material: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        placeholder="Material"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Price
@@ -1096,81 +950,22 @@ const Products: React.FC = () => {
                     <option value="inactive">Inactive</option>
                   </select>
                 </div>
-
-                <div className="flex items-center justify-end space-x-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowVariationModal(false)}
-                    className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>{editingVariation ? 'Update' : 'Add'}</span>
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Media Modal */}
-      {showMediaModal && (
-        <div className="fixed inset-0 z-70 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowMediaModal(false)} />
-            
-            <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Select Media</h3>
-                <button
-                  onClick={() => setShowMediaModal(false)}
-                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-                >
-                  <X className="w-5 h-5" />
-                </button>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 max-h-96 overflow-y-auto">
-                {/* This would typically fetch from your media library */}
-                {[
-                  'https://images.pexels.com/photos/51383/photo-camera-subject-photographer-51383.jpeg',
-                  'https://images.pexels.com/photos/577769/pexels-photo-577769.jpeg',
-                  'https://images.pexels.com/photos/243757/pexels-photo-243757.jpeg',
-                  'https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg'
-                ].map((url, index) => (
-                  <div
-                    key={index}
-                    onClick={() => {
-                      if (mediaCallback) {
-                        mediaCallback(url);
-                        setMediaCallback(null);
-                        setShowMediaModal(false);
-                      }
-                    }}
-                    className="relative group cursor-pointer hover:opacity-75 transition-opacity"
-                  >
-                    <img
-                      src={url}
-                      alt={`Media ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-lg"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all" />
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6 flex justify-center">
+              <div className="mt-6 flex justify-end space-x-3">
                 <button
-                  onClick={() => setShowMediaModal(false)}
+                  type="button"
+                  onClick={() => setShowVariationModal(false)}
                   className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                 >
                   Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveVariation}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  {editingVariation ? 'Update Variation' : 'Add Variation'}
                 </button>
               </div>
             </div>

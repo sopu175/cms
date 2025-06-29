@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Star,
@@ -8,21 +8,65 @@ import {
   Check,
   X,
   Eye,
-  Filter
+  Filter,
+  Plus,
+  Save
 } from 'lucide-react';
 import { useReviews } from '../hooks/useReviews';
 import { useAuth } from '../contexts/AuthContext';
+import { useProducts } from '../hooks/useProducts';
+import { Review } from '../types';
 
 const Reviews: React.FC = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState('all');
-  const { reviews, loading, approveReview, rejectReview, deleteReview } = useReviews({
+  const { reviews, loading, createReview, approveReview, rejectReview, deleteReview } = useReviews({
     status: statusFilter
+  });
+  const { products } = useProducts();
+  const [showAddReviewModal, setShowAddReviewModal] = useState(false);
+  const [reviewForm, setReviewForm] = useState({
+    product_id: '',
+    rating: 5,
+    comment: ''
   });
 
   const canModerate = ['admin', 'editor'].includes(user?.role || '');
+
+  useEffect(() => {
+    // Add demo reviews if none exist
+    if (reviews.length === 0 && !loading && products.length > 0) {
+      addDemoReviews();
+    }
+  }, [reviews, loading, products]);
+
+  const addDemoReviews = async () => {
+    if (!canModerate || products.length === 0) return;
+    
+    // Create demo reviews
+    const demoReviews = [
+      {
+        product_id: products[0].id,
+        user_id: user?.id,
+        rating: 5,
+        comment: 'Excellent product! Exceeded my expectations in every way.',
+        status: 'approved'
+      },
+      {
+        product_id: products.length > 1 ? products[1].id : products[0].id,
+        user_id: user?.id,
+        rating: 4,
+        comment: 'Very good product. Would recommend with minor reservations.',
+        status: 'pending'
+      }
+    ];
+    
+    for (const review of demoReviews) {
+      await createReview(review);
+    }
+  };
 
   const handleApprove = async (reviewId: string) => {
     const result = await approveReview(reviewId);
@@ -44,6 +88,43 @@ const Reviews: React.FC = () => {
     const result = await deleteReview(reviewId);
     if (!result.success) {
       alert(result.error || 'Failed to delete review');
+    }
+  };
+
+  const handleAddReview = () => {
+    if (products.length > 0) {
+      setReviewForm({
+        product_id: products[0].id,
+        rating: 5,
+        comment: ''
+      });
+      setShowAddReviewModal(true);
+    } else {
+      alert('No products available to review');
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!reviewForm.product_id || !reviewForm.comment) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    const result = await createReview({
+      ...reviewForm,
+      user_id: user?.id,
+      status: canModerate ? 'approved' : 'pending'
+    });
+
+    if (result.success) {
+      setShowAddReviewModal(false);
+      setReviewForm({
+        product_id: '',
+        rating: 5,
+        comment: ''
+      });
+    } else {
+      alert(result.error || 'Failed to submit review');
     }
   };
 
@@ -99,6 +180,13 @@ const Reviews: React.FC = () => {
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Reviews</h2>
           <p className="text-gray-600 dark:text-gray-400">Manage product reviews and ratings</p>
         </div>
+        <button
+          onClick={handleAddReview}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Add Review</span>
+        </button>
       </div>
 
       {/* Filters */}
@@ -226,6 +314,102 @@ const Reviews: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-400">
             {searchTerm ? 'Try adjusting your search terms' : 'Reviews will appear here when customers leave feedback'}
           </p>
+        </div>
+      )}
+
+      {/* Add Review Modal */}
+      {showAddReviewModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowAddReviewModal(false)} />
+            
+            <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Add Review</h3>
+                <button
+                  onClick={() => setShowAddReviewModal(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Product
+                  </label>
+                  <select
+                    value={reviewForm.product_id}
+                    onChange={(e) => setReviewForm({ ...reviewForm, product_id: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    required
+                  >
+                    <option value="">Select Product</option>
+                    {products.map((product) => (
+                      <option key={product.id} value={product.id}>
+                        {product.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Rating
+                  </label>
+                  <div className="flex items-center space-x-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                        className="focus:outline-none"
+                      >
+                        <Star
+                          className={`w-8 h-8 ${
+                            star <= reviewForm.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Comment
+                  </label>
+                  <textarea
+                    value={reviewForm.comment}
+                    onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    placeholder="Write your review here..."
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddReviewModal(false)}
+                  className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmitReview}
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Submit Review</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
