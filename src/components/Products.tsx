@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   Search, 
@@ -12,7 +12,10 @@ import {
   X,
   Save,
   Upload,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Check,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { useProducts } from '../hooks/useProducts';
 import { useCategories } from '../hooks/useCategories';
@@ -23,7 +26,17 @@ const Products: React.FC = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('active');
-  const { products, loading, createProduct, updateProduct, deleteProduct } = useProducts({
+  const { 
+    products, 
+    loading, 
+    createProduct, 
+    updateProduct, 
+    deleteProduct,
+    getProductVariations,
+    createProductVariation,
+    updateProductVariation,
+    deleteProductVariation
+  } = useProducts({
     status: statusFilter
   });
   const { categories } = useCategories();
@@ -33,6 +46,9 @@ const Products: React.FC = () => {
   const [showVariationModal, setShowVariationModal] = useState(false);
   const [editingVariation, setEditingVariation] = useState<ProductVariation | null>(null);
   const [currentProductId, setCurrentProductId] = useState<string | null>(null);
+  const [productVariations, setProductVariations] = useState<ProductVariation[]>([]);
+  const [loadingVariations, setLoadingVariations] = useState(false);
+  const [showVariationsList, setShowVariationsList] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -161,10 +177,29 @@ const Products: React.FC = () => {
     }));
   };
 
-  const handleManageVariations = (productId: string) => {
+  const handleManageVariations = async (productId: string) => {
     setCurrentProductId(productId);
-    // In a real implementation, you would fetch variations for this product
-    // For now, we'll just show the modal to add a new variation
+    setLoadingVariations(true);
+    
+    try {
+      const result = await getProductVariations(productId);
+      if (result.success) {
+        setProductVariations(result.data || []);
+      } else {
+        console.error('Failed to fetch variations:', result.error);
+        setProductVariations([]);
+      }
+    } catch (error) {
+      console.error('Error fetching variations:', error);
+      setProductVariations([]);
+    } finally {
+      setLoadingVariations(false);
+    }
+    
+    setShowVariationsList(true);
+  };
+
+  const handleCreateVariation = () => {
     setEditingVariation(null);
     setVariationData({
       sku: '',
@@ -176,13 +211,66 @@ const Products: React.FC = () => {
     setShowVariationModal(true);
   };
 
-  const handleSaveVariation = () => {
-    // In a real implementation, you would save the variation to the database
-    console.log('Saving variation:', {
-      ...variationData,
-      product_id: currentProductId
+  const handleEditVariation = (variation: ProductVariation) => {
+    setEditingVariation(variation);
+    setVariationData({
+      sku: variation.sku,
+      options: variation.options || {},
+      price: variation.price,
+      stock: variation.stock,
+      status: variation.status
     });
-    setShowVariationModal(false);
+    
+    // Update option keys based on the variation's options
+    const keys = Object.keys(variation.options || {});
+    if (keys.length > 0) {
+      setOptionKeys(keys);
+    }
+    
+    setShowVariationModal(true);
+  };
+
+  const handleDeleteVariation = async (variationId: string) => {
+    if (!confirm('Are you sure you want to delete this variation?')) return;
+
+    const result = await deleteProductVariation(variationId);
+    if (result.success) {
+      setProductVariations(productVariations.filter(v => v.id !== variationId));
+    } else {
+      alert(result.error || 'Failed to delete variation');
+    }
+  };
+
+  const handleSaveVariation = async () => {
+    if (!currentProductId) return;
+    
+    const variationToSave = {
+      ...variationData,
+      product_id: currentProductId,
+      price: Number(variationData.price),
+      stock: Number(variationData.stock)
+    };
+    
+    let result;
+    if (editingVariation) {
+      result = await updateProductVariation(editingVariation.id, variationToSave);
+    } else {
+      result = await createProductVariation(variationToSave);
+    }
+    
+    if (result.success) {
+      if (editingVariation) {
+        setProductVariations(productVariations.map(v => 
+          v.id === editingVariation.id ? result.data : v
+        ));
+      } else {
+        setProductVariations([...productVariations, result.data]);
+      }
+      setShowVariationModal(false);
+      setEditingVariation(null);
+    } else {
+      alert(result.error || 'Failed to save variation');
+    }
   };
 
   const filteredProducts = products.filter(product =>
@@ -540,9 +628,129 @@ const Products: React.FC = () => {
         </div>
       )}
 
+      {/* Variations List Modal */}
+      {showVariationsList && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowVariationsList(false)} />
+            
+            <div className="inline-block w-full max-w-3xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Product Variations
+                </h3>
+                <button
+                  onClick={() => setShowVariationsList(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {loadingVariations ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-4">
+                    <button
+                      type="button"
+                      onClick={handleCreateVariation}
+                      className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Variation</span>
+                    </button>
+                  </div>
+
+                  {productVariations.length > 0 ? (
+                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-800">
+                          <tr>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              SKU
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              Options
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              Price
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              Stock
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              Status
+                            </th>
+                            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                          {productVariations.map((variation) => (
+                            <tr key={variation.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                {variation.sku}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                {Object.entries(variation.options || {}).map(([key, value]) => (
+                                  <span key={key} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-300 mr-2">
+                                    {key}: {value}
+                                  </span>
+                                ))}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                ${variation.price}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                {variation.stock}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(variation.status)}`}>
+                                  {variation.status}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div className="flex items-center justify-end space-x-2">
+                                  <button
+                                    onClick={() => handleEditVariation(variation)}
+                                    className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded"
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteVariation(variation.id)}
+                                    className="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 rounded"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
+                      <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                      <p className="text-gray-500 dark:text-gray-400">No variations found</p>
+                      <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">Add variations to create different options for this product</p>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Variation Modal */}
       {showVariationModal && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="fixed inset-0 z-60 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowVariationModal(false)} />
             
