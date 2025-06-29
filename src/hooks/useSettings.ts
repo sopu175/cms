@@ -19,7 +19,8 @@ export const useSettings = () => {
     enable_reviews: true,
     enable_wishlist: true,
     stock_management: true,
-    low_stock_threshold: 5
+    low_stock_threshold: 5,
+    enable_ecommerce: true
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +39,26 @@ export const useSettings = () => {
       }
 
       const settingsObject = (data || []).reduce((acc: any, setting) => {
-        acc[setting.key] = setting.value;
+        try {
+          // Parse JSON values
+          if (setting.type === 'json') {
+            acc[setting.key] = JSON.parse(setting.value);
+          } else if (setting.type === 'boolean') {
+            acc[setting.key] = setting.value === 'true';
+          } else if (setting.type === 'number') {
+            acc[setting.key] = parseFloat(setting.value);
+          } else {
+            // Handle string values - remove quotes if they exist
+            if (typeof setting.value === 'string' && setting.value.startsWith('"') && setting.value.endsWith('"')) {
+              acc[setting.key] = setting.value.slice(1, -1);
+            } else {
+              acc[setting.key] = setting.value;
+            }
+          }
+        } catch (e) {
+          // If parsing fails, use the raw value
+          acc[setting.key] = setting.value;
+        }
         return acc;
       }, {});
 
@@ -60,21 +80,41 @@ export const useSettings = () => {
 
   const updateSettings = async (newSettings: any) => {
     try {
-      const settingsToUpsert = Object.entries(newSettings).map(([key, value]) => ({
-        key,
-        value,
-        type: typeof value === 'boolean' ? 'boolean' : 'string'
-      }));
+      const settingsToUpsert = Object.entries(newSettings).map(([key, value]) => {
+        let formattedValue;
+        let type;
+
+        if (typeof value === 'boolean') {
+          formattedValue = value.toString();
+          type = 'boolean';
+        } else if (typeof value === 'number') {
+          formattedValue = value.toString();
+          type = 'number';
+        } else if (typeof value === 'object') {
+          formattedValue = JSON.stringify(value);
+          type = 'json';
+        } else {
+          formattedValue = JSON.stringify(value);
+          type = 'string';
+        }
+
+        return {
+          key,
+          value: formattedValue,
+          type
+        };
+      });
 
       const { error } = await supabase
         .from('settings')
-        .upsert(settingsToUpsert);
+        .upsert(settingsToUpsert, { onConflict: 'key' });
 
       if (error) throw error;
 
       await fetchSettings();
       return { success: true };
     } catch (err) {
+      console.error('Error updating settings:', err);
       return { success: false, error: err instanceof Error ? err.message : 'Failed to update settings' };
     }
   };

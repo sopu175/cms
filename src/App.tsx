@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {AuthProvider, useAuth} from './contexts/AuthContext';
 import {ThemeProvider} from './contexts/ThemeContext';
 import Layout from './components/Layout';
@@ -21,8 +21,31 @@ import Menus from "./pages/Menus.tsx";
 import Forms from "./pages/Forms.tsx";
 
 const AppContent: React.FC = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [settings, setSettings] = useState<any>(null);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
+
+  // Fetch settings on component mount
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/settings');
+        const data = await response.json();
+        if (data.success) {
+          setSettings(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      } finally {
+        setSettingsLoaded(true);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchSettings();
+    }
+  }, [isAuthenticated]);
 
   if (loading) {
     return (
@@ -36,6 +59,9 @@ const AppContent: React.FC = () => {
     return <Login />;
   }
 
+  // Check if ecommerce is disabled
+  const isEcommerceDisabled = settings && settings.enable_ecommerce === false;
+
   const renderActiveTab = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -47,13 +73,13 @@ const AppContent: React.FC = () => {
       case 'content':
         return <ContentPages />;
       case 'products':
-        return <Products />;
+        return isEcommerceDisabled ? <EcommerceDisabled /> : <Products />;
       case 'orders':
-        return <Orders />;
+        return isEcommerceDisabled ? <EcommerceDisabled /> : <Orders />;
       case 'reviews':
-        return <Reviews/>;
+        return isEcommerceDisabled ? <EcommerceDisabled /> : <Reviews />;
       case 'coupons':
-        return <Coupons/>;
+        return isEcommerceDisabled ? <EcommerceDisabled /> : <Coupons />;
       case 'users':
         return <Users />;
       case 'settings':
@@ -65,9 +91,9 @@ const AppContent: React.FC = () => {
       case 'galleries':
         return <Gallery />;
       case 'menus':
-        return <Menus/>;
+        return <Menus />;
       case 'forms':
-        return <Forms/>;
+        return <Forms />;
       default:
         return <Dashboard />;
     }
@@ -77,6 +103,33 @@ const AppContent: React.FC = () => {
     <Layout activeTab={activeTab} onTabChange={setActiveTab}>
       {renderActiveTab()}
     </Layout>
+  );
+};
+
+// Component to show when ecommerce is disabled
+const EcommerceDisabled: React.FC = () => {
+  return (
+    <div className="flex flex-col items-center justify-center h-64 text-center">
+      <div className="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-600 dark:text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Ecommerce Features Disabled</h3>
+      <p className="text-gray-600 dark:text-gray-400 max-w-md">
+        Ecommerce functionality is currently disabled. To enable it, go to Settings → Ecommerce and turn on the "Enable Ecommerce" option.
+      </p>
+      <button 
+        onClick={() => {
+          // Dispatch event to change tab to settings
+          const event = new CustomEvent('change-tab', { detail: 'settings' });
+          window.dispatchEvent(event);
+        }}
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+      >
+        Go to Settings
+      </button>
+    </div>
   );
 };
 
