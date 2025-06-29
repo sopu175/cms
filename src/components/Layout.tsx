@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, FileText, FolderOpen, Users, Settings, LogOut, Menu, X, ShoppingBag, ShoppingCart, Globe, User, Image, Image as Images, Navigation, FileInput, MessageSquare, Tag } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useSettings } from '../hooks/useSettings';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 
@@ -12,7 +13,11 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => {
   const { user, signOut } = useAuth();
+  const { settings, loading: settingsLoading } = useSettings();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Check if ecommerce is disabled
+  const isEcommerceDisabled = settings && settings.enable_ecommerce === false;
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -23,10 +28,10 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
     { id: 'galleries', label: 'Galleries', icon: Images },
     { id: 'menus', label: 'Menus', icon: Navigation, adminEditorOnly: true },
     { id: 'forms', label: 'Forms', icon: FileInput, adminEditorOnly: true },
-    { id: 'products', label: 'Products', icon: ShoppingBag, adminEditorOnly: true },
-    { id: 'orders', label: 'Orders', icon: ShoppingCart, adminEditorOnly: true },
-    { id: 'reviews', label: 'Reviews', icon: MessageSquare, adminEditorOnly: true },
-    { id: 'coupons', label: 'Coupons', icon: Tag, adminOnly: true },
+    { id: 'products', label: 'Products', icon: ShoppingBag, adminEditorOnly: true, ecommerceOnly: true },
+    { id: 'orders', label: 'Orders', icon: ShoppingCart, adminEditorOnly: true, ecommerceOnly: true },
+    { id: 'reviews', label: 'Reviews', icon: MessageSquare, adminEditorOnly: true, ecommerceOnly: true },
+    { id: 'coupons', label: 'Coupons', icon: Tag, adminOnly: true, ecommerceOnly: true },
     { id: 'users', label: 'Users', icon: Users, adminOnly: true },
     { id: 'settings', label: 'Settings', icon: Settings, adminOnly: true },
   ];
@@ -34,6 +39,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => 
   const filteredMenuItems = menuItems.filter(item => {
     if (item.adminOnly && user?.role !== 'admin') return false;
     if (item.adminEditorOnly && !['admin', 'editor'].includes(user?.role || '')) return false;
+    if (item.ecommerceOnly && isEcommerceDisabled) return false;
     return true;
   });
 
