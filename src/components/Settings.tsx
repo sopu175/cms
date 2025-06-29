@@ -1,38 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Save, 
-  Plus, 
-  Trash2, 
-  Globe, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Image, 
-  FileText, 
-  DollarSign, 
-  ShieldCheck, 
-  Bell, 
-  Search,
-  Upload,
-  X,
-  ExternalLink,
-  Info,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Youtube,
-  Github,
-  Dribbble,
-  Twitch,
-  Slack,
-  Discord,
-  Pinterest,
-  TikTok,
-  Snapchat,
-  Whatsapp,
-  Telegram
-} from 'lucide-react';
+import { Save, Plus, Trash2, Globe, Mail, Phone, MapPin, Image, FileText, DollarSign, ShieldCheck, Bell, Search, Upload, X, ExternalLink, Info, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Dribbble, Twitch, Slack, Disc as Discord, Pointer as Pinterest, Bike as TikTok, Watch as Snapchat, Wheat as Whatsapp, Instagram as Telegram } from 'lucide-react';
 import { useSettings } from '../hooks/useSettings';
 import { useSiteInfo } from '../hooks/useSiteInfo';
 import { useAuth } from '../contexts/AuthContext';
