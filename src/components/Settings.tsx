@@ -153,6 +153,30 @@ const Settings: React.FC = () => {
     session_timeout: 60
   });
   
+  // Helper function to ensure contact info structure
+  const normalizeContactInfo = (contactData: any[]) => {
+    if (!Array.isArray(contactData)) return [];
+    
+    return contactData.map(location => ({
+      id: location.id || Date.now().toString(),
+      label: location.label || 'Location',
+      address: location.address || '',
+      map_url: location.map_url || '',
+      emails: Array.isArray(location.emails) 
+        ? location.emails.map(email => ({
+            label: typeof email === 'object' && email !== null ? (email.label || 'Email') : 'Email',
+            link: typeof email === 'object' && email !== null ? (email.link || '') : (typeof email === 'string' ? email : '')
+          }))
+        : [{ label: 'Contact', link: '' }],
+      phones: Array.isArray(location.phones)
+        ? location.phones.map(phone => ({
+            label: typeof phone === 'object' && phone !== null ? (phone.label || 'Phone') : 'Phone',
+            link: typeof phone === 'object' && phone !== null ? (phone.link || '') : (typeof phone === 'string' ? phone : '')
+          }))
+        : [{ label: 'Main', link: '' }]
+    }));
+  };
+  
   // Load settings
   useEffect(() => {
     if (!settingsLoading && settings) {
@@ -220,7 +244,7 @@ const Settings: React.FC = () => {
       
       // Load contact info with proper structure
       if (siteInfo.contact_info && Array.isArray(siteInfo.contact_info)) {
-        setContactInfo(siteInfo.contact_info);
+        setContactInfo(normalizeContactInfo(siteInfo.contact_info));
       } else {
         // Create default contact info structure
         setContactInfo([{
@@ -385,6 +409,9 @@ const Settings: React.FC = () => {
   // Update email in contact location
   const updateEmail = (locationIndex: number, emailIndex: number, field: 'label' | 'link', value: string) => {
     const updatedContactInfo = [...contactInfo];
+    if (!updatedContactInfo[locationIndex].emails[emailIndex] || typeof updatedContactInfo[locationIndex].emails[emailIndex] !== 'object') {
+      updatedContactInfo[locationIndex].emails[emailIndex] = { label: '', link: '' };
+    }
     updatedContactInfo[locationIndex].emails[emailIndex][field] = value;
     setContactInfo(updatedContactInfo);
   };
@@ -409,6 +436,9 @@ const Settings: React.FC = () => {
   // Update phone in contact location
   const updatePhone = (locationIndex: number, phoneIndex: number, field: 'label' | 'link', value: string) => {
     const updatedContactInfo = [...contactInfo];
+    if (!updatedContactInfo[locationIndex].phones[phoneIndex] || typeof updatedContactInfo[locationIndex].phones[phoneIndex] !== 'object') {
+      updatedContactInfo[locationIndex].phones[phoneIndex] = { label: '', link: '' };
+    }
     updatedContactInfo[locationIndex].phones[phoneIndex][field] = value;
     setContactInfo(updatedContactInfo);
   };
@@ -1227,14 +1257,14 @@ const getProducts = async () => {
                           <div key={emailIndex} className="flex items-center space-x-2">
                             <input
                               type="text"
-                              value={email.label}
+                              value={typeof email === 'object' && email !== null ? email.label : 'Email'}
                               onChange={(e) => updateEmail(locationIndex, emailIndex, 'label', e.target.value)}
                               className="w-1/3 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                               placeholder="Label (e.g. Support)"
                             />
                             <input
                               type="email"
-                              value={email.link}
+                              value={typeof email === 'object' && email !== null ? email.link : (typeof email === 'string' ? email : '')}
                               onChange={(e) => updateEmail(locationIndex, emailIndex, 'link', e.target.value)}
                               className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                               placeholder="email@example.com"
@@ -1271,14 +1301,14 @@ const getProducts = async () => {
                           <div key={phoneIndex} className="flex items-center space-x-2">
                             <input
                               type="text"
-                              value={phone.label}
+                              value={typeof phone === 'object' && phone !== null ? phone.label : 'Phone'}
                               onChange={(e) => updatePhone(locationIndex, phoneIndex, 'label', e.target.value)}
                               className="w-1/3 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                               placeholder="Label (e.g. Sales)"
                             />
                             <input
                               type="tel"
-                              value={phone.link}
+                              value={typeof phone === 'object' && phone !== null ? phone.link : (typeof phone === 'string' ? phone : '')}
                               onChange={(e) => updatePhone(locationIndex, phoneIndex, 'link', e.target.value)}
                               className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                               placeholder="+1234567890"
