@@ -1,38 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Save, 
-  Plus, 
-  Trash2, 
-  Upload, 
-  Globe, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  FileText, 
-  Code, 
-  DollarSign, 
-  Settings as SettingsIcon,
-  Image,
-  X,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Youtube,
-  Github,
-  Dribbble,
-  Figma,
-  Twitch,
-  Pinterest,
-  Slack,
-  Discord,
-  Behance,
-  Codepen,
-  Tiktok,
-  Whatsapp,
-  Telegram,
-  Link
-} from 'lucide-react';
+import { Save, Plus, Trash2, Upload, Globe, Mail, Phone, MapPin, FileText, Code, DollarSign, Settings as SettingsIcon, Image, X, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Dribbble, Figma, Twitch, Pointer as Pinterest, Slack, Disc as Discord, Bean as Behance, Codepen, Atom as Tiktok, Wheat as Whatsapp, Instagram as Telegram, Link } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSettings } from '../hooks/useSettings';
 import { useSiteInfo } from '../hooks/useSiteInfo';
