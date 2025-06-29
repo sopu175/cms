@@ -15,12 +15,17 @@ import {
   Image as ImageIcon,
   Check,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Layers,
+  List,
+  FileText
 } from 'lucide-react';
 import { useProducts } from '../hooks/useProducts';
 import { useCategories } from '../hooks/useCategories';
 import { useAuth } from '../contexts/AuthContext';
-import { Product, ProductVariation } from '../types';
+import { Product, ProductVariation, ContentBlock, PostSection } from '../types';
+import ContentBlockEditor from './ContentBlockEditor';
+import PostSectionEditor from './PostSectionEditor';
 
 const Products: React.FC = () => {
   const { user } = useAuth();
@@ -49,6 +54,7 @@ const Products: React.FC = () => {
   const [productVariations, setProductVariations] = useState<ProductVariation[]>([]);
   const [loadingVariations, setLoadingVariations] = useState(false);
   const [showVariationsList, setShowVariationsList] = useState(false);
+  const [activeTab, setActiveTab] = useState('basic');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -57,7 +63,9 @@ const Products: React.FC = () => {
     images: [] as string[],
     price: 0,
     category_id: '',
-    status: 'active'
+    status: 'active',
+    content_blocks: [] as ContentBlock[],
+    sections: [] as PostSection[]
   });
 
   const [variationData, setVariationData] = useState({
@@ -70,8 +78,146 @@ const Products: React.FC = () => {
 
   const [optionKeys, setOptionKeys] = useState<string[]>(['color', 'size']);
   const [newOptionKey, setNewOptionKey] = useState('');
+  const [showMediaModal, setShowMediaModal] = useState(false);
+  const [mediaCallback, setMediaCallback] = useState<((url: string) => void) | null>(null);
 
   const canEdit = ['admin', 'editor'].includes(user?.role || '');
+
+  useEffect(() => {
+    // Add demo products if none exist
+    if (products.length === 0 && !loading) {
+      addDemoProducts();
+    }
+  }, [products, loading]);
+
+  const addDemoProducts = async () => {
+    // Get category IDs
+    const techCategory = categories.find(c => c.slug === 'technology')?.id;
+    const lifestyleCategory = categories.find(c => c.slug === 'lifestyle')?.id;
+    
+    // Demo products
+    const demoProducts = [
+      {
+        name: 'Premium Laptop',
+        slug: 'premium-laptop',
+        description: 'High-performance laptop with the latest processor and ample storage.',
+        images: ['https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'],
+        price: 1299.99,
+        category_id: techCategory || '',
+        status: 'active',
+        content_blocks: [
+          {
+            id: '1',
+            type: 'rich_text',
+            content: '<h2>Premium Laptop Features</h2><ul><li>Latest generation processor</li><li>16GB RAM</li><li>512GB SSD storage</li><li>15.6" 4K display</li><li>Backlit keyboard</li></ul>',
+            order: 0
+          },
+          {
+            id: '2',
+            type: 'image',
+            content: {
+              url: 'https://images.pexels.com/photos/459653/pexels-photo-459653.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+              alt: 'Laptop keyboard closeup',
+              caption: 'Ergonomic backlit keyboard for comfortable typing'
+            },
+            order: 1
+          }
+        ],
+        sections: [
+          {
+            id: '1',
+            title: 'Technical Specifications',
+            type: 'section',
+            content: '<h3>Technical Specifications</h3><table><tr><td>Processor</td><td>Intel Core i7-12700H</td></tr><tr><td>Memory</td><td>16GB DDR4</td></tr><tr><td>Storage</td><td>512GB NVMe SSD</td></tr><tr><td>Display</td><td>15.6" 4K UHD (3840 x 2160)</td></tr><tr><td>Graphics</td><td>NVIDIA GeForce RTX 3060 6GB</td></tr><tr><td>Battery</td><td>Up to 10 hours</td></tr></table>',
+            order: 0
+          },
+          {
+            id: '2',
+            title: 'What\'s in the Box',
+            type: 'section',
+            content: '<h3>What\'s in the Box</h3><ul><li>Premium Laptop</li><li>Power adapter</li><li>Quick start guide</li><li>Warranty information</li></ul>',
+            order: 1
+          }
+        ]
+      },
+      {
+        name: 'Wireless Earbuds',
+        slug: 'wireless-earbuds',
+        description: 'True wireless earbuds with active noise cancellation and long battery life.',
+        images: ['https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'],
+        price: 149.99,
+        category_id: techCategory || '',
+        status: 'active',
+        content_blocks: [
+          {
+            id: '1',
+            type: 'rich_text',
+            content: '<h2>Wireless Earbuds Features</h2><ul><li>Active noise cancellation</li><li>8 hours of playback time</li><li>24 hours with charging case</li><li>Water and sweat resistant</li><li>Touch controls</li></ul>',
+            order: 0
+          }
+        ],
+        sections: [
+          {
+            id: '1',
+            title: 'Sound Quality',
+            type: 'section',
+            content: '<h3>Superior Sound Quality</h3><p>Experience crystal clear audio with deep bass and crisp highs. The advanced audio drivers deliver an immersive listening experience for music, podcasts, and calls.</p>',
+            order: 0
+          }
+        ]
+      }
+    ];
+    
+    // Create demo products
+    for (const product of demoProducts) {
+      const result = await createProduct(product);
+      
+      if (result.success && result.data) {
+        // Add variations for the product
+        if (product.name === 'Premium Laptop') {
+          await createProductVariation({
+            product_id: result.data.id,
+            sku: 'LAPTOP-16GB-512GB',
+            options: { memory: '16GB', storage: '512GB' },
+            price: 1299.99,
+            stock: 10,
+            status: 'active'
+          });
+          
+          await createProductVariation({
+            product_id: result.data.id,
+            sku: 'LAPTOP-32GB-1TB',
+            options: { memory: '32GB', storage: '1TB' },
+            price: 1599.99,
+            stock: 5,
+            status: 'active'
+          });
+        } else if (product.name === 'Wireless Earbuds') {
+          await createProductVariation({
+            product_id: result.data.id,
+            sku: 'EARBUDS-BLACK',
+            options: { color: 'Black' },
+            price: 149.99,
+            stock: 20,
+            status: 'active'
+          });
+          
+          await createProductVariation({
+            product_id: result.data.id,
+            sku: 'EARBUDS-WHITE',
+            options: { color: 'White' },
+            price: 149.99,
+            stock: 15,
+            status: 'active'
+          });
+        }
+      }
+    }
+    
+    // Create demo orders
+    // This would typically be done through the orders API
+    console.log('Demo products and variations created');
+  };
 
   const handleCreateProduct = () => {
     setEditingProduct(null);
@@ -82,8 +228,11 @@ const Products: React.FC = () => {
       images: [],
       price: 0,
       category_id: '',
-      status: 'active'
+      status: 'active',
+      content_blocks: [],
+      sections: []
     });
+    setActiveTab('basic');
     setShowModal(true);
   };
 
@@ -96,8 +245,11 @@ const Products: React.FC = () => {
       images: product.images || [],
       price: product.price,
       category_id: product.category_id || '',
-      status: product.status
+      status: product.status,
+      content_blocks: product.content_blocks || [],
+      sections: product.sections || []
     });
+    setActiveTab('basic');
     setShowModal(true);
   };
 
@@ -271,6 +423,19 @@ const Products: React.FC = () => {
     } else {
       alert(result.error || 'Failed to save variation');
     }
+  };
+
+  const handleMediaSelect = (callback: (url: string) => void) => {
+    setMediaCallback(() => callback);
+    setShowMediaModal(true);
+  };
+
+  const selectMedia = (mediaItem: any) => {
+    if (mediaCallback) {
+      mediaCallback(mediaItem.url);
+      setMediaCallback(null);
+    }
+    setShowMediaModal(false);
   };
 
   const filteredProducts = products.filter(product =>
@@ -448,7 +613,7 @@ const Products: React.FC = () => {
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowModal(false)} />
             
-            <div className="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
+            <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   {editingProduct ? 'Edit Product' : 'New Product'}
@@ -461,150 +626,219 @@ const Products: React.FC = () => {
                 </button>
               </div>
 
+              {/* Tabs */}
+              <div className="flex space-x-4 border-b border-gray-200 dark:border-gray-700 mb-6">
+                <button
+                  onClick={() => setActiveTab('basic')}
+                  className={`pb-2 border-b-2 transition-colors ${
+                    activeTab === 'basic'
+                      ? 'border-blue-600 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <FileText className="w-4 h-4" />
+                    <span>Basic Info</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setActiveTab('blocks')}
+                  className={`pb-2 border-b-2 transition-colors ${
+                    activeTab === 'blocks'
+                      ? 'border-blue-600 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <Layers className="w-4 h-4" />
+                    <span>Content Blocks</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setActiveTab('sections')}
+                  className={`pb-2 border-b-2 transition-colors ${
+                    activeTab === 'sections'
+                      ? 'border-blue-600 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <List className="w-4 h-4" />
+                    <span>Sections</span>
+                  </div>
+                </button>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Product Name
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                  </div>
+                {activeTab === 'basic' && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Product Name
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          required
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Slug
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.slug}
-                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="auto-generated-if-empty"
-                    />
-                  </div>
-                </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Slug
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.slug}
+                          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="auto-generated-if-empty"
+                        />
+                      </div>
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Price
-                    </label>
-                    <div className="relative">
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
-                        $
-                      </span>
-                      <input
-                        type="number"
-                        value={formData.price}
-                        onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                        className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        step="0.01"
-                        min="0"
-                        required
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Description
+                      </label>
+                      <textarea
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Category
-                    </label>
-                    <select
-                      value={formData.category_id}
-                      onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Select Category</option>
-                      {categories.map(category => (
-                        <option key={category.id} value={category.id}>{category.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Status
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="archived">Archived</option>
-                  </select>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Product Images
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleAddImage}
-                      className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700"
-                    >
-                      <Plus className="w-4 h-4" />
-                      <span>Add Image</span>
-                    </button>
-                  </div>
-                  
-                  {formData.images.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                      {formData.images.map((image, index) => (
-                        <div key={index} className="relative group">
-                          <img
-                            src={image}
-                            alt={`Product ${index + 1}`}
-                            className="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Price
+                        </label>
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-400">
+                            $
+                          </span>
+                          <input
+                            type="number"
+                            value={formData.price}
+                            onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                            className="w-full pl-8 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            step="0.01"
+                            min="0"
+                            required
                           />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Category
+                        </label>
+                        <select
+                          value={formData.category_id}
+                          onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select Category</option>
+                          {categories.map(category => (
+                            <option key={category.id} value={category.id}>{category.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Status
+                      </label>
+                      <select
+                        value={formData.status}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="archived">Archived</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Product Images
+                        </label>
+                        <button
+                          type="button"
+                          onClick={handleAddImage}
+                          className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Add Image</span>
+                        </button>
+                      </div>
+                      
+                      {formData.images.length > 0 ? (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                          {formData.images.map((image, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={image}
+                                alt={`Product ${index + 1}`}
+                                className="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveImage(index)}
+                                className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center">
+                          <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            No images added yet
+                          </p>
                           <button
                             type="button"
-                            onClick={() => handleRemoveImage(index)}
-                            className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={handleAddImage}
+                            className="mt-2 text-sm text-blue-600 hover:text-blue-700"
                           >
-                            <X className="w-3 h-3" />
+                            Add product images
                           </button>
                         </div>
-                      ))}
+                      )}
                     </div>
-                  ) : (
-                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center">
-                      <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        No images added yet
-                      </p>
-                      <button
-                        type="button"
-                        onClick={handleAddImage}
-                        className="mt-2 text-sm text-blue-600 hover:text-blue-700"
-                      >
-                        Add product images
-                      </button>
-                    </div>
-                  )}
-                </div>
+                  </>
+                )}
+
+                {activeTab === 'blocks' && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Content Blocks</h3>
+                    <ContentBlockEditor
+                      blocks={formData.content_blocks}
+                      onChange={(blocks) => setFormData({ ...formData, content_blocks: blocks })}
+                      onMediaSelect={handleMediaSelect}
+                    />
+                  </div>
+                )}
+
+                {activeTab === 'sections' && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Sections</h3>
+                    <PostSectionEditor
+                      sections={formData.sections}
+                      onChange={(sections) => setFormData({ ...formData, sections: sections })}
+                      onMediaSelect={handleMediaSelect}
+                    />
+                  </div>
+                )}
 
                 <div className="flex items-center justify-end space-x-3 pt-4">
                   <button
@@ -898,6 +1132,70 @@ const Products: React.FC = () => {
                     <span>{editingVariation ? 'Update' : 'Create'}</span>
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Media Modal */}
+      {showMediaModal && (
+        <div className="fixed inset-0 z-60 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowMediaModal(false)} />
+            
+            <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Select Media</h3>
+                <button
+                  onClick={() => setShowMediaModal(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
+                {/* This would typically be populated with media from your media library */}
+                <div
+                  onClick={() => selectMedia({ url: 'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' })}
+                  className="relative group cursor-pointer hover:opacity-75 transition-opacity"
+                >
+                  <img
+                    src="https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                    alt="Laptop"
+                    className="w-full h-24 object-cover rounded-lg"
+                  />
+                </div>
+                <div
+                  onClick={() => selectMedia({ url: 'https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' })}
+                  className="relative group cursor-pointer hover:opacity-75 transition-opacity"
+                >
+                  <img
+                    src="https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                    alt="Earbuds"
+                    className="w-full h-24 object-cover rounded-lg"
+                  />
+                </div>
+                <div
+                  onClick={() => selectMedia({ url: 'https://images.pexels.com/photos/459653/pexels-photo-459653.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' })}
+                  className="relative group cursor-pointer hover:opacity-75 transition-opacity"
+                >
+                  <img
+                    src="https://images.pexels.com/photos/459653/pexels-photo-459653.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                    alt="Keyboard"
+                    className="w-full h-24 object-cover rounded-lg"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-center">
+                <button
+                  onClick={() => setShowMediaModal(false)}
+                  className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>

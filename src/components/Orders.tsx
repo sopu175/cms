@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   ShoppingCart,
@@ -6,18 +6,47 @@ import {
   Calendar,
   User,
   Package,
-  Eye
+  Eye,
+  Edit,
+  Trash2,
+  Check,
+  X,
+  Save,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { useOrders } from '../hooks/useOrders';
 import { useAuth } from '../contexts/AuthContext';
+import { Order } from '../types';
 
 const Orders: React.FC = () => {
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const { orders, loading } = useOrders({
+  const { orders, loading, updateOrderStatus } = useOrders({
     status: statusFilter
   });
+  const [showOrderDetails, setShowOrderDetails] = useState<string | null>(null);
+  const [editingOrder, setEditingOrder] = useState<Order | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const [formData, setFormData] = useState({
+    status: '',
+    payment_status: ''
+  });
+
+  useEffect(() => {
+    // Add demo orders if none exist
+    if (orders.length === 0 && !loading) {
+      addDemoOrders();
+    }
+  }, [orders, loading]);
+
+  const addDemoOrders = () => {
+    // This would typically be done through the API
+    console.log('Demo orders would be created here');
+    // In a real implementation, you would call an API endpoint to create demo orders
+  };
 
   const filteredOrders = orders.filter(order =>
     order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -52,6 +81,36 @@ const Orders: React.FC = () => {
       case 'failed': return 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400';
       case 'refunded': return 'bg-gray-100 text-gray-700 dark:bg-gray-500/20 dark:text-gray-400';
       default: return 'bg-gray-100 text-gray-700 dark:bg-gray-500/20 dark:text-gray-400';
+    }
+  };
+
+  const handleEditOrder = (order: Order) => {
+    setEditingOrder(order);
+    setFormData({
+      status: order.status,
+      payment_status: order.payment_status
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateOrder = async () => {
+    if (!editingOrder) return;
+    
+    const result = await updateOrderStatus(editingOrder.id, formData.status, formData.payment_status);
+    
+    if (result.success) {
+      setShowEditModal(false);
+      setEditingOrder(null);
+    } else {
+      alert(result.error || 'Failed to update order');
+    }
+  };
+
+  const toggleOrderDetails = (orderId: string) => {
+    if (showOrderDetails === orderId) {
+      setShowOrderDetails(null);
+    } else {
+      setShowOrderDetails(orderId);
     }
   };
 
@@ -100,7 +159,7 @@ const Orders: React.FC = () => {
         </select>
       </div>
 
-      {/* Orders Table */}
+      {/* Orders List */}
       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -117,56 +176,139 @@ const Orders: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredOrders.map((order) => (
-                <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">
-                        #{order.order_number}
+                <React.Fragment key={order.id}>
+                  <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white flex items-center">
+                          <button 
+                            onClick={() => toggleOrderDetails(order.id)}
+                            className="mr-2 focus:outline-none"
+                          >
+                            {showOrderDetails === order.id ? 
+                              <ChevronUp className="w-4 h-4 text-gray-500" /> : 
+                              <ChevronDown className="w-4 h-4 text-gray-500" />
+                            }
+                          </button>
+                          #{order.order_number}
+                        </div>
+                        <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
+                          <Package className="w-4 h-4" />
+                          <span>{order.items?.length || 0} items</span>
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
-                        <Package className="w-4 h-4" />
-                        <span>{order.items?.length || 0} items</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-2">
+                        <User className="w-4 h-4 text-gray-400" />
+                        <span className="text-sm text-gray-900 dark:text-white">
+                          {order.user?.username || 'Guest'}
+                        </span>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center space-x-2">
-                      <User className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-900 dark:text-white">
-                        {order.user?.username || 'Guest'}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(order.status)}`}>
+                        {order.status}
                       </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(order.status)}`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs rounded-full capitalize ${getPaymentStatusColor(order.payment_status)}`}>
-                      {order.payment_status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center space-x-1 font-medium text-gray-900 dark:text-white">
-                      <DollarSign className="w-4 h-4" />
-                      <span>{order.total_amount}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-400">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(order.created_at)}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end space-x-2">
-                      <button className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors">
-                        <Eye className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 text-xs rounded-full capitalize ${getPaymentStatusColor(order.payment_status)}`}>
+                        {order.payment_status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-1 font-medium text-gray-900 dark:text-white">
+                        <DollarSign className="w-4 h-4" />
+                        <span>{order.total_amount}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-400">
+                        <Calendar className="w-4 h-4" />
+                        <span>{formatDate(order.created_at)}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-end space-x-2">
+                        <button 
+                          onClick={() => handleEditOrder(order)}
+                          className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button className="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-colors">
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  {showOrderDetails === order.id && (
+                    <tr className="bg-gray-50 dark:bg-gray-800/30">
+                      <td colSpan={7} className="px-6 py-4">
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                              <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Order Items</h4>
+                              <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                  <thead className="bg-gray-50 dark:bg-gray-800">
+                                    <tr>
+                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Product</th>
+                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Variation</th>
+                                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Qty</th>
+                                      <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-400">Price</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                                    {order.items.map((item, index) => (
+                                      <tr key={index}>
+                                        <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">
+                                          {item.product?.name || `Product #${item.product_id}`}
+                                        </td>
+                                        <td className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
+                                          {item.variation?.sku || '-'}
+                                        </td>
+                                        <td className="px-4 py-2 text-sm text-gray-900 dark:text-white">
+                                          {item.quantity}
+                                        </td>
+                                        <td className="px-4 py-2 text-sm text-gray-900 dark:text-white text-right">
+                                          ${item.unit_price}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Shipping Information</h4>
+                              <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                                <p className="text-sm text-gray-900 dark:text-white font-medium">
+                                  {order.shipping_info.name}
+                                </p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {order.shipping_info.address}
+                                </p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {order.shipping_info.city}, {order.shipping_info.postal_code}
+                                </p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {order.shipping_info.country}
+                                </p>
+                                {order.shipping_info.phone && (
+                                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                    Phone: {order.shipping_info.phone}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))}
             </tbody>
           </table>
@@ -182,6 +324,82 @@ const Orders: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-400">
             {searchTerm ? 'Try adjusting your search terms' : 'Orders will appear here when customers make purchases'}
           </p>
+        </div>
+      )}
+
+      {/* Edit Order Modal */}
+      {showEditModal && editingOrder && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowEditModal(false)} />
+            
+            <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 shadow-xl rounded-2xl modal-container">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Edit Order #{editingOrder.order_number}
+                </h3>
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Order Status
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Payment Status
+                  </label>
+                  <select
+                    value={formData.payment_status}
+                    onChange={(e) => setFormData({ ...formData, payment_status: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="paid">Paid</option>
+                    <option value="failed">Failed</option>
+                    <option value="refunded">Refunded</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-end space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleUpdateOrder}
+                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Update Order</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
