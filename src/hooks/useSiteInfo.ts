@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { SiteInfo } from '../types';
+import { SiteInfo, ContactInfo } from '../types';
 
 export const useSiteInfo = () => {
   const [siteInfo, setSiteInfo] = useState<SiteInfo | null>(null);

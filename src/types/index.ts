@@ -265,6 +265,12 @@ export interface Gallery {
   updated_at?: string;
 }
 
+export interface ContactInfo {
+  type: 'email' | 'phone';
+  label: string;
+  value: string;
+}
+
 export interface SiteInfo {
   id: string;
   site_name: string;
@@ -274,9 +280,13 @@ export interface SiteInfo {
   favicon?: string;
   description?: string;
   tagline?: string;
+  contact_name?: string;
   contact_email?: string;
   phone?: string;
   address?: string;
+  google_maps_link?: string;
+  google_maps_embed?: string;
+  contact_info?: ContactInfo[];
   social_icons?: any[];
   copyright_text?: string;
   google_analytics?: string;
