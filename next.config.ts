@@ -117,14 +117,14 @@ const nextConfig = {
             'beta.ecosourcing.org',
             'cms.ecosourcing.org',
             'ecosourcing.org',
-            'via.placeholder.com' // Added for fallback images
+            'via.placeholder.com', // Added for fallback images
+            'picsum.photos' // Added for demo images
         ],
         minimumCacheTTL: 60,
         deviceSizes: [640, 750, 1080, 1200, 1920],
         formats: ["image/avif", "image/webp"],
     },
     transpilePackages: ["@studio-freight/compono"],
-    // FIXED: Removed turbopack configuration that was causing issues
     webpack: (config, { dev }) => {
         // FIXED: Simplified webpack config
         config.module.rules.push({
@@ -229,7 +229,6 @@ const nextConfig = {
             },
         ];
     },
-    // FIXED: Removed problematic runtime configs
     compress: true,
     productionBrowserSourceMaps: false, // Disable source maps for production
 };

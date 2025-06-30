@@ -35,6 +35,7 @@ export interface PageSectionData {
   asModal?: boolean;
   formData?: any;
   career?: any;
+  blogs_list?: any[];
 }
 
 export interface PageSection {
