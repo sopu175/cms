@@ -2,59 +2,107 @@ import React from 'react';
 import parse, { domToReact, HTMLReactParserOptions, Element } from 'html-react-parser';
 
 /**
- * Props for the Paragraph component.
- *
- * @property textOne - The primary text content to display in the paragraph.
- * @property textTwo - (Optional) The secondary text content, typically rendered as a <span> or similar element.
- * @property color - (Optional) The color of the paragraph text (CSS color value).
- * @property fontSize - (Optional) The font size of the paragraph text (CSS font-size value).
- * @property fontWeight - (Optional) The font weight of the paragraph text.
- * @property lineHeight - (Optional) The line height of the paragraph text (CSS line-height value).
- * @property letterSpacing - (Optional) The letter spacing of the paragraph text (CSS letter-spacing value).
- * @property fontFamily - (Optional) The font family of the paragraph text (CSS font-family value).
- * @property className - (Optional) Additional CSS class names to apply to the paragraph.
- * @property gap - (Optional) The gap between textOne and textTwo (Tailwind gap classes).
- * @property margin - (Optional) The margin around the paragraph (CSS margin value).
- * @property spanColor - (Optional) The color to apply specifically to all <span> elements in the text (CSS color value).
- * @property spanFontWeight - (Optional) Font weight for all <span> elements.
- * @property spanFontSize - (Optional) Font size for all <span> elements.
- * @property spanFontFamily - (Optional) Font family for all <span> elements.
- * @property spanTextTransform - (Optional) Text transform for all <span> elements.
- * @property spanLetterSpacing - (Optional) Letter spacing for all <span> elements.
- * @property spanFontStyle - (Optional) Font style for all <span> elements.
- * @property spanMargin - (Optional) Margin for all <span> elements.
- * @property spanPadding - (Optional) Padding for all <span> elements.
- * @property spanTextDecoration - (Optional) Text decoration for all <span> elements.
+ * Paragraph Component
+ * 
+ * A flexible paragraph component that supports responsive grid layouts,
+ * HTML parsing, and dynamic span styling. Perfect for creating consistent
+ * text content with advanced formatting options.
+ * 
+ * @example
+ * // Single paragraph
+ * <Paragraph
+ *   textOne="This is a single paragraph with some content."
+ *   fontSize="1.2rem"
+ *   color="var(--var-dc--foreground)"
+ * />
+ * 
+ * @example
+ * // Two-column layout
+ * <Paragraph
+ *   textOne="First column content goes here."
+ *   textTwo="Second column content goes here."
+ *   gap="gap-8"
+ *   fontSize="1.1rem"
+ * />
+ * 
+ * @example
+ * // With HTML content and span styling
+ * <Paragraph
+ *   textOne="This paragraph has <span>highlighted text</span> in it."
+ *   spanColor="var(--var-dc--primary-color)"
+ *   spanFontWeight="700"
+ *   fontSize="1rem"
+ * />
+ * 
+ * @example
+ * // Using CSS variables for theming
+ * <Paragraph
+ *   textOne="Themed paragraph content"
+ *   fontSize="var(--var-dc--font-size-lg)"
+ *   fontFamily="var(--var-dc--font-secondary)"
+ *   color="var(--var-dc--foreground)"
+ *   margin="var(--var-dc--spacing-40) 0"
+ * />
  */
+
 interface ParagraphProps {
+  /** Primary text content (required) */
   textOne: string;
+  /** Secondary text content for two-column layout (optional) */
   textTwo?: string;
+  /** Text color (CSS color value) */
   color?: string;
+  /** Font size (CSS font-size value) */
   fontSize?: string;
+  /** Font weight */
   fontWeight?: React.CSSProperties['fontWeight'];
+  /** Line height (CSS line-height value) */
   lineHeight?: string;
+  /** Letter spacing (CSS letter-spacing value) */
   letterSpacing?: string;
+  /** Font family (CSS font-family value) */
   fontFamily?: string;
+  /** Additional CSS classes */
   className?: string;
+  /** Gap between columns (Tailwind gap classes) */
   gap?: string;
+  /** Margin around container (CSS margin value) */
   margin?: string;
+  
+  // Span-specific styling props
+  /** Color for all span elements */
   spanColor?: string;
+  /** Font weight for all span elements */
   spanFontWeight?: string;
+  /** Font size for all span elements */
   spanFontSize?: string;
+  /** Font family for all span elements */
   spanFontFamily?: string;
+  /** Text transform for all span elements */
   spanTextTransform?: React.CSSProperties['textTransform'];
+  /** Letter spacing for all span elements */
   spanLetterSpacing?: string;
+  /** Font style for all span elements */
   spanFontStyle?: React.CSSProperties['fontStyle'];
+  /** Margin for all span elements */
   spanMargin?: string;
+  /** Padding for all span elements */
   spanPadding?: string;
+  /** Text decoration for all span elements */
   spanTextDecoration?: React.CSSProperties['textDecoration'];
 }
 
 /**
- * Paragraph component that displays one or two text blocks in a responsive grid.
- * - If only textOne is provided, it spans the full width.
- * - If both textOne and textTwo are provided, each takes 6 columns on desktop.
- * - Supports dynamic styling and parsing of HTML, including dynamic styling of <span> tags.
+ * Paragraph Component Implementation
+ * 
+ * Features:
+ * - Responsive grid layout (single or two-column)
+ * - HTML string parsing with html-react-parser
+ * - Dynamic span element styling
+ * - CSS custom properties support
+ * - Mobile-first responsive design
+ * - TypeScript support with comprehensive prop types
+ * - Automatic layout detection based on content
  */
 const Paragraph: React.FC<ParagraphProps> = ({
   textOne,
@@ -96,8 +144,8 @@ const Paragraph: React.FC<ParagraphProps> = ({
   };
 
   /**
-   * Parser options for html-react-parser.
-   * This will inject all span-related props as styles for all <span> elements in the parsed HTML.
+   * Parser options for html-react-parser
+   * Automatically applies span-specific styles to all span elements
    */
   const parserOptions: HTMLReactParserOptions = {
     replace: (domNode) => {
@@ -129,9 +177,9 @@ const Paragraph: React.FC<ParagraphProps> = ({
   };
 
   /**
-   * Helper function to parse an inline style string into a style object.
+   * Helper function to parse inline style strings into style objects
    * @param styleString - The inline style string (e.g., "font-weight:bold;color:red;")
-   * @returns An object suitable for use as a React style prop.
+   * @returns Style object suitable for React style prop
    */
   function parseStyleString(styleString: string): Record<string, string> {
     return styleString.split(';').reduce((acc, styleProp) => {
@@ -143,9 +191,8 @@ const Paragraph: React.FC<ParagraphProps> = ({
     }, {} as Record<string, string>);
   }
 
-  // Render single or double column grid based on presence of textTwo
+  // Single column layout (only textOne provided)
   if (!textTwo) {
-    // Only textOne: full width
     return (
       <div className={`grid grid-cols-12 ${className || ''}`} style={containerStyle} {...rest}>
         <p className="col-span-12" style={style}>
@@ -155,7 +202,7 @@ const Paragraph: React.FC<ParagraphProps> = ({
     );
   }
 
-  // Both textOne and textTwo: split 6/6 on desktop, stacked on mobile
+  // Two-column layout (both textOne and textTwo provided)
   return (
     <div className={`grid grid-cols-12 ${gap} ${className || ''}`} style={containerStyle} {...rest}>
       <p className="col-span-12 md:col-span-6" style={style}>
