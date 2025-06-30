@@ -103,8 +103,6 @@ const nextConfig = {
         autoPrerender: false,
     },
     crossOrigin: "anonymous",
-    // FIXED: Removed output: "standalone" for Vercel
-    // output: "standalone", // This can cause issues on Vercel
     images: {
         domains: [
             'bestinbd.com',
@@ -126,11 +124,7 @@ const nextConfig = {
         formats: ["image/avif", "image/webp"],
     },
     transpilePackages: ["@studio-freight/compono"],
-    turbopack: {
-        resolveAlias: {
-            canvas: './empty-module.js',
-        },
-    },
+    // FIXED: Removed turbopack configuration that was causing issues
     webpack: (config, { dev }) => {
         // FIXED: Simplified webpack config
         config.module.rules.push({

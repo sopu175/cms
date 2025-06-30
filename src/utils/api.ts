@@ -65,6 +65,26 @@ interface MenuData {
 }
 
 /**
+ * Get the base URL for API calls
+ * Handles both client-side and server-side environments
+ */
+function getBaseUrl(): string {
+  // For client-side, use the environment variable or current origin
+  if (typeof window !== 'undefined') {
+    return process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
+  }
+  
+  // For server-side, ensure we have a valid base URL
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  if (baseUrl && (baseUrl.startsWith('http://') || baseUrl.startsWith('https://'))) {
+    return baseUrl;
+  }
+  
+  // Fallback for development
+  return 'http://localhost:3000';
+}
+
+/**
  * Fetches page data from JSON files in the public directory
  * 
  * @param slug - The slug of the page to fetch data for
@@ -72,10 +92,13 @@ interface MenuData {
  */
 export async function getPageData(slug?: string): Promise<PageData | null> {
   try {
+    // Get the base URL
+    const baseUrl = getBaseUrl();
+    
     // Determine the URL based on the slug
     const url = slug 
-      ? `${process.env.NEXT_PUBLIC_BASE_URL || ''}/json/page/${slug}.json`
-      : `${process.env.NEXT_PUBLIC_BASE_URL || ''}/json/page/home.json`;
+      ? `${baseUrl}/json/page/${slug}.json`
+      : `${baseUrl}/json/page/home.json`;
     
     console.log('Fetching page data from:', url);
     
@@ -111,8 +134,11 @@ export async function getPageData(slug?: string): Promise<PageData | null> {
  */
 export async function getBlogData(slug?: string): Promise<any[] | null> {
   try {
+    // Get the base URL
+    const baseUrl = getBaseUrl();
+    
     // Fetch the blog list data
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/json/blog/blog_list.json`;
+    const url = `${baseUrl}/json/blog/blog_list.json`;
     console.log('Fetching blog data from:', url);
     
     const res = await fetch(url, {
@@ -176,7 +202,10 @@ export async function getSettingsData(slug?: string): Promise<SettingsData | nul
   try {
     if (!slug) return null;
     
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/json/${slug}.json`;
+    // Get the base URL
+    const baseUrl = getBaseUrl();
+    
+    const url = `${baseUrl}/json/${slug}.json`;
     console.log('Fetching settings data from:', url);
     
     const res = await fetch(url, {
@@ -209,7 +238,10 @@ export async function getMenuData(slug?: string): Promise<MenuData | null> {
   try {
     if (!slug) return null;
     
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/json/${slug}.json`;
+    // Get the base URL
+    const baseUrl = getBaseUrl();
+    
+    const url = `${baseUrl}/json/${slug}.json`;
     console.log('Fetching menu data from:', url);
     
     const res = await fetch(url, {
@@ -242,7 +274,10 @@ export async function getFormData(formId?: string): Promise<any | null> {
   try {
     if (!formId) return null;
     
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/json/forms.json`;
+    // Get the base URL
+    const baseUrl = getBaseUrl();
+    
+    const url = `${baseUrl}/json/forms.json`;
     console.log('Fetching form data from:', url);
     
     const res = await fetch(url, {
@@ -276,9 +311,12 @@ export async function getJsonData(path: string): Promise<any | null> {
   try {
     if (!path) return null;
     
+    // Get the base URL
+    const baseUrl = getBaseUrl();
+    
     // Ensure path has .json extension
     const jsonPath = path.endsWith('.json') ? path : `${path}.json`;
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/json/${jsonPath}`;
+    const url = `${baseUrl}/json/${jsonPath}`;
     
     console.log('Fetching JSON data from:', url);
     
