@@ -9,6 +9,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Import routes
+import authRoutes from './routes/auth.js';
+import productRoutes from './routes/products.js';
+import categoryRoutes from './routes/categories.js';
+import orderRoutes from './routes/orders.js';
+import contentRoutes from './routes/content.js';
 import settingsRoutes from './routes/settings.js';
 
 // Load environment variables
@@ -71,6 +76,11 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/content', contentRoutes);
 app.use('/api/settings', settingsRoutes);
 
 // 404 handler
