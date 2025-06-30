@@ -1,5 +1,5 @@
 /**
- * global Context for managing application-wide settings data
+ * Global Context for managing application-wide settings data
  *
  * This context provides centralized state management for global settings data
  * that needs to be accessed across multiple components in the application.
@@ -13,8 +13,6 @@ import { getMenuData, getSettingsData } from "@/utils/api";
 
 /**
  * Interface defining the structure of global data
- * Currently allows any properties - should be replaced with specific types
- * based on your actual settings data structure
  */
 export interface MenuItem {
     item_title: string;
@@ -24,34 +22,71 @@ export interface MenuItem {
 }
 
 interface GlobalData {
-    logo_footer_fav?: string;
+    site_title?: string;
+    slogan?: string;
+    info_email?: string;
+    career_email?: string;
+    contact_email?: string;
     office_location?: string;
     office_phone?: string;
-    contact_email?: string;
-    google_map_link?: string;
+    office_fax?: string;
+    logo_light?: string;
+    logo_dark?: string;
+    favicon?: string;
+    copyright_text?: string;
     facebook?: string;
+    youtube?: string;
+    linkedin?: string;
     instagram?: string;
     twitter?: string;
-    youtube?: string;
-    copyright_text?: string;
-    [key: string]: unknown; // This allows any properties - replace with specific ones
+    google_map?: string;
+    [key: string]: unknown;
 }
 
 interface MenuData {
-    main_menu?: MenuItem[];
-    footer_menu?: MenuItem[];
+    main_menu?: {
+        data: MenuItem[];
+        social_links?: { name: string; icon: string; url: string }[];
+        additional_info?: {
+            contact_info: string;
+            address: string;
+            phone_numbers: string[];
+            email_address: string;
+        };
+        additional_links?: { label: string; path: string; target_window: string }[];
+    };
+    footer_menu?: {
+        data: {
+            menu_list1?: MenuItem[];
+            menu_list2?: MenuItem[];
+            menu_list3?: MenuItem[];
+            menu_list4?: MenuItem[];
+        };
+        social_links?: { name: string; icon: string; url: string }[];
+        additional_info?: {
+            logo?: { primary?: string; secondary?: string };
+            contact_info?: string[];
+            address?: { name: string; address: string; google_map?: string }[];
+            phone_numbers?: string[];
+            email_address?: string[];
+            copyright?: string;
+            siteCredit?: string;
+        };
+        additional_links?: { label: string; path: string; target_window: string }[];
+    };
     [key: string]: unknown;
 }
 
 /**
  * Type definition for the context value
- * Defines what data and functions are available through the context
  */
 interface GlobalContextType {
     globalData: GlobalData | null;
     setGlobalData: React.Dispatch<React.SetStateAction<GlobalData | null>>;
     menuData: MenuData | null;
     setMenuData: React.Dispatch<React.SetStateAction<MenuData | null>>;
+    isLoading: boolean;
+    refreshData: () => Promise<void>;
 }
 
 /**
@@ -63,94 +98,77 @@ interface GlobalProviderProps {
 
 /**
  * Create React context with proper TypeScript typing
- * Initially undefined, will be populated by the provider
  */
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 /**
- * global Context Provider Component
+ * Global Context Provider Component
  *
  * Wraps the application to provide global settings data to all child components.
  * Automatically fetches settings data on mount and ensures it's only fetched once.
- *
- * @param children - React components that will have access to the global context
- * @returns JSX.Element - Context provider wrapping children
  */
 export function GlobalProvider({ children }: GlobalProviderProps) {
-    // State to store the fetched global settings data
+    // State to store the fetched data
     const [globalData, setGlobalData] = useState<GlobalData | null>(null);
     const [menuData, setMenuData] = useState<MenuData | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-
-    // Ref to track whether API call was already made to prevent duplicate requests
+    // Ref to track whether API calls were already made
     const hasFetchedGlobalData = useRef<boolean>(false);
     const hasFetchedMenuData = useRef<boolean>(false);
+
     /**
-     * Optimized data fetching function that ensures API is only called once
-     *
-     * This function implements a single-call pattern using refs to prevent
-     * duplicate API requests during component re-renders.
-     *
-     * @param fetchFunction - Function that returns a Promise with the data
-     * @param setState - React state setter function
-     * @param currentState - Current state value to check if data already exists
-     * @param flagRef - Ref to track if fetch has been attempted
+     * Fetch all required data
      */
-    const fetchDataOnce = useCallback(async (
-        fetchFunction: () => Promise<GlobalData | null>,
-        setState: React.Dispatch<React.SetStateAction<GlobalData | null>>,
-        currentState: GlobalData | null,
-        flagRef: React.MutableRefObject<boolean>
-    ) => {
-        // Only fetch if data doesn't exist and fetch hasn't been attempted
-        if (!currentState && !flagRef.current) {
-            flagRef.current = true;  // Mark as fetch attempted to prevent duplicate calls
-            try {
-                const response = await fetchFunction(); // Attempt to fetch the data
-                setState(response); // Update state with fetched data
-            } catch (error) {
-                // Log error and reset flag to allow retry on next render
-                console.error(`Error fetching global data: ${error instanceof Error ? error.message : 'Unknown error'}`);
-                flagRef.current = false; // Reset flag to allow retry
+    const fetchAllData = useCallback(async () => {
+        setIsLoading(true);
+        
+        try {
+            // Fetch settings data
+            if (!globalData && !hasFetchedGlobalData.current) {
+                hasFetchedGlobalData.current = true;
+                const settingsData = await getSettingsData("settings");
+                setGlobalData(settingsData);
             }
+            
+            // Fetch menu data
+            if (!menuData && !hasFetchedMenuData.current) {
+                hasFetchedMenuData.current = true;
+                const menuDataResult = await getMenuData("menu");
+                setMenuData(menuDataResult);
+            }
+        } catch (error) {
+            console.error('Error fetching global data:', error);
+        } finally {
+            setIsLoading(false);
         }
-    }, []);
+    }, [globalData, menuData]);
 
     /**
-     * Effect hook to fetch global settings data on component mount
-     *
-     * Creates a wrapper function for the API call and triggers the fetch
-     * only when the component first mounts or when dependencies change.
+     * Function to manually refresh data
      */
+    const refreshData = useCallback(async () => {
+        hasFetchedGlobalData.current = false;
+        hasFetchedMenuData.current = false;
+        await fetchAllData();
+    }, [fetchAllData]);
+
+    // Fetch data on component mount
     useEffect(() => {
-        // Create a function that calls getSettingsData with "settings" parameter
-        const fetchGlobalData = () => getSettingsData("settings");
-
-        // Trigger the optimized fetch function
-        fetchDataOnce(fetchGlobalData, setGlobalData, globalData, hasFetchedGlobalData);
-    }, [globalData, fetchDataOnce]); // Dependency array - effect runs when these values change
-
-     // Fetch menu.json (new)
-     useEffect(() => {
-        const fetchMenuData = () => getMenuData("menu");
-        if (!menuData && !hasFetchedMenuData.current) {
-            hasFetchedMenuData.current = true;
-            fetchMenuData().then(setMenuData);
-        }
-    }, [menuData]);
+        fetchAllData();
+    }, [fetchAllData]);
 
     /**
      * Render the context provider
-     *
-     * Provides globalData and setGlobalData to all child components
-     * that use the useGlobalData hook.
      */
     return (
         <GlobalContext.Provider value={{
-            globalData,      // Current global settings data (null until loaded)
-            setGlobalData,    // Function to update global settings data
+            globalData,
+            setGlobalData,
             menuData,
             setMenuData,
+            isLoading,
+            refreshData
         }}>
             {children}
         </GlobalContext.Provider>
@@ -160,22 +178,19 @@ export function GlobalProvider({ children }: GlobalProviderProps) {
 /**
  * Custom hook to access global context data
  *
- * This hook provides a convenient way to access the global settings data
- * and its setter function from any component within the GlobalProvider.
- *
  * @throws Error if used outside of GlobalProvider
- * @returns GlobalContextType - Object containing globalData and setGlobalData
+ * @returns GlobalContextType - Object containing globalData, menuData, and related functions
  *
  * @example
  * ```tsx
  * function MyComponent() {
- *   const { globalData, setGlobalData } = useGlobalData();
+ *   const { globalData, menuData, isLoading } = useGlobalData();
  *
- *   if (!globalData) {
+ *   if (isLoading) {
  *     return <div>Loading...</div>;
  *   }
  *
- *   return <div>{globalData.siteName}</div>;
+ *   return <div>{globalData?.site_title}</div>;
  * }
  * ```
  */

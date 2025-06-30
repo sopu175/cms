@@ -2,7 +2,6 @@ import {Suspense, unstable_ViewTransition as ViewTransition} from 'react';
 import NotFound from "@/app/not-found";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import reactHtmlParser from 'react-html-parser';
-import CardsSection from "@/components/client/CardsSection";
 import {getPageData, PageSection} from "@/utils/api";
 import { generatePageSEO } from "@/utils/seoConfig";
 import Banner from "@/components/client/Banner";
@@ -11,27 +10,21 @@ import NestedGallery from "@/components/client/NestedGallery";
 import FormContact from "@/components/FormContact";
 import BlogListing from '@/components/client/BlogListing';
 
+// Map section templates to their corresponding components
 const sectionComponentMap: Record<string, React.ComponentType<any>> = {
     hero_banner: Banner,
     overview: Slider,
     gallery: NestedGallery,
     form: FormContact,
     news_list: BlogListing,
+    inner_banner: Banner,
+    blog_list_all: BlogListing,
     // Add more mappings as needed
 };
 
-
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-    // Resolve the params to get the slug
-    const resolvedParams = await params;
-
-    // Fetch the page data with the slug
-    const pageData = await getPageData(resolvedParams?.slug);
-
-    console.log(pageData, 'pageData in generateMetadata');
-    if (pageData && pageData?.page_data) {
-        console.log('pageData', pageData?.page_data);
-    }
+export async function generateMetadata() {
+    // Fetch the page data for the home page
+    const pageData = await getPageData();
 
     // Handle the case where page data is missing
     if (!pageData || !pageData?.page_data) {
@@ -40,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         // Use the SEO config with default values
         return generatePageSEO({
             title: 'Next.js Boilerplate',
-            description: 'Learn more about our team and mission.',
+            description: 'A powerful Next.js boilerplate with PWA capabilities.',
         });
     }
 
@@ -48,35 +41,30 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const meta = pageData?.page_data;
 
     // Parse HTML content if needed
-    const parsedTitle = reactHtmlParser(meta.meta_title);
-    const parsedSubtitle = reactHtmlParser(meta.meta_description);
+    const parsedTitle = reactHtmlParser(meta.meta_title || 'Next.js Boilerplate');
+    const parsedSubtitle = reactHtmlParser(meta.meta_description || 'A powerful Next.js boilerplate with PWA capabilities.');
 
     // Use the SEO config function
     return generatePageSEO({
-        title: Array.isArray(parsedTitle) ? parsedTitle.join('') : parsedTitle || 'Next.js Boilerplate',
-        description: Array.isArray(parsedSubtitle) ? parsedSubtitle.join('') : parsedSubtitle || 'Learn more about our team and mission.',
+        title: Array.isArray(parsedTitle) ? parsedTitle.join('') : parsedTitle,
+        description: Array.isArray(parsedSubtitle) ? parsedSubtitle.join('') : parsedSubtitle,
         ogTitle: Array.isArray(parsedTitle) ? parsedTitle.join('') : parsedTitle,
         ogDescription: Array.isArray(parsedSubtitle) ? parsedSubtitle.join('') : parsedSubtitle,
         ogImage: pageData.images?.[0],
-        keywords: 'Next.js, React, TypeScript, Boilerplate',
-        url: `/${resolvedParams?.slug || ''}`,
+        keywords: 'Next.js, React, TypeScript, Boilerplate, PWA',
+        url: '/',
     });
 }
 
-export default async function Home({ params }: { params: Promise<{ slug: string }> }) {
-    const resolvedParams = await params;
-    console.log(resolvedParams, 'slug param');
-
+export default async function Home() {
     // Fetch page data on the server side
-    const data = await getPageData(resolvedParams?.slug);
+    const data = await getPageData();
 
     if (!data) {
         return <NotFound />; // Handle error case
     }
 
-    console.log('Base URL:', data);
-
-    // Pass the fetched data to the HomeClient component
+    // Pass the fetched data to the components
     return (
         <Suspense fallback={<LoadingSpinner />}>
             <ViewTransition>
@@ -84,6 +72,7 @@ export default async function Home({ params }: { params: Promise<{ slug: string 
                 {data?.sections?.map((section: PageSection, idx: number) => {
                     const SectionComponent = sectionComponentMap[section?.section_data?.template];
                     if (!SectionComponent) return null; // Skip unknown templates
+                    
                     // Special handling for FormContact
                     if (SectionComponent === FormContact) {
                         const { padding, asModal, id, formData, form_id, career } = section.section_data || {};
@@ -99,6 +88,7 @@ export default async function Home({ params }: { params: Promise<{ slug: string 
                             />
                         );
                     }
+                    
                     return (
                         <SectionComponent
                             key={section.section_data?.id || idx}
