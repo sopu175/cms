@@ -13,10 +13,12 @@
     "backend:start": "cd backend && npm run start"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "lucide-react": "^0.263.1",
+    "quill": "^2.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "lucide-react": "^0.263.1",
-    "@supabase/supabase-js": "^2.39.0"
+    "react-quill": "^2.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
