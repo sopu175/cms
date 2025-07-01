@@ -66,7 +66,8 @@ const Categories: React.FC = () => {
             category_type: "post" as 'post' | 'product'
          });
       } else {
-         alert(result.error || "Failed to save category");
+         console.log('Category creation error:', result);
+         alert(result.error ? result.error : JSON.stringify(result));
       }
    };
 

@@ -67,7 +67,8 @@ export const useContentPages = (options: UseContentPagesOptions = {}) => {
       await fetchContentPages();
       return { success: true, data };
     } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'Failed to create content page' };
+      console.error('Create content page error:', err);
+      return { success: false, error: err instanceof Error ? err.message : JSON.stringify(err) };
     }
   };
 

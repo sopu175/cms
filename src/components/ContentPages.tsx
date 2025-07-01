@@ -34,18 +34,42 @@ const ContentPages: React.FC = () => {
 
    const handleSavePage = async (data: any) => {
       let result;
+      const allowedFields = [
+        'title', 'html_name', 'description', 'background_image', 'background_color',
+        'sections', 'status', 'author_id', 'seo_title', 'seo_description', 'seo_keywords',
+        'canonical_url', 'og_image', 'robots', 'schema_markup'
+      ];
       if (editingPage) {
-         result = await updateContentPage(editingPage.id, data);
+         // Only send fields that exist in the DB schema
+         const pageData: any = {};
+         for (const key of allowedFields) {
+           if (data[key] !== undefined) pageData[key] = data[key];
+         }
+         result = await updateContentPage(editingPage.id, pageData);
       } else {
-         result = await createContentPage({
-            ...data,
-            author_id: user?.id
-         });
+         let html_name = data.html_name;
+         if (!html_name && data.title) {
+            html_name = data.title
+               .toLowerCase()
+               .replace(/[^a-z0-9\s-]/g, '')
+               .replace(/-+/g, '-')
+               .replace(/\s+/g, '-')
+               .trim();
+         }
+         const pageData: any = {};
+         for (const key of allowedFields) {
+           if (data[key] !== undefined) pageData[key] = data[key];
+         }
+         pageData.html_name = html_name;
+         pageData.author_id = user?.id;
+         result = await createContentPage(pageData);
       }
 
       if (result.success) {
          setShowEditor(false);
          setEditingPage(undefined);
+      } else if (result.error) {
+         alert(result.error || 'Failed to save content page');
       }
 
       return result;

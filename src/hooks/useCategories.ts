@@ -50,10 +50,18 @@ export const useCategories = () => {
 
   const createCategory = async (categoryData: Omit<Category, 'id' | 'created_at' | 'post_count'>) => {
     try {
-      // Sanitize parent_id
+      // Only send allowed fields
+      const { name, description, color, parent_id } = categoryData;
+      const slug = name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "");
       const safeCategoryData = {
-        ...categoryData,
-        parent_id: categoryData.parent_id ? categoryData.parent_id : null
+        name,
+        slug,
+        description,
+        color,
+        parent_id: parent_id ? parent_id : null
       };
       const { data, error } = await supabase
         .from('categories')
@@ -66,17 +74,28 @@ export const useCategories = () => {
       await fetchCategories(); // Refresh the list
       return { success: true, data };
     } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'Failed to create category' };
+      console.error('Supabase createCategory error:', err, JSON.stringify(err));
+      return { success: false, error: typeof err === 'object' ? JSON.stringify(err) : String(err) };
     }
   };
 
   const updateCategory = async (id: string, updates: Partial<Category>) => {
     try {
-      // Sanitize parent_id
-      const safeUpdates = {
-        ...updates,
-        parent_id: updates.parent_id ? updates.parent_id : null
+      // Only send allowed fields
+      const { name, description, color, parent_id } = updates;
+      const safeUpdates: any = {
+        description,
+        color,
+        parent_id: parent_id ? parent_id : null
       };
+      // If name is being updated, also update slug
+      if (name) {
+        safeUpdates.name = name;
+        safeUpdates.slug = name
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "");
+      }
       const { data, error } = await supabase
         .from('categories')
         .update(safeUpdates)
@@ -89,7 +108,7 @@ export const useCategories = () => {
       await fetchCategories(); // Refresh the list
       return { success: true, data };
     } catch (err) {
-      return { success: false, error: err instanceof Error ? err.message : 'Failed to update category' };
+      return { success: false, error: typeof err === 'object' ? JSON.stringify(err) : String(err) };
     }
   };
 

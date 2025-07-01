@@ -46,16 +46,24 @@ const Posts: React.FC = () => {
 
    const handleSavePost = async (postData: any) => {
       let result;
-      // Sanitize UUID fields before sending to createPost
-      const safePostData = {
-         ...postData,
-         author_id: user?.id && user.id !== '' ? user.id : null,
-         category_id: postData.category_id && postData.category_id !== '' ? postData.category_id : null
-      };
+      // Only send fields that exist in the DB schema
+      const allowedFields = [
+        'title', 'slug', 'content', 'excerpt', 'featured_image', 'status',
+        'author_id', 'category_id', 'views', 'published_at', 'created_at', 'updated_at',
+        'seo_title', 'seo_description', 'seo_keywords', 'canonical_url', 'og_image',
+        'robots', 'scheduled_at', 'content_blocks', 'sections', 'gallery_images',
+        'video_url', 'audio_url', 'is_featured'
+      ];
+      const cleanPayload: any = {};
+      for (const key of allowedFields) {
+        if (postData[key] !== undefined) cleanPayload[key] = postData[key];
+      }
+      cleanPayload.author_id = user?.id && user.id !== '' ? user.id : null;
+      cleanPayload.category_id = postData.category_id && postData.category_id !== '' ? postData.category_id : null;
       if (editingPost) {
-         result = await updatePost(editingPost.id, safePostData);
+         result = await updatePost(editingPost.id, cleanPayload);
       } else {
-         result = await createPost(safePostData);
+         result = await createPost(cleanPayload);
       }
 
       if (result.success) {
