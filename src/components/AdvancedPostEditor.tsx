@@ -21,10 +21,11 @@ import ContentBlockEditor from './ContentBlockEditor';
 import PostSectionEditor from './PostSectionEditor';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from '../contexts/AuthContext';
+import { useGalleries } from '../hooks/useGalleries';
 
 interface AdvancedPostEditorProps {
   post?: Post;
-  onSave: (data: Post) => Promise<{ success: boolean; error?: string }>;
+  onSave: (data: Post) => Promise<{ success: boolean; error?: string; data?: Partial<Post> }>;
   onCancel: () => void;
 }
 
@@ -32,6 +33,7 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
   const { categories } = useCategories();
   const { media, uploadMedia } = useMedia();
   const { user } = useAuth();
+  const { galleries } = useGalleries();
   const [activeTab, setActiveTab] = useState('content');
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [mediaCallback, setMediaCallback] = useState<((url: string) => void) | null>(null);
@@ -60,6 +62,7 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
     created_at: post?.created_at || new Date().toISOString(),
     updated_at: post?.updated_at || new Date().toISOString(),
     author_id: post?.author_id || (user?.id && user.id !== '' ? user.id : undefined),
+    gallery_id: typeof post?.gallery_id === 'string' && post.gallery_id !== '' ? post.gallery_id : undefined,
   });
 
   const [seoData, setSeoData] = useState({
@@ -214,8 +217,9 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
     }
     console.log('Submitting postData:', postData);
     const result = await onSave(postData as Post);
-    if (result.success) {
-      onCancel();
+    if (result.success && result.data) {
+      setFormData(prev => ({ ...prev, ...result.data }));
+      // Optionally, show a success message or keep the modal open
     } else if (result.error) {
       setError(result.error);
     }
@@ -408,53 +412,69 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
                           required
                         />
                       </div>
-                    </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Excerpt
-                      </label>
-                      <textarea
-                        value={formData.excerpt}
-                        onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                        rows={3}
-                        className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      />
-                    </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Gallery
+                        </label>
+                        <select
+                          value={formData.gallery_id || ''}
+                          onChange={e => setFormData({ ...formData, gallery_id: e.target.value || undefined })}
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        >
+                          <option value="">No Gallery</option>
+                          {galleries.map(gallery => (
+                            <option key={gallery.id} value={gallery.id}>{gallery.name}</option>
+                          ))}
+                        </select>
+                      </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Content
-                      </label>
-                      <div className="bg-white dark:bg-gray-800 rounded-lg">
-                        <ReactQuill
-                          className="my-quill-editor"
-                          value={formData.content}
-                          onChange={(content) => setFormData({ ...formData, content })}
-                          modules={{
-                            toolbar: [
-                              [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                              ['bold', 'italic', 'underline', 'strike'],
-                              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                              [{ 'script': 'sub'}, { 'script': 'super' }],
-                              [{ 'indent': '-1'}, { 'indent': '+1' }],
-                              [{ 'direction': 'rtl' }],
-                              [{ 'color': [] }, { 'background': [] }],
-                              [{ 'align': [] }],
-                              ['link', 'image', 'video'],
-                              ['blockquote', 'code-block'],
-                              ['clean']
-                            ]
-                          }}
-                          formats={[
-                            'header', 'bold', 'italic', 'underline', 'strike',
-                            'list', 'bullet', 'script', 'indent', 'direction',
-                            'color', 'background', 'align', 'link', 'image', 'video',
-                            'blockquote', 'code-block'
-                          ]}
-                          placeholder="Write your post content here..."
-                          style={{ minHeight: '300px' }}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Excerpt
+                        </label>
+                        <textarea
+                          value={formData.excerpt}
+                          onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                          rows={3}
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Content
+                        </label>
+                        <div className="bg-white dark:bg-gray-800 rounded-lg">
+                          <ReactQuill
+                            className="my-quill-editor"
+                            value={formData.content}
+                            onChange={(content) => setFormData({ ...formData, content })}
+                            modules={{
+                              toolbar: [
+                                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                                ['bold', 'italic', 'underline', 'strike'],
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                [{ 'script': 'sub'}, { 'script': 'super' }],
+                                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                                [{ 'direction': 'rtl' }],
+                                [{ 'color': [] }, { 'background': [] }],
+                                [{ 'align': [] }],
+                                ['link', 'image', 'video'],
+                                ['blockquote', 'code-block'],
+                                ['clean']
+                              ]
+                            }}
+                            formats={[
+                              'header', 'bold', 'italic', 'underline', 'strike',
+                              'list', 'bullet', 'script', 'indent', 'direction',
+                              'color', 'background', 'align', 'link', 'image', 'video',
+                              'blockquote', 'code-block'
+                            ]}
+                            placeholder="Write your post content here..."
+                            style={{ minHeight: '300px' }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

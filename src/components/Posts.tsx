@@ -52,7 +52,7 @@ const Posts: React.FC = () => {
         'author_id', 'category_id', 'views', 'published_at', 'created_at', 'updated_at',
         'seo_title', 'seo_description', 'seo_keywords', 'canonical_url', 'og_image',
         'robots', 'scheduled_at', 'content_blocks', 'sections', 'gallery_images',
-        'video_url', 'audio_url', 'is_featured'
+        'video_url', 'audio_url', 'is_featured', 'gallery_id'
       ];
       const cleanPayload: any = {};
       for (const key of allowedFields) {

@@ -171,19 +171,25 @@ const Products: React.FC = () => {
     if (!slug) {
       slug = productForm.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     }
-    
+
+    // Only send fields that exist in the products table
     const productData = {
-      ...productForm,
-      slug
+      name: productForm.name,
+      slug,
+      description: productForm.description,
+      images: productForm.images,
+      price: productForm.price,
+      category_id: productForm.category_id,
+      status: productForm.status
     };
-    
+
     let result;
     if (editingProduct) {
       result = await updateProduct(editingProduct.id, productData);
     } else {
       result = await createProduct(productData);
     }
-    
+
     if (result.success) {
       setShowProductModal(false);
       setEditingProduct(null);

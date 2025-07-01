@@ -67,6 +67,7 @@ export interface Post {
   tags?: string[];
   is_featured?: boolean;
   allow_comments?: boolean;
+  gallery_id?: string;
 }
 
 export interface GalleryItem {
@@ -108,6 +109,7 @@ export interface ContentPage {
   audio_url?: string;
   is_featured?: boolean;
   allow_comments?: boolean;
+  gallery_id?: string;
 }
 
 export interface ContentBlock {
@@ -277,7 +279,7 @@ export interface Gallery {
   slug: string;
   description?: string;
   type: 'image' | 'video' | 'mixed';
-  images: string[];
+  items: GalleryItem[];
   status: string;
   created_by?: string;
   created_at: string;

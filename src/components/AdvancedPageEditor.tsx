@@ -17,6 +17,7 @@ import { useMedia } from '../hooks/useMedia';
 import { ContentPage, SEOData } from '../types';
 import ContentBlockEditor from './ContentBlockEditor';
 import PostSectionEditor from './PostSectionEditor';
+import { useGalleries } from '../hooks/useGalleries';
 
 interface AdvancedPageEditorProps {
   page?: ContentPage;
@@ -26,6 +27,7 @@ interface AdvancedPageEditorProps {
 
 const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, onCancel }) => {
   const { media, uploadMedia } = useMedia();
+  const { galleries } = useGalleries();
   const [activeTab, setActiveTab] = useState('content');
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [mediaCallback, setMediaCallback] = useState<((url: string) => void) | null>(null);
@@ -47,7 +49,8 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
     video_url: page?.video_url || '',
     audio_url: page?.audio_url || '',
     is_featured: page?.is_featured || false,
-    allow_comments: page?.allow_comments !== false
+    allow_comments: page?.allow_comments !== false,
+    gallery_id: page?.gallery_id || undefined
   });
 
   const [seoData, setSeoData] = useState<SEOData>({
@@ -222,6 +225,22 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
                           className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                           required
                         />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Gallery
+                        </label>
+                        <select
+                          value={formData.gallery_id || ''}
+                          onChange={e => setFormData({ ...formData, gallery_id: e.target.value || undefined })}
+                          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        >
+                          <option value="">No Gallery</option>
+                          {galleries.map(gallery => (
+                            <option key={gallery.id} value={gallery.id}>{gallery.name}</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
 

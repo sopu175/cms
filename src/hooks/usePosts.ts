@@ -62,6 +62,7 @@ export const usePosts = (options: UsePostsOptions = {}) => {
         ...postData,
         author_id: postData.author_id && postData.author_id !== '' ? postData.author_id : null,
         category_id: postData.category_id && postData.category_id !== '' ? postData.category_id : null,
+        gallery_id: postData.gallery_id && postData.gallery_id !== '' ? postData.gallery_id : null,
         published_at: postData.status === 'published' ? new Date().toISOString() : null
       };
       if ('id' in safePostData && !safePostData.id) {
@@ -98,6 +99,7 @@ export const usePosts = (options: UsePostsOptions = {}) => {
         ...updates,
         author_id: updates.author_id && updates.author_id !== '' ? updates.author_id : null,
         category_id: updates.category_id && updates.category_id !== '' ? updates.category_id : null,
+        gallery_id: updates.gallery_id && updates.gallery_id !== '' ? updates.gallery_id : null,
         published_at: updates.status === 'published' ? new Date().toISOString() : null
       };
       const { data, error } = await supabase

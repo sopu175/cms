@@ -37,15 +37,24 @@ export const useMedia = () => {
     try {
       // Get the current user
       const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error('User must be authenticated to upload media');
-      }
+      if (!user) throw new Error('User must be authenticated to upload media');
 
-      // In a real implementation, you would upload to a storage service
-      // For now, we'll simulate the upload
-      const url = URL.createObjectURL(file);
-      
+      // Upload to Supabase Storage
+      const filePath = `${folder}/${Date.now()}-${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from('media-bucket')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get the public URL
+      const { data: publicUrlData } = supabase.storage
+        .from('media-bucket')
+        .getPublicUrl(filePath);
+
+      const url = publicUrlData.publicUrl;
+
+      // Save to media table
       const { data, error } = await supabase
         .from('media')
         .insert([{
@@ -55,7 +64,7 @@ export const useMedia = () => {
           file_size: file.size,
           url: url,
           folder: folder,
-          uploaded_by: user.id // This is required by the RLS policy
+          uploaded_by: user.id
         }])
         .select()
         .single();

@@ -14,7 +14,9 @@ import {
 } from 'lucide-react';
 import { useGalleries } from '../hooks/useGalleries';
 import { useAuth } from '../contexts/AuthContext';
-import { Gallery as GalleryType } from '../types';
+import { Gallery as GalleryType, GalleryItem } from '../types';
+import { v4 as uuidv4 } from 'uuid';
+import { useMedia } from '../hooks/useMedia';
 
 const Gallery: React.FC = () => {
   const { user } = useAuth();
@@ -24,15 +26,18 @@ const Gallery: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingGallery, setEditingGallery] = useState<GalleryType | null>(null);
   const { galleries, loading, createGallery, updateGallery, deleteGallery } = useGalleries();
+  const { uploadMedia } = useMedia();
 
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
     description: '',
     type: 'image' as 'image' | 'video' | 'mixed',
-    images: [] as string[],
+    items: [] as GalleryItem[],
     status: 'active'
   });
+
+  const [galleryPath, setGalleryPath] = useState<string[]>([]);
 
   const canEdit = ['admin', 'editor', 'author'].includes(user?.role || '');
 
@@ -43,7 +48,7 @@ const Gallery: React.FC = () => {
       slug: '',
       description: '',
       type: 'image',
-      images: [],
+      items: [],
       status: 'active'
     });
     setShowModal(true);
@@ -56,7 +61,7 @@ const Gallery: React.FC = () => {
       slug: gallery.slug,
       description: gallery.description || '',
       type: gallery.type,
-      images: gallery.images,
+      items: gallery.items,
       status: gallery.status
     });
     setShowModal(true);
@@ -86,7 +91,7 @@ const Gallery: React.FC = () => {
         slug: '',
         description: '',
         type: 'image',
-        images: [],
+        items: [],
         status: 'active'
       });
     } else {
@@ -103,21 +108,98 @@ const Gallery: React.FC = () => {
     }
   };
 
-  const addImage = () => {
-    const url = prompt('Enter image URL:');
-    if (url) {
-      setFormData(prev => ({
+  const getCurrentGalleryItems = (): GalleryItem[] => {
+    const items = formData.items || [];
+    let currentItems = items;
+    for (const folderId of galleryPath) {
+      const folder = currentItems.find(item => item.type === 'folder' && item.id === folderId);
+      if (folder && folder.children) {
+        currentItems = folder.children;
+      } else {
+        break;
+      }
+    }
+    return currentItems;
+  };
+
+  const updateGalleryAtPath = (path: string[], updater: (items: GalleryItem[]) => GalleryItem[]) => {
+    if (path.length === 0) {
+      setFormData(prev => ({ ...prev, items: updater(prev.items || []) }));
+      return;
+    }
+    setFormData(prev => {
+      const updateRecursive = (items: GalleryItem[], depth: number): GalleryItem[] => {
+        return items.map(item => {
+          if (item.type === 'folder' && item.id === path[depth]) {
+            if (depth === path.length - 1) {
+              return { ...item, children: updater(item.children || []) };
+            } else {
+              return { ...item, children: updateRecursive(item.children || [], depth + 1) };
+            }
+          }
+          return item;
+        });
+      };
+      return {
         ...prev,
-        images: [...prev.images, url]
-      }));
+        items: updateRecursive(prev.items || [], 0)
+      };
+    });
+  };
+
+  const handleAddFolder = () => {
+    const name = prompt('Folder name?');
+    if (!name) return;
+    const newFolder: GalleryItem = { id: uuidv4(), type: 'folder', name, children: [] };
+    updateGalleryAtPath(galleryPath, items => [...items, newFolder]);
+  };
+
+  const handleUploadImage = async (file: File) => {
+    const result = await uploadMedia(file);
+    if (result.success && result.data) {
+      const newImage: GalleryItem = { id: uuidv4(), type: 'image', url: result.data.url };
+      updateGalleryAtPath(galleryPath, items => [...items, newImage]);
     }
   };
 
-  const removeImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
+  const handleUploadClickGallery = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        handleUploadImage(file);
+      }
+    };
+    input.click();
+  };
+
+  const handleEnterFolder = (folderId: string) => {
+    setGalleryPath(path => [...path, folderId]);
+  };
+
+  const handleGoUp = () => {
+    setGalleryPath(path => path.slice(0, -1));
+  };
+
+  const renderGalleryBreadcrumbs = () => {
+    let items = formData.items || [];
+    const crumbs = [
+      <span key="root" className="cursor-pointer text-blue-400" onClick={() => setGalleryPath([])}>Gallery</span>
+    ];
+    let currentPath: string[] = [];
+    for (const folderId of galleryPath) {
+      const folder = items.find((item: any) => item.type === 'folder' && item.id === folderId);
+      if (!folder) break;
+      currentPath = [...currentPath, folderId];
+      crumbs.push(
+        <span key={folderId} className="mx-2 text-gray-400">/</span>,
+        <span key={folderId + '-crumb'} className="cursor-pointer text-blue-400" onClick={() => setGalleryPath(currentPath)}>{folder.name}</span>
+      );
+      items = folder.children || [];
+    }
+    return <div className="mb-4 flex items-center flex-wrap">{crumbs}</div>;
   };
 
   const filteredGalleries = galleries.filter(gallery => {
@@ -225,12 +307,12 @@ const Gallery: React.FC = () => {
               >
                 {/* Gallery Preview */}
                 <div className="aspect-video bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
-                  {gallery.images.length > 0 ? (
+                  {gallery.items.length > 0 ? (
                     <div className="grid grid-cols-2 gap-1 h-full">
-                      {gallery.images.slice(0, 4).map((image, index) => (
+                      {gallery.items.slice(0, 4).map((item, index) => (
                         <img
                           key={index}
-                          src={image}
+                          src={item.url}
                           alt={`${gallery.name} ${index + 1}`}
                           className="w-full h-full object-cover"
                         />
@@ -246,9 +328,9 @@ const Gallery: React.FC = () => {
                       {gallery.type}
                     </span>
                   </div>
-                  {gallery.images.length > 4 && (
+                  {gallery.items.length > 4 && (
                     <div className="absolute bottom-3 right-3 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                      +{gallery.images.length - 4} more
+                      +{gallery.items.length - 4} more
                     </div>
                   )}
                 </div>
@@ -263,7 +345,7 @@ const Gallery: React.FC = () => {
                   )}
                   
                   <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
-                    <span>{gallery.images.length} items</span>
+                    <span>{gallery.items.length} items</span>
                     <span>{new Date(gallery.created_at).toLocaleDateString()}</span>
                   </div>
 
@@ -313,9 +395,9 @@ const Gallery: React.FC = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-3">
                           <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-                            {gallery.images.length > 0 ? (
+                            {gallery.items.length > 0 ? (
                               <img
-                                src={gallery.images[0]}
+                                src={gallery.items[0].url}
                                 alt={gallery.name}
                                 className="w-full h-full object-cover rounded-lg"
                               />
@@ -339,7 +421,7 @@ const Gallery: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                        {gallery.images.length}
+                        {gallery.items.length}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                         {new Date(gallery.created_at).toLocaleDateString()}
@@ -479,34 +561,69 @@ const Gallery: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Images ({formData.images.length})
+                      Items ({getCurrentGalleryItems().length})
                     </label>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={handleAddFolder}
+                        className="flex items-center space-x-2 px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Add Folder</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleUploadClickGallery}
+                        className="flex items-center space-x-2 px-3 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Upload Image</span>
+                      </button>
+                    </div>
+                  </div>
+                  {renderGalleryBreadcrumbs()}
+                  {galleryPath.length > 0 && (
                     <button
                       type="button"
-                      onClick={addImage}
-                      className="flex items-center space-x-2 px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      onClick={handleGoUp}
+                      className="mb-2 px-2 py-1 text-xs bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600"
                     >
-                      <Plus className="w-4 h-4" />
-                      <span>Add Image</span>
+                      Go Up
                     </button>
-                  </div>
-                  
+                  )}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-h-48 overflow-y-auto">
-                    {formData.images.map((image, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={image}
-                          alt={`Gallery item ${index + 1}`}
-                          className="w-full h-20 object-cover rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index)}
-                          className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    {getCurrentGalleryItems().map((item, index) => (
+                      item.type === 'folder' ? (
+                        <div key={item.id} className="relative group cursor-pointer bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex flex-col items-center justify-center border border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+                          onClick={() => handleEnterFolder(item.id)}
                         >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
+                          <Grid className="w-8 h-8 text-blue-400 mb-2" />
+                          <span className="text-gray-900 dark:text-white font-semibold">{item.name}</span>
+                          <button
+                            type="button"
+                            onClick={e => { e.stopPropagation(); updateGalleryAtPath(galleryPath, items => items.filter(f => f.id !== item.id)); }}
+                            className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div key={item.id} className="relative group">
+                          <img
+                            src={item.url}
+                            alt={`Gallery item ${index + 1}`}
+                            className="w-full h-20 object-cover rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => updateGalleryAtPath(galleryPath, items => items.filter(img => img.id !== item.id))}
+                            className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )
                     ))}
                   </div>
                 </div>

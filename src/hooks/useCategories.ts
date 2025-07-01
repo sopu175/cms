@@ -82,11 +82,12 @@ export const useCategories = () => {
   const updateCategory = async (id: string, updates: Partial<Category>) => {
     try {
       // Only send allowed fields
-      const { name, description, color, parent_id } = updates;
+      const { name, description, color, parent_id, category_type } = updates;
       const safeUpdates: any = {
         description,
         color,
-        parent_id: parent_id ? parent_id : null
+        parent_id: parent_id ? parent_id : null,
+        category_type
       };
       // If name is being updated, also update slug
       if (name) {
