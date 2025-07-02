@@ -22,6 +22,7 @@ import PostSectionEditor from './PostSectionEditor';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from '../contexts/AuthContext';
 import { useGalleries } from '../hooks/useGalleries';
+import MediaUploadButton from './MediaUploadButton';
 
 interface AdvancedPostEditorProps {
   post?: Post;
@@ -514,30 +515,7 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
                 <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Featured Image</h3>
                   <div className="flex items-center space-x-4">
-                    <input
-                      type="url"
-                      value={formData.featured_image}
-                      onChange={(e) => setFormData({ ...formData, featured_image: e.target.value })}
-                      className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      placeholder="Featured image URL"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleUploadClick((url) => setFormData({ ...formData, featured_image: url }))}
-                      disabled={uploading}
-                      className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-400"
-                    >
-                      <Upload className="w-4 h-4" />
-                      <span>Upload</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleMediaSelect((url) => setFormData({ ...formData, featured_image: url }))}
-                      className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    >
-                      <Image className="w-4 h-4" />
-                      <span>Browse</span>
-                    </button>
+                    <MediaUploadButton onChange={urls => setFormData({ ...formData, featured_image: urls[0] })} buttonText="Select Featured Image" />
                   </div>
                   {formData.featured_image && (
                     <div className="mt-4">
@@ -554,33 +532,7 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
                 <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Gallery</h3>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={handleUploadClickGallery}
-                        disabled={uploading}
-                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-400"
-                      >
-                        <Upload className="w-4 h-4" />
-                        <span>Upload</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleBrowseGallery}
-                        className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                      >
-                        <Image className="w-4 h-4" />
-                        <span>Browse</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleAddFolder}
-                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                      >
-                        <Plus className="w-4 h-4" />
-                        <span>Add Folder</span>
-                      </button>
-                    </div>
+                    <MediaUploadButton onChange={urls => updateGalleryAtPath(galleryPath, items => [...items, ...urls.map(url => ({ id: uuidv4(), type: 'image' as const, url }))])} buttonText="Add Images" />
                   </div>
                   {renderGalleryBreadcrumbs()}
                   {galleryPath.length > 0 && (
@@ -602,16 +554,6 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
                         >
                           <FolderOpen className="w-8 h-8 text-blue-400 mb-2" />
                           <span className="text-gray-900 dark:text-white font-semibold">{item.name}</span>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              updateGalleryAtPath(galleryPath, items => items.filter((f: any) => f.id !== item.id));
-                            }}
-                            className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
                         </div>
                       ) : (
                         <div key={item.id} className="relative group">
@@ -620,15 +562,6 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
                             alt={`Gallery ${index + 1}`}
                             className="w-full h-32 object-cover rounded-lg"
                           />
-                          <button
-                            type="button"
-                            onClick={() => {
-                              updateGalleryAtPath(galleryPath, items => items.filter((img: any) => img.id !== item.id));
-                            }}
-                            className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
                         </div>
                       )
                     ))}
@@ -726,22 +659,7 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
                       Open Graph Image
                     </label>
                     <div className="flex items-center space-x-4">
-                      <input
-                        type="url"
-                        value={seoData.og_image}
-                        onChange={(e) => setSeoData({ ...seoData, og_image: e.target.value })}
-                        className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        placeholder="Image URL for social media sharing"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleUploadClick((url) => setSeoData({ ...seoData, og_image: url }))}
-                        disabled={uploading}
-                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-400"
-                      >
-                        <Upload className="w-4 h-4" />
-                        <span>Upload</span>
-                      </button>
+                      <MediaUploadButton onChange={urls => setSeoData({ ...seoData, og_image: urls[0] })} buttonText="Select Open Graph Image" />
                     </div>
                   </div>
                 </div>

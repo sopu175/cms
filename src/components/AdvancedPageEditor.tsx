@@ -11,13 +11,16 @@ import {
   Layers,
   List,
   Plus,
-  Upload
+  Upload,
+  FolderOpen
 } from 'lucide-react';
 import { useMedia } from '../hooks/useMedia';
-import { ContentPage, SEOData } from '../types';
+import { ContentPage, SEOData, GalleryItem } from '../types';
 import ContentBlockEditor from './ContentBlockEditor';
 import PostSectionEditor from './PostSectionEditor';
 import { useGalleries } from '../hooks/useGalleries';
+import MediaUploadButton from './MediaUploadButton';
+import { v4 as uuidv4 } from 'uuid';
 
 interface AdvancedPageEditorProps {
   page?: ContentPage;
@@ -33,6 +36,14 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
   const [mediaCallback, setMediaCallback] = useState<((url: string) => void) | null>(null);
   const [uploading, setUploading] = useState(false);
   
+  let initialGalleryImages: GalleryItem[] = [];
+  if (Array.isArray(page?.gallery_images) && page.gallery_images.length > 0) {
+    if (typeof page.gallery_images[0] === 'object' && 'type' in page.gallery_images[0]) {
+      initialGalleryImages = page.gallery_images as GalleryItem[];
+    } else if (typeof page.gallery_images[0] === 'string') {
+      initialGalleryImages = (page.gallery_images as unknown as string[]).map(url => ({ id: uuidv4(), type: 'image' as const, url }));
+    }
+  }
   const [formData, setFormData] = useState({
     title: page?.title || '',
     html_name: page?.html_name || '',
@@ -45,7 +56,7 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
     scheduled_at: page?.scheduled_at || '',
     content_blocks: page?.content_blocks || [],
     sections: page?.sections || [],
-    gallery_images: page?.gallery_images || [],
+    gallery_images: initialGalleryImages,
     video_url: page?.video_url || '',
     audio_url: page?.audio_url || '',
     is_featured: page?.is_featured || false,
@@ -140,6 +151,76 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
     { id: 'seo', label: 'SEO', icon: Eye },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
+
+  // Nested gallery helpers (copied/adapted from AdvancedPostEditor)
+  const [galleryPath, setGalleryPath] = useState<string[]>([]);
+  const getCurrentGalleryItems = (): GalleryItem[] => {
+    const items = formData.gallery_images || [];
+    let currentItems = items;
+    for (const folderId of galleryPath) {
+      const folder = currentItems.find(item => item.type === 'folder' && item.id === folderId);
+      if (folder && folder.children) {
+        currentItems = folder.children;
+      } else {
+        break;
+      }
+    }
+    return currentItems;
+  };
+  const updateGalleryAtPath = (path: string[], updater: (items: GalleryItem[]) => GalleryItem[]) => {
+    if (path.length === 0) {
+      setFormData(prev => ({ ...prev, gallery_images: updater(prev.gallery_images || []) }));
+      return;
+    }
+    setFormData(prev => {
+      const updateRecursive = (items: GalleryItem[], depth: number): GalleryItem[] => {
+        return items.map(item => {
+          if (item.type === 'folder' && item.id === path[depth]) {
+            if (depth === path.length - 1) {
+              return { ...item, children: updater(item.children || []) };
+            } else {
+              return { ...item, children: updateRecursive(item.children || [], depth + 1) };
+            }
+          }
+          return item;
+        });
+      };
+      return {
+        ...prev,
+        gallery_images: updateRecursive(prev.gallery_images || [], 0)
+      };
+    });
+  };
+  const handleAddFolder = () => {
+    const name = prompt('Folder name?');
+    if (!name) return;
+    const newFolder: GalleryItem = { id: uuidv4(), type: 'folder', name, children: [] };
+    updateGalleryAtPath(galleryPath, items => [...items, newFolder]);
+  };
+  const handleEnterFolder = (folderId: string) => {
+    setGalleryPath(path => [...path, folderId]);
+  };
+  const handleGoUp = () => {
+    setGalleryPath(path => path.slice(0, -1));
+  };
+  const renderGalleryBreadcrumbs = () => {
+    let items = formData.gallery_images || [];
+    const crumbs = [
+      <span key="root" className="cursor-pointer text-blue-400" onClick={() => setGalleryPath([])}>Gallery</span>
+    ];
+    let currentPath: string[] = [];
+    for (const folderId of galleryPath) {
+      const folder = items.find((item: any) => item.type === 'folder' && item.id === folderId);
+      if (!folder) break;
+      currentPath = [...currentPath, folderId];
+      crumbs.push(
+        <span key={folderId} className="mx-2 text-gray-400">/</span>,
+        <span key={folderId + '-crumb'} className="cursor-pointer text-blue-400" onClick={() => setGalleryPath(currentPath)}>{folder.name}</span>
+      );
+      items = folder.children || [];
+    }
+    return <div className="mb-4 flex items-center flex-wrap">{crumbs}</div>;
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-50 dark:bg-gray-950">
@@ -335,30 +416,7 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
                 <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Background Image</h3>
                   <div className="flex items-center space-x-4">
-                    <input
-                      type="url"
-                      value={formData.background_image}
-                      onChange={(e) => setFormData({ ...formData, background_image: e.target.value })}
-                      className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      placeholder="Background image URL"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleUploadClick((url) => setFormData({ ...formData, background_image: url }))}
-                      disabled={uploading}
-                      className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-400"
-                    >
-                      <Upload className="w-4 h-4" />
-                      <span>Upload</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleMediaSelect((url) => setFormData({ ...formData, background_image: url }))}
-                      className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    >
-                      <Image className="w-4 h-4" />
-                      <span>Browse</span>
-                    </button>
+                    <MediaUploadButton onChange={urls => setFormData({ ...formData, background_image: urls[0] })} buttonText="Select Background Image" />
                   </div>
                   {formData.background_image && (
                     <div className="mt-4">
@@ -395,51 +453,37 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
                 <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Gallery</h3>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => handleUploadClick((url) => 
-                          setFormData(prev => ({ ...prev, gallery_images: [...prev.gallery_images, url] }))
-                        )}
-                        disabled={uploading}
-                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-400"
-                      >
-                        <Upload className="w-4 h-4" />
-                        <span>Upload</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleMediaSelect((url) => 
-                          setFormData(prev => ({ ...prev, gallery_images: [...prev.gallery_images, url] }))
-                        )}
-                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                      >
-                        <Plus className="w-4 h-4" />
-                        <span>Add Images</span>
-                      </button>
-                    </div>
+                    <MediaUploadButton onChange={urls => updateGalleryAtPath(galleryPath, items => [...items, ...urls.map(url => ({ id: uuidv4(), type: 'image' as const, url }))])} buttonText="Add Images" />
                   </div>
+                  {renderGalleryBreadcrumbs()}
+                  {galleryPath.length > 0 && (
+                    <button onClick={handleGoUp} className="mb-4 text-blue-400 hover:underline">Back</button>
+                  )}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {formData.gallery_images.map((image, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={image}
-                          alt={`Gallery ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFormData(prev => ({
-                              ...prev,
-                              gallery_images: prev.gallery_images.filter((_, i) => i !== index)
-                            }));
-                          }}
-                          className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    {/* Add Folder Button */}
+                    <div className="relative group cursor-pointer bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex flex-col items-center justify-center border border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+                      onClick={handleAddFolder}
+                    >
+                      <Plus className="w-8 h-8 text-blue-400 mb-2" />
+                      <span className="text-gray-900 dark:text-white font-semibold">Add Folder</span>
+                    </div>
+                    {getCurrentGalleryItems().map((item, index) => (
+                      item.type === 'folder' ? (
+                        <div key={item.id} className="relative group cursor-pointer bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex flex-col items-center justify-center border border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+                          onClick={() => handleEnterFolder(item.id)}
                         >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
+                          <FolderOpen className="w-8 h-8 text-blue-400 mb-2" />
+                          <span className="text-gray-900 dark:text-white font-semibold">{item.name}</span>
+                        </div>
+                      ) : (
+                        <div key={item.id} className="relative group">
+                          <img
+                            src={item.url}
+                            alt={`Gallery ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg"
+                          />
+                        </div>
+                      )
                     ))}
                   </div>
                 </div>
@@ -535,22 +579,7 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
                       Open Graph Image
                     </label>
                     <div className="flex items-center space-x-4">
-                      <input
-                        type="url"
-                        value={seoData.og_image}
-                        onChange={(e) => setSeoData({ ...seoData, og_image: e.target.value })}
-                        className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                        placeholder="Image URL for social media sharing"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleUploadClick((url) => setSeoData({ ...seoData, og_image: url }))}
-                        disabled={uploading}
-                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-400"
-                      >
-                        <Upload className="w-4 h-4" />
-                        <span>Upload</span>
-                      </button>
+                      <MediaUploadButton onChange={urls => setSeoData({ ...seoData, og_image: urls[0] })} buttonText="Select Open Graph Image" />
                     </div>
                   </div>
 

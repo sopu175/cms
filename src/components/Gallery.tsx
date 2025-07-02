@@ -17,6 +17,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Gallery as GalleryType, GalleryItem } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { useMedia } from '../hooks/useMedia';
+import MediaUploadButton from './MediaUploadButton';
 
 const Gallery: React.FC = () => {
   const { user } = useAuth();
@@ -563,7 +564,7 @@ const Gallery: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Items ({getCurrentGalleryItems().length})
                     </label>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 mb-4">
                       <button
                         type="button"
                         onClick={handleAddFolder}
@@ -572,14 +573,7 @@ const Gallery: React.FC = () => {
                         <Plus className="w-4 h-4" />
                         <span>Add Folder</span>
                       </button>
-                      <button
-                        type="button"
-                        onClick={handleUploadClickGallery}
-                        className="flex items-center space-x-2 px-3 py-1 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
-                      >
-                        <Plus className="w-4 h-4" />
-                        <span>Upload Image</span>
-                      </button>
+                      <MediaUploadButton onChange={urls => updateGalleryAtPath(galleryPath, items => [...items, ...urls.map(url => ({ id: uuidv4(), type: 'image' as const, url }))])} buttonText="Add Images to Folder" />
                     </div>
                   </div>
                   {renderGalleryBreadcrumbs()}

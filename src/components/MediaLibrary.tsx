@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Upload, 
   Search, 
@@ -17,13 +17,19 @@ import {
 import { useMedia } from '../hooks/useMedia';
 import { Media } from '../types';
 
-const MediaLibrary: React.FC = () => {
+interface MediaLibraryProps {
+  onSelect?: (media: Media[]) => void;
+  selectedMedia?: Media[];
+  clearSelection?: boolean;
+}
+
+const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect, selectedMedia: externalSelectedMedia, clearSelection }) => {
   const { media, loading, uploadMedia, updateMedia, deleteMedia } = useMedia();
   const [searchTerm, setSearchTerm] = useState('');
   const [folderFilter, setFolderFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedMedia, setSelectedMedia] = useState<Media[]>([]);
+  const [selectedMedia, setSelectedMedia] = useState<Media[]>(externalSelectedMedia || []);
   const [editingMedia, setEditingMedia] = useState<Media | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -32,6 +38,10 @@ const MediaLibrary: React.FC = () => {
     caption: '',
     folder: ''
   });
+
+  useEffect(() => {
+    if (clearSelection) setSelectedMedia([]);
+  }, [clearSelection]);
 
   const handleFileUpload = async (files: FileList) => {
     for (let i = 0; i < files.length; i++) {
@@ -460,6 +470,18 @@ const MediaLibrary: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-400">
             {searchTerm ? 'Try adjusting your search terms' : 'Upload your first media file to get started'}
           </p>
+        </div>
+      )}
+
+      {onSelect && (
+        <div className="mt-6">
+          <button
+            onClick={() => onSelect(selectedMedia)}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+          >
+            <Save className="w-4 h-4" />
+            <span>Select</span>
+          </button>
         </div>
       )}
     </div>

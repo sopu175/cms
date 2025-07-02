@@ -2,7 +2,7 @@ import { Edit, FolderOpen, Plus, Save, Search, Trash2, X } from "lucide-react";
 import React, { useState } from "react";
 
 import { Category, PostSection } from "../types";
-import { MediaUploadButton } from "./MediaUploadButton";
+import MediaUploadButton from './MediaUploadButton';
 import SectionEditor from "./PostSectionEditor";
 import { useAuth } from "../contexts/AuthContext";
 import { useCategories } from "../hooks/useCategories";
@@ -314,15 +314,7 @@ const Categories: React.FC = () => {
                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                               Featured Image
                            </label>
-                           <MediaUploadButton onChange={(url) => setFormData({ ...formData, featured_image: url })} />
-                           {formData.featured_image && (
-                              <img
-                                 src={formData.featured_image}
-                                 alt="Featured"
-                                 className="mt-2 max-w-xs rounded"
-                                 style={{ maxWidth: 120, marginTop: 8 }}
-                              />
-                           )}
+                           <MediaUploadButton onChange={urls => setFormData({ ...formData, featured_image: urls[0] })} buttonText="Select Featured Image" />
                         </div>
 
                         {/* Sections Editor (reuse Post Section tab) */}
