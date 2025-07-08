@@ -170,7 +170,7 @@ export interface Product {
   description?: string;
   images?: string[];
   price: number;
-  category_id?: string;
+  category_id?: string | undefined;
   category_name?: string;
   status: string;
   variations_count?: number;

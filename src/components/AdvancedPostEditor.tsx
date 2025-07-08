@@ -11,7 +11,6 @@ import {
   Layers,
   List,
   Plus,
-  Upload,
   FolderOpen
 } from 'lucide-react';
 import { useCategories } from '../hooks/useCategories';
@@ -32,13 +31,13 @@ interface AdvancedPostEditorProps {
 
 const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, onCancel }) => {
   const { categories } = useCategories();
-  const { media, uploadMedia } = useMedia();
+  const { media } = useMedia();
   const { user } = useAuth();
   const { galleries } = useGalleries();
   const [activeTab, setActiveTab] = useState('content');
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [mediaCallback, setMediaCallback] = useState<((url: string) => void) | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [uploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   const [formData, setFormData] = useState<Post>({
@@ -127,34 +126,6 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
     updateGalleryAtPath(galleryPath, items => [...items, newFolder]);
   };
 
-  // Upload image to current path
-  const handleUploadImage = async (file: File) => {
-    setUploading(true);
-    try {
-      const result = await uploadMedia(file);
-      if (result.success && result.data) {
-        const newImage: GalleryItem = { id: uuidv4(), type: 'image', url: result.data.url };
-        updateGalleryAtPath(galleryPath, items => [...items, newImage]);
-      }
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  // Handle upload button click
-  const handleUploadClickGallery = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        handleUploadImage(file);
-      }
-    };
-    input.click();
-  };
-
   // Navigate into a folder
   const handleEnterFolder = (folderId: string) => {
     setGalleryPath(path => [...path, folderId]);
@@ -239,35 +210,6 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
     setShowMediaModal(false);
   };
 
-  const handleFileUpload = async (file: File, callback?: (url: string) => void) => {
-    try {
-      setUploading(true);
-      const result = await uploadMedia(file);
-      if (result.success && result.data) {
-        if (callback) {
-          callback(result.data.url);
-        }
-      }
-    } catch (error) {
-      console.error('Upload failed:', error);
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleUploadClick = (callback: (url: string) => void) => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        handleFileUpload(file, callback);
-      }
-    };
-    input.click();
-  };
-
   // Get hierarchical categories for display
   const getHierarchicalCategories = () => {
     const categoryMap = new Map();
@@ -312,14 +254,6 @@ const AdvancedPostEditor: React.FC<AdvancedPostEditorProps> = ({ post, onSave, o
     { id: 'seo', label: 'SEO', icon: Eye },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
-
-  // Add this handler for browsing and adding an image from media modal to the current folder
-  const handleBrowseGallery = () => {
-    handleMediaSelect((url) => {
-      const newImage: GalleryItem = { id: uuidv4(), type: 'image', url };
-      updateGalleryAtPath(galleryPath, items => [...items, newImage]);
-    });
-  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-50 dark:bg-gray-950">

@@ -46,8 +46,8 @@ const ContentPageEditor: React.FC<{
       onSubmit(formData);
    };
 
-   const handleFeaturedImageChange = (url: string) => {
-      handleChange("featured_image", url);
+   const handleFeaturedImageChange = (urls: string[]) => {
+      handleChange("featured_image", urls[0] || "");
    };
 
    return (

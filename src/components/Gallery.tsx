@@ -16,7 +16,6 @@ import { useGalleries } from '../hooks/useGalleries';
 import { useAuth } from '../contexts/AuthContext';
 import { Gallery as GalleryType, GalleryItem } from '../types';
 import { v4 as uuidv4 } from 'uuid';
-import { useMedia } from '../hooks/useMedia';
 import MediaUploadButton from './MediaUploadButton';
 
 const Gallery: React.FC = () => {
@@ -27,7 +26,6 @@ const Gallery: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingGallery, setEditingGallery] = useState<GalleryType | null>(null);
   const { galleries, loading, createGallery, updateGallery, deleteGallery } = useGalleries();
-  const { uploadMedia } = useMedia();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -153,27 +151,6 @@ const Gallery: React.FC = () => {
     if (!name) return;
     const newFolder: GalleryItem = { id: uuidv4(), type: 'folder', name, children: [] };
     updateGalleryAtPath(galleryPath, items => [...items, newFolder]);
-  };
-
-  const handleUploadImage = async (file: File) => {
-    const result = await uploadMedia(file);
-    if (result.success && result.data) {
-      const newImage: GalleryItem = { id: uuidv4(), type: 'image', url: result.data.url };
-      updateGalleryAtPath(galleryPath, items => [...items, newImage]);
-    }
-  };
-
-  const handleUploadClickGallery = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        handleUploadImage(file);
-      }
-    };
-    input.click();
   };
 
   const handleEnterFolder = (folderId: string) => {

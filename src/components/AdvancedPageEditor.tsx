@@ -11,7 +11,6 @@ import {
   Layers,
   List,
   Plus,
-  Upload,
   FolderOpen
 } from 'lucide-react';
 import { useMedia } from '../hooks/useMedia';
@@ -29,18 +28,20 @@ interface AdvancedPageEditorProps {
 }
 
 const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, onCancel }) => {
-  const { media, uploadMedia } = useMedia();
+  const { media } = useMedia();
   const { galleries } = useGalleries();
   const [activeTab, setActiveTab] = useState('content');
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [mediaCallback, setMediaCallback] = useState<((url: string) => void) | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [uploading] = useState(false);
   
   let initialGalleryImages: GalleryItem[] = [];
   if (Array.isArray(page?.gallery_images) && page.gallery_images.length > 0) {
     if (typeof page.gallery_images[0] === 'object' && 'type' in page.gallery_images[0]) {
-      initialGalleryImages = page.gallery_images as GalleryItem[];
+      // @ts-ignore
+      initialGalleryImages = page.gallery_images;
     } else if (typeof page.gallery_images[0] === 'string') {
+      // @ts-ignore
       initialGalleryImages = (page.gallery_images as unknown as string[]).map(url => ({ id: uuidv4(), type: 'image' as const, url }));
     }
   }
@@ -112,35 +113,6 @@ const AdvancedPageEditor: React.FC<AdvancedPageEditorProps> = ({ page, onSave, o
       setMediaCallback(null);
     }
     setShowMediaModal(false);
-  };
-
-  const handleFileUpload = async (file: File, callback?: (url: string) => void) => {
-    try {
-      setUploading(true);
-      const result = await uploadMedia(file);
-      if (result.success && result.data) {
-        if (callback) {
-          callback(result.data.url);
-        }
-      }
-    } catch (error) {
-      console.error('Upload failed:', error);
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleUploadClick = (callback: (url: string) => void) => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        handleFileUpload(file, callback);
-      }
-    };
-    input.click();
   };
 
   const tabs = [

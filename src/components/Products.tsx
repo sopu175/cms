@@ -37,18 +37,31 @@ const Products: React.FC = () => {
   const [activeTab, setActiveTab] = useState('basic');
   const [currencySymbol, setCurrencySymbol] = useState('৳'); // Default to Bangladeshi Taka (TK)
   
-  const [productForm, setProductForm] = useState({
-    name: '',
-    slug: '',
-    description: '',
-    images: [] as string[],
-    price: 0,
-    category_id: null,
-    status: 'active',
-    content_blocks: [] as ContentBlock[],
-    sections: [] as PostSection[],
-    specifications: [] as {name: string, value: string}[]
-  });
+  const [productForm, setProductForm] = useState<{
+    name: string;
+    slug: string;
+    description: string;
+    images: string[];
+    price: number;
+    category_id: string | undefined;
+    status: string;
+    content_blocks: ContentBlock[];
+    sections: PostSection[];
+    specifications: { name: string; value: string }[];
+  }>(
+    {
+      name: '',
+      slug: '',
+      description: '',
+      images: [],
+      price: 0,
+      category_id: undefined,
+      status: 'active',
+      content_blocks: [],
+      sections: [],
+      specifications: []
+    }
+  );
   
   const [showVariationModal, setShowVariationModal] = useState(false);
   const [editingVariation, setEditingVariation] = useState<ProductVariation | null>(null);
@@ -130,7 +143,7 @@ const Products: React.FC = () => {
       description: '',
       images: [],
       price: 0,
-      category_id: categories.length > 0 ? categories[0].id : null,
+      category_id: categories.length > 0 ? categories[0].id : undefined,
       status: 'active',
       content_blocks: [],
       sections: [],
@@ -179,7 +192,7 @@ const Products: React.FC = () => {
       description: productForm.description,
       images: productForm.images,
       price: productForm.price,
-      category_id: productForm.category_id,
+      category_id: productForm.category_id || undefined,
       status: productForm.status
     };
 
@@ -652,8 +665,8 @@ const Products: React.FC = () => {
                         Category
                       </label>
                       <select
-                        value={productForm.category_id}
-                        onChange={(e) => setProductForm({ ...productForm, category_id: e.target.value })}
+                        value={productForm.category_id || ''}
+                        onChange={(e) => setProductForm({ ...productForm, category_id: e.target.value || undefined })}
                         className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       >
                         <option value="">Select Category</option>

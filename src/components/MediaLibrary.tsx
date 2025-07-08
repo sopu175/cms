@@ -12,7 +12,8 @@ import {
   FileText,
   Music,
   X,
-  Save
+  Save,
+  ClipboardCopy
 } from 'lucide-react';
 import { useMedia } from '../hooks/useMedia';
 import { Media } from '../types';
@@ -32,6 +33,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect, selectedMedia: ex
   const [selectedMedia, setSelectedMedia] = useState<Media[]>(externalSelectedMedia || []);
   const [editingMedia, setEditingMedia] = useState<Media | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const [editForm, setEditForm] = useState({
     alt_text: '',
@@ -104,7 +106,8 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect, selectedMedia: ex
 
   const filteredMedia = media.filter(item => {
     const matchesSearch = item.original_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.alt_text?.toLowerCase().includes(searchTerm.toLowerCase());
+                         item.alt_text?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.url?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFolder = folderFilter === 'all' || item.folder === folderFilter;
     const matchesType = typeFilter === 'all' || item.mime_type.startsWith(typeFilter);
     return matchesSearch && matchesFolder && matchesType;
@@ -218,7 +221,7 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect, selectedMedia: ex
 
       {/* Media Grid/List */}
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {filteredMedia.map((item) => {
             const isSelected = selectedMedia.some(m => m.id === item.id);
             const FileIcon = getFileIcon(item.mime_type);
@@ -281,6 +284,24 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect, selectedMedia: ex
                       <div className="w-2 h-2 bg-white rounded-full" />
                     </div>
                   </div>
+                )}
+
+                <button
+                  type="button"
+                  className="absolute bottom-3 right-3 p-1 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-blue-600 hover:text-white text-gray-700 dark:text-gray-200 transition-colors"
+                  onClick={e => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(item.url);
+                    setCopiedId(item.id);
+                    setTimeout(() => setCopiedId(null), 1200);
+                  }}
+                  title="Copy image URL"
+                >
+                  <ClipboardCopy className="w-4 h-4" />
+                </button>
+
+                {copiedId === item.id && (
+                  <span className="absolute bottom-10 right-3 bg-blue-600 text-white text-xs rounded px-2 py-1 shadow">Copied!</span>
                 )}
               </div>
             );
@@ -360,6 +381,22 @@ const MediaLibrary: React.FC<MediaLibraryProps> = ({ onSelect, selectedMedia: ex
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
+                          <button
+                            type="button"
+                            className="p-2 text-gray-500 hover:text-blue-600"
+                            onClick={e => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(item.url);
+                              setCopiedId(item.id);
+                              setTimeout(() => setCopiedId(null), 1200);
+                            }}
+                            title="Copy image URL"
+                          >
+                            <ClipboardCopy className="w-4 h-4" />
+                          </button>
+                          {copiedId === item.id && (
+                            <span className="absolute z-10 bg-blue-600 text-white text-xs rounded px-2 py-1 shadow ml-2">Copied!</span>
+                          )}
                         </div>
                       </td>
                     </tr>
